@@ -6,7 +6,7 @@ import { Coordinates } from "@dnd-kit/utilities";
 import { DraggableItem } from "./dragAndDrop/DraggableItem";
 import { Wrapper } from "./dragAndDrop/components"
 
-import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, unitAbbreviations, players, PLAYERS, allPieces, pieceSize } from './consts';
+import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, unitAbbreviations, PLAYERS, allPieces, pieceSize } from './consts';
 import { generateTiles } from './utils/generateTiles';
 
 const tileNumberRegex = /ST_(\d+).png/;
@@ -118,8 +118,6 @@ const getScaleFactor = (boardSize?: number): number => {
 }
 
 const Hexagon: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked, extraSystem = false, onClick }) => {
-  const hexKey = `${q},${r},${s}`;
-
   let extraSystemStyle: CSSProperties = {}
   if (extraSystem) {
     extraSystemStyle = {
@@ -311,7 +309,7 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
       return false;
     });
     return filteredTiles
-  }, [availableTiles, filter, homeSystemTiles, activeCategory, activeTier, tileSelectionData])
+  }, [availableTiles, filter, homeSystemTiles, hyperlaneTiles, activeCategory, activeTier, tileSelectionData])
 
   // Display a subset of tiles or all if showAll is true
   const displayedTiles = showAll ? filteredTiles : filteredTiles.slice(0, 24);
@@ -363,7 +361,7 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
                 setActiveCategory("hyperlanes");
                 setActiveTier(null);
               }}
-              >
+            >
               Hyperlanes
             </button>
           </div>
@@ -625,6 +623,7 @@ const colorsByPlayer: Record<PLAYERS, BASE_FACTION_COLORS> = {
 const getImageFromDraggablePieceProps = ({ player, name, pieceNumber }: DraggablePieceProps, scaleFactor: number): React.ReactNode => {
   const [width, height] = pieceSize[name]
   return <img
+    alt={`${getUidFromDraggablePieceProps({ player, name, pieceNumber })}`}
     src={allPNGs[colorsByPlayer[player]][name]}
     style={{
       width: width,
@@ -729,7 +728,7 @@ const HexBoard: React.FC = () => {
 
   // DnD handlers
   const [allDraggables, setAllDraggables] = useState<DraggablePiecePropsByUid>(
-    [1,2,3,4,5,6].reduce((draggablesByUid, player) => {
+    [1, 2, 3, 4, 5, 6].reduce((draggablesByUid, player) => {
       return Object.assign(draggablesByUid, getDraggablePieceProps(player))
     }, {} as DraggablePiecePropsByUid)
   );
@@ -798,7 +797,7 @@ const HexBoard: React.FC = () => {
     setActiveHex({ q, r, s });
     setShowPicker(true);
     setPickerPosition({ x: 0, y: 0 }); // Position will be centered by CSS
-  }, [setActiveHex, setShowPicker, setPickerPosition]);
+  }, [locked, setActiveHex, setShowPicker, setPickerPosition]);
 
   // Handle tile selection
   const handleTileSelect = useCallback((tile: string | null) => {
@@ -887,7 +886,7 @@ const HexBoard: React.FC = () => {
   const onDragEnd = useCallback(({ delta, active }: DragEndEvent): void => {
     setAllDraggables(prev => {
       const props = prev[active.id];
-      let {x, y} = props
+      let { x, y } = props
       return {
         ...prev,
         [active.id]: {
@@ -897,7 +896,7 @@ const HexBoard: React.FC = () => {
         }
       }
     })
-}, [setAllDraggables])
+  }, [setAllDraggables])
 
   return (
     <>

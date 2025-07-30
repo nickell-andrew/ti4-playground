@@ -12,7 +12,7 @@ import { WarSun } from "./lgy-ws-svg";
 
 import { units } from "../../../components/consts";
 
-export default {
+const grayUnits = {
     [units.Carrier]: Carrier,
     [units.Cruiser]: Cruiser,
     [units.Destroyer]: Destroyer,
@@ -25,3 +25,4 @@ export default {
     [units.Spacedock]: Spacedock,
     [units.WarSun]: WarSun,
 }
+export default grayUnits

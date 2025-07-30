@@ -1,7 +1,7 @@
 import Gray from "./Gray";
 import { baseFactionColors } from "../../components/consts";
 
-export default {
+const pinkUnits = {
     [baseFactionColors.Black]: Gray,
     [baseFactionColors.Blue]: Gray,
     [baseFactionColors.Purple]: Gray,
@@ -12,3 +12,5 @@ export default {
     [baseFactionColors.Green]: Gray,
     [baseFactionColors.Gray]: Gray,
 }
+
+export default pinkUnits

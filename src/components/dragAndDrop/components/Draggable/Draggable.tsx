@@ -1,17 +1,8 @@
-import React, {CSSProperties, forwardRef} from 'react';
+import React, { CSSProperties, forwardRef } from 'react';
 import classNames from 'classnames';
-import type {DraggableSyntheticListeners} from '@dnd-kit/core';
-import type {Transform} from '@dnd-kit/utilities';
-
-import {Handle} from '../Item/components/Handle';
-
-import {
-  draggable,
-  draggableHorizontal,
-  draggableVertical,
-} from './draggable-svg';
+import type { DraggableSyntheticListeners } from '@dnd-kit/core';
+import type { Transform } from '@dnd-kit/utilities';
 import styles from './Draggable.module.css';
-import { DraggableSvgProps } from '../../../../svg/Units/Pink/pch_ca-svg';
 
 export enum Axis {
   All,
