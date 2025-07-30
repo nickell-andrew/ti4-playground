@@ -26,9 +26,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Use Node.js 20
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --watchAll=false # Use --watchAll=false for CI environments
+
+      - name: Build App
         run: npm run build -- --base=href /playground/
