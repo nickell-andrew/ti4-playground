@@ -1,5 +1,5 @@
-import React, {forwardRef} from 'react'
-import type {DraggableSyntheticListeners} from '@dnd-kit/core';
+import React from 'react'
+import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 
 export interface DraggableSvgProps {
     width: string | number | undefined

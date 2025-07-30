@@ -1,5 +1,5 @@
-import React, {forwardRef} from 'react'
-import type {DraggableSyntheticListeners} from '@dnd-kit/core';
+import React from 'react'
+import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 
 export interface DraggableSvgProps {
     width: string | number | undefined
@@ -14,8 +14,8 @@ export const pch_ca = (
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 -0.5 67 67"
         shape-rendering="crispEdges"
-        // width="100%"
-        // height="100%"
+    // width="100%"
+    // height="100%"
     >
         <metadata>Made with Pixels to Svg https://codepen.io/shshaw/pen/XbxvNj</metadata>
         <path stroke="rgba(255,255,255,0.2901960784313726)" d="M9 0h1M3 16h1" />
