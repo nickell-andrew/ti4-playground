@@ -31,10 +31,13 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci; npm install -g serve
 
       - name: Run tests
         run: npm test -- --watchAll=false # Use --watchAll=false for CI environments
 
       - name: Build App
-        run: npm run build -- --base=href /playground/
+        run: npm run build
+
+      - name: Serve
+        run: serve -s build
