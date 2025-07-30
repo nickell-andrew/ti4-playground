@@ -11,6 +11,8 @@ import { generateTiles } from './utils/generateTiles';
 
 const tileNumberRegex = /ST_(\d+).png/;
 
+const urlBase = "ti4-playground"
+
 
 // Define the corner coordinates based on the grid size
 // The grid is generated with q and r from -3 to 3, with s = -q - r
@@ -152,7 +154,7 @@ const Hexagon: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked, extra
 
   // Background style for the tile image
   const backgroundStyle = tile ? {
-    backgroundImage: `url(${tile})`,
+    backgroundImage: `url(${urlBase}/${tile})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   } : {};
@@ -413,7 +415,7 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
               onClick={() => handleTileSelect(tile)}
             // title={tileData?.[tileNumberRegex.exec(tile)?.[1] || '']?.planets.map(planet => planet.name).join(' ') || ''}
             >
-              <img src={tile} alt={`Tile ${tile.split('/').pop()?.replace('.png', '')}`} />
+              <img src={`${urlBase}${tile}`} alt={`Tile ${tile.split('/').pop()?.replace('.png', '')}`} />
               <span className="tooltiptext"> {tooltipTextForTile(tile, tileData)}</span>
             </div>
           ))}
@@ -600,11 +602,11 @@ const allPNGs: allPNGsType = Object.values(baseFactionColors).reduce((dict, colo
   dict[color] = {
     ...Object.values(units).reduce((dict, name) => {
       let fileName = unitAbbreviations[name]
-      dict[name] = `/units/${color}_${fileName}.png`
+      dict[name] = `${urlBase}/units/${color}_${fileName}.png`
       return dict
     }, {} as PNGsForFaction),
     ...Object.values(tokens).reduce((dict, name) => {
-      dict[name] = `tokens/command_${color}.png`
+      dict[name] = `${urlBase}/tokens/command_${color}.png`
       return dict
     }, {} as PNGsForFaction)
   }
