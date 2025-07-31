@@ -8,8 +8,9 @@ import { Wrapper } from "./dragAndDrop/components"
 
 import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, unitAbbreviations, PLAYERS, allPieces, pieceSize } from './consts';
 import { generateTiles } from './utils/generateTiles';
-
-const tileNumberRegex = /ST_(\d+).png/;
+import { TileMap, tilesInfo } from '../assets/data/tiles';
+import { TIER, tileTiers } from '../assets/data/tile-selection';
+import { allTiles, homeSystemTiles, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
 
 const urlBase = "ti4-playground"
 
@@ -25,69 +26,31 @@ const cornerCoordinates = [
   { q: 0, r: 3, s: -3 }    // Bottom
 ];
 
-const tooltipTextForTile = (tile: string, tileData: Record<string, Tile> | null): string => {
-  let tileInfo = tileData?.[tileNumberRegex.exec(tile)?.[1] || '']
-  return tileInfo?.planets.map(planet => planet.name).join(' ') ||
-    tileInfo?.faction ||
-    tileInfo?.wormhole ||
-    tileInfo?.anomaly ||
-    ""
-}
+const tooltipTextForTile = (tile: TILE_NUMBERS, tileData: TileMap): string => {
+  let tileInfo = tileData[tile]
 
-// Helper function to extract tile number from path
-const extractTileNumber = (tilePath: string): number | null => {
-  const match = tilePath.match(/ST_(\d+)/);
-  if (match && match[1]) {
-    return parseInt(match[1], 10);
+  if (tileInfo.faction || tileInfo.planets.length > 0) {
+    return tileInfo?.faction ||
+      tileInfo?.planets.map(planet => planet.name).join(' ')
   }
-  return null;
-};
 
-// Define a type for tile data
-type TileType = string | null;
+  let wormholeText = tileInfo.wormhole ?? ""
+  let anomalyText = tileInfo.anomaly ?? ""
+  if (wormholeText.length > 0 && anomalyText.length > 0) {
+    return `${wormholeText} ${anomalyText}`
+  } else if (wormholeText.length > 0) {
+    return `${wormholeText} wormhole`
+  } else if (anomalyText.length > 0) {
+    return `${anomalyText}`
+  }
+  return "Empty"
+}
 
 // Define a type for the map data
 interface MapData {
-  hexTiles: Record<string, string>;
+  hexTiles: Record<string, TILE_NUMBERS>;
   allDraggablesByUid: DraggablePiecePropsByUid;
   timestamp: number;
-}
-
-// Define a type for faction data
-interface Faction {
-  id: string;
-  name: string;
-  homesystem: string;
-  wiki: string;
-  set: string;
-  options?: string[];
-}
-
-interface Tile {
-  type: string;
-  faction: string | null;
-  wormhole: string | null;
-  anomaly: string | null;
-  planets: Planet[];
-}
-
-interface Planet {
-  name: string;
-  resources: number;
-  influence: number;
-  trait: string;
-  specialty: string | null;
-  legendary: boolean;
-}
-
-// Define a type for tile selection data
-interface TileSelectionData {
-  tiers: {
-    high: number[];
-    mid: number[];
-    low: number[];
-    red: number[];
-  };
 }
 
 interface HexProps {
@@ -96,7 +59,7 @@ interface HexProps {
   s: number;
   extraSystem?: boolean
   boardSize: number;
-  tile: TileType;
+  tile: TILE_NUMBERS | null;
   isLocked: boolean;
   onClick: (event: React.MouseEvent) => void;
 }
@@ -154,7 +117,8 @@ const Hexagon: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked, extra
 
   // Background style for the tile image
   const backgroundStyle = tile ? {
-    backgroundImage: `url(${urlBase}/${tile})`,
+    backgroundImage: `url(${allTiles[tile]})`,
+    // backgroundImage: `url(${urlBase}/${tile})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   } : {};
@@ -176,79 +140,18 @@ const Hexagon: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked, extra
 interface TilePickerProps {
   selectedTile: string | null;
   activeHex: { q: number, r: number, s: number } | null;
-  onSelectTile: (tile: string | null) => void;
+  onSelectTile: (tile: TILE_NUMBERS | null) => void;
   onClose: () => void;
   position: { x: number, y: number } | null;
 }
 
 const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSelectTile, onClose, position }) => {
-  const [availableTiles, setAvailableTiles] = useState<string[]>([]);
-  const [homeSystemTiles, setHomeSystemTiles] = useState<string[]>([]);
-  const [hyperlaneTiles, setHyperlaneTiles] = useState<string[]>([])
   const [showAll, setShowAll] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
   const defaultActiveCategory = cornerCoordinates.find(coord => coord.q === activeHex?.q && coord.r === activeHex?.r && coord.s === activeHex?.s) !== undefined ? "home" : "all";
   const [activeCategory, setActiveCategory] = useState<string>(defaultActiveCategory);
-  const [activeTier, setActiveTier] = useState<string | null>(null);
-  const [tileSelectionData, setTileSelectionData] = useState<TileSelectionData | null>(null);
-  const [factionData, setFactionData] = useState<Record<string, Faction> | null>(null);
-  const [tileData, setTileData] = useState<Record<string, Tile> | null>(null);
+  const [activeTier, setActiveTier] = useState<TIER | null>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
-
-  // Load JSON data
-  useEffect(() => {
-    // Load tile selection data
-    fetch('/data/tile-selection.json')
-      .then(response => response.json())
-      .then(data => setTileSelectionData(data))
-      .catch(error => console.error('Error loading tile selection data:', error));
-
-    // Load faction data
-    fetch('/data/factions.json')
-      .then(response => response.json())
-      .then(data => setFactionData(data))
-      .catch(error => console.error('Error loading faction data:', error));
-
-    fetch('/data/tiles.json')
-      .then(response => response.json())
-      .then(data => setTileData(data))
-      .catch(error => console.error('Error loading tile data:', error));
-  }, []);
-
-  useEffect(() => {
-    // Create a list of available tiles from the public/tiles directory
-    const tileList: string[] = [];
-    const homeSystems: string[] = [];
-    const hyperlanes: string[] = [];
-
-    // Add regular system tiles (ST_0 to ST_91)
-    for (let i = 0; i <= 81; i++) {
-      if (i === 51) continue;
-      tileList.push(`/tiles/ST_${i}.png`);
-    }
-
-    // Add special A/B variants
-    for (let i = 83; i <= 91; i++) {
-      let tileA = `/tiles/ST_${i}A.png`, tileB = `/tiles/ST_${i}B.png`;
-      hyperlanes.push(tileA)
-      hyperlanes.push(tileB)
-      tileList.push(tileA);
-      tileList.push(tileB);
-    }
-
-    // Extract home system tiles from factions.json if available
-    if (factionData) {
-      Object.values(factionData).forEach(faction => {
-        if (faction.homesystem) {
-          homeSystems.push(`/tiles/ST_${faction.homesystem}.png`);
-        }
-      });
-    }
-
-    setHyperlaneTiles(hyperlanes);
-    setAvailableTiles(tileList);
-    setHomeSystemTiles(homeSystems);
-  }, [factionData]);
 
   // Close picker when clicking outside
   useEffect(() => {
@@ -266,64 +169,63 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
 
   // Filter tiles based on search input, active category, and active tier
   const filteredTiles = useMemo(() => {
-    const filteredTiles = availableTiles.filter(tile => {
-      const matchesSearch = tile.toLowerCase().includes(filter.toLowerCase());
+    const filteredTiles = Object.values(tileNumbers).filter(tileNumber => {
+      const tile = tilesInfo[tileNumber]
+      const matchesSearch = `
+        ${tile.anomaly || ""}|
+        ${tile.faction || ""}|
+        ${tile.planets.map(p => {
+        return `
+            ${p.name}|
+            ${p.trait || ""}|
+            ${p.legendary ? "legendary" : ""}|
+            ${p.specialty}
+          `
+      }).join('|')}|
+        ${tile.type || ""}
+        ${tile.wormhole || ""}
+      `.toLowerCase().includes(filter.toLowerCase())
 
       // For home systems category
       if (activeCategory === "home") {
-        return homeSystemTiles.includes(tile) && matchesSearch;
+        return Object.values(homeSystemTiles) && matchesSearch;
       }
 
       // For all tiles category (excluding home systems)
       if (activeCategory === "all") {
         // Remove home system tiles from All Tiles category
-        if (homeSystemTiles.includes(tile)) {
+        if (tile.faction != null) {
           return false;
         }
 
         // If a tier filter is active, apply it
-        if (activeTier && tileSelectionData) {
-          const tileNumber = extractTileNumber(tile);
-          if (tileNumber === null) return false;
-
-          const tierData = tileSelectionData.tiers;
-          switch (activeTier) {
-            case "high":
-              return tierData.high.includes(tileNumber) && matchesSearch;
-            case "mid":
-              return tierData.mid.includes(tileNumber) && matchesSearch;
-            case "low":
-              return tierData.low.includes(tileNumber) && matchesSearch;
-            case "red":
-              return tierData.red.includes(tileNumber) && matchesSearch;
-            default:
-              return matchesSearch;
-          }
+        if (activeTier) {
+          return tileTiers[activeTier].includes(tileNumber) && matchesSearch;
         }
 
         return matchesSearch;
       }
 
       if (activeCategory === "hyperlanes") {
-        return hyperlaneTiles.includes(tile)
+        return false
       }
 
       return false;
     });
     return filteredTiles
-  }, [availableTiles, filter, homeSystemTiles, hyperlaneTiles, activeCategory, activeTier, tileSelectionData])
+  }, [filter, activeCategory, activeTier])
 
   // Display a subset of tiles or all if showAll is true
   const displayedTiles = showAll ? filteredTiles : filteredTiles.slice(0, 24);
 
   if (!position) return null;
 
-  const handleTileSelect = (tile: string | null) => {
+  const handleTileSelect = (tile: TILE_NUMBERS | null) => {
     onSelectTile(tile);
     onClose();
   };
 
-  const handleTierSelect = (tier: string | null) => {
+  const handleTierSelect = (tier: TIER | null) => {
     setActiveTier(tier);
   };
 
@@ -368,7 +270,7 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
             </button>
           </div>
 
-          {activeCategory === "all" && tileSelectionData && (
+          {activeCategory === "all" && (
             <div className="tier-buttons">
               <button
                 className={activeTier === null ? "active" : ""}
@@ -413,10 +315,9 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
               key={index}
               className={`tile-option ${selectedTile === tile ? 'selected' : ''} tooltip`}
               onClick={() => handleTileSelect(tile)}
-            // title={tileData?.[tileNumberRegex.exec(tile)?.[1] || '']?.planets.map(planet => planet.name).join(' ') || ''}
             >
-              <img src={`${urlBase}${tile}`} alt={`Tile ${tile.split('/').pop()?.replace('.png', '')}`} />
-              <span className="tooltiptext"> {tooltipTextForTile(tile, tileData)}</span>
+              <img src={allTiles[tile]} alt={`Tile ${tile})}`} />
+              <span className="tooltiptext"> {tooltipTextForTile(tile, tilesInfo)}</span>
             </div>
           ))}
           {filteredTiles.length > 24 && !showAll && (
@@ -460,7 +361,7 @@ type CoordinateOffsets = {
   [allPieces.Flagship]: Coordinates
   [allPieces.Spacedock]: Coordinates
   [allPieces.PDS]: Coordinates
-  [allPieces.WarSun]: Coordinates
+  [allPieces.Warsun]: Coordinates
   // [allPieces.Flagship]: Coordinates
 }
 
@@ -532,7 +433,7 @@ const coordOffsetsAllPieces: CoordinateOffsets = {
   [allPieces.Flagship]: { x: -40, y: 50 },
   [allPieces.Spacedock]: { x: -35, y: -35 },
   [allPieces.PDS]: { x: 0, y: -55 },
-  [allPieces.WarSun]: { x: 30, y: 50 },
+  [allPieces.Warsun]: { x: 30, y: 50 },
   [allPieces.CommandCounter]: { x: 40, y: -40 },
 }
 
@@ -580,7 +481,7 @@ const getInitialCoordinates = ({ player, name, pieceNumber }: DraggablePieceProp
       base = referencePoints[`p${player}h1`]
       offset = coordOffsetsAllPieces[name]
       break;
-    case allPieces.WarSun:
+    case allPieces.Warsun:
       base = referencePoints[`p${player}h2`]
       offset = coordOffsetsAllPieces[name]
       break;
@@ -721,8 +622,8 @@ const getDraggablePieceProps = (player: number) => {
 
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(getBoardSize());
-  const [selectedTile, setSelectedTile] = useState<string | null>(null);
-  const [hexTiles, setHexTiles] = useState<Record<string, string>>({});
+  const [selectedTile, setSelectedTile] = useState<TILE_NUMBERS | null>(null);
+  const [hexTiles, setHexTiles] = useState<Record<string, TILE_NUMBERS>>({});
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [pickerPosition, setPickerPosition] = useState<{ x: number, y: number } | null>(null);
   const [activeHex, setActiveHex] = useState<{ q: number, r: number, s: number } | null>(null);
@@ -772,16 +673,16 @@ const HexBoard: React.FC = () => {
       }
     } else {
       // Initialize corner tiles with ST_0.png if no saved map exists
-      const initialTiles: Record<string, string> = {};
+      const initialTiles: Record<string, TILE_NUMBERS> = {};
 
       // Set ST_0.png for each corner
       cornerCoordinates.forEach(coord => {
         const hexKey = `${coord.q},${coord.r},${coord.s}`;
-        initialTiles[hexKey] = '/tiles/ST_0.png';
+        initialTiles[hexKey] = tileNumbers.tile0;
       });
 
       // Set the central tile to ST_18.png (Mecatol Rex)
-      initialTiles['0,0,0'] = '/tiles/ST_18.png';
+      initialTiles['0,0,0'] = tileNumbers.tile18;
 
       setHexTiles(initialTiles);
     }
@@ -802,7 +703,7 @@ const HexBoard: React.FC = () => {
   }, [locked, setActiveHex, setShowPicker, setPickerPosition]);
 
   // Handle tile selection
-  const handleTileSelect = useCallback((tile: string | null) => {
+  const handleTileSelect = useCallback((tile: TILE_NUMBERS | null) => {
     setSelectedTile(tile);
 
     if (activeHex && tile) {
@@ -934,7 +835,7 @@ const HexBoard: React.FC = () => {
                     key={index}
                     {...hex}
                     boardSize={boardSize}
-                    tile={hexTiles[hexKey] || null}
+                    tile={hexTiles[hexKey] ?? null}
                     isLocked={locked}
                     onClick={(e: React.MouseEvent) => handleHexClick(hex.q, hex.r, hex.s, e)}
                   />

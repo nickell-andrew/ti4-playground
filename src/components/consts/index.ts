@@ -81,7 +81,7 @@ export const units = {
     Carrier: "carrier",
     Dreadnought: "dreadnought",
     Flagship: "flagship",
-    WarSun: "warsun",
+    Warsun: "warsun",
 } as const;
 export type UNITS = (typeof units)[keyof typeof units];
 
