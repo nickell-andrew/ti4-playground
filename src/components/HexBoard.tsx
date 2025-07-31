@@ -217,7 +217,9 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
   }, [filter, activeCategory, activeTier])
 
   // Display a subset of tiles or all if showAll is true
-  const displayedTiles = showAll ? filteredTiles : filteredTiles.slice(0, 24);
+  const displayedTiles = useMemo(() => {
+    return showAll ? filteredTiles : filteredTiles.slice(0, 24)
+  }, [showAll, filteredTiles]);
 
   if (!position) return null;
 
