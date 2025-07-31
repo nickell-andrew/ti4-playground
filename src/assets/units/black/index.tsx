@@ -11,7 +11,6 @@ import PDS from './blk_pd.png'
 import Spacedock from './blk_sd.png'
 import Warsun from './blk_ws.png'
 import { units } from '../../../components/consts'
-import { UniqueIdentifier } from '@dnd-kit/core'
 
 const blackUnits = {
     [units.Cruiser]: (alt: string, style: CSSProperties) => <img src={Cruiser} alt={alt} style={style} />,
