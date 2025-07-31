@@ -10,7 +10,7 @@ import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, A
 import { generateTiles } from './utils/generateTiles';
 import { TileMap, tilesInfo } from '../assets/data/tiles';
 import { TIER, tileTiers } from '../assets/data/tile-selection';
-import { allTiles, homeSystemTiles, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
+import { allTiles, homeSystemTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
 import allUnitImages from '../assets/units';
 import allTokenImages from '../assets/tokens';
 import { ImageComponentProps } from '../assets/units/black';
@@ -189,7 +189,7 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
 
       // For home systems category
       if (activeCategory === "home") {
-        return Object.values(homeSystemTiles) && matchesSearch;
+        return !!homeSystemTilesByTileNumber[tileNumber] && matchesSearch;
       }
 
       // For all tiles category (excluding home systems)
@@ -216,10 +216,18 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
     return filteredTiles
   }, [filter, activeCategory, activeTier])
 
+  const isShowingAll = useMemo(() => {
+    return filteredTiles.length <= 25 || showAll
+  }, [showAll, filteredTiles])
+
   // Display a subset of tiles or all if showAll is true
   const displayedTiles = useMemo(() => {
-    return showAll ? filteredTiles : filteredTiles.slice(0, 24)
-  }, [showAll, filteredTiles]);
+    return isShowingAll ? filteredTiles : filteredTiles.slice(0, 25)
+  }, [isShowingAll, filteredTiles]);
+
+  const displayShowLess = useMemo(() => {
+    return isShowingAll && filteredTiles.length > 25
+  }, [isShowingAll, filteredTiles])
 
   if (!position) return null;
 
@@ -323,12 +331,12 @@ const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSele
               <span className="tooltiptext"> {tooltipTextForTile(tile, tilesInfo)}</span>
             </div>
           ))}
-          {filteredTiles.length > 24 && !showAll && (
+          {!isShowingAll && (
             <button onClick={() => setShowAll(true)}>
               Show {filteredTiles.length - 24} more...
             </button>
           )}
-          {showAll && filteredTiles.length > 24 && (
+          {displayShowLess && (
             <button onClick={() => setShowAll(false)}>Show less</button>
           )}
         </div>

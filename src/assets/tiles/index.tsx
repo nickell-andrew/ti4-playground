@@ -329,8 +329,16 @@ export const homeSystemTiles: HOME_SYSTEM_TILES = {
         dict[value] = tilesInfo[factionInfo[value].homesystem]
         return dict
     }, {} as HOME_SYSTEM_TILES)
+} as const;
 
-}
+export type TILES_BY_TILE_NUMBER = Record<TILE_NUMBERS, Tile>
+export const homeSystemTilesByTileNumber: TILES_BY_TILE_NUMBER = {
+    ...Object.entries(homeSystemTiles).reduce((dict, [faction, value]) => {
+        let f = (faction as any) as ALL_FACTIONS
+        dict[factionInfo[f].homesystem] = value
+        return dict
+    }, {} as TILES_BY_TILE_NUMBER)
+} as const;
 
 export const hyperlaneTiles: TileMap = {
     ...Object.values(tileNumbers).reduce((map, tileNumber) => {
@@ -340,4 +348,4 @@ export const hyperlaneTiles: TileMap = {
         }
         return map
     }, {} as TileMap)
-}
+} as const;
