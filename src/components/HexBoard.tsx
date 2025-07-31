@@ -6,13 +6,13 @@ import { Coordinates } from "@dnd-kit/utilities";
 import { DraggableItem } from "./dragAndDrop/DraggableItem";
 import { Wrapper } from "./dragAndDrop/components"
 
-import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, unitAbbreviations, PLAYERS, allPieces, pieceSize } from './consts';
+import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, PLAYERS, allPieces, pieceSize } from './consts';
 import { generateTiles } from './utils/generateTiles';
 import { TileMap, tilesInfo } from '../assets/data/tiles';
 import { TIER, tileTiers } from '../assets/data/tile-selection';
 import { allTiles, homeSystemTiles, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
-
-const urlBase = "ti4-playground"
+import allUnitImages from '../assets/units';
+import allTokenImages from '../assets/tokens';
 
 
 // Define the corner coordinates based on the grid size
@@ -347,6 +347,10 @@ const getUidFromDraggablePieceProps = ({ player, name, pieceNumber }: DraggableP
   return `${player}-${name}-${pieceNumber}`;
 }
 
+const getAltTextFromDraggablePieceProps = ({ player, name, pieceNumber }: DraggablePieceProps): string => {
+  return `${player}-${name}-${pieceNumber}`;
+}
+
 
 type CoordinateOffsets = {
   // base: Coordinates
@@ -496,18 +500,17 @@ const getInitialCoordinates = ({ player, name, pieceNumber }: DraggablePieceProp
   return { x: base.x + offset.x, y: base.y + offset.y }
 }
 
-type PNGsForFaction = Record<ALL_PIECES, string>
+type PNGsForFaction = Record<ALL_PIECES, (alt: string, style: CSSProperties) => React.ReactElement>
 type allPNGsType = Record<BASE_FACTION_COLORS, PNGsForFaction>
 
 const allPNGs: allPNGsType = Object.values(baseFactionColors).reduce((dict, color) => {
   dict[color] = {
     ...Object.values(units).reduce((dict, name) => {
-      let fileName = unitAbbreviations[name]
-      dict[name] = `${urlBase}/units/${color}_${fileName}.png`
+      dict[name] = allUnitImages[color][name]
       return dict
     }, {} as PNGsForFaction),
     ...Object.values(tokens).reduce((dict, name) => {
-      dict[name] = `${urlBase}/tokens/command_${color}.png`
+      dict[name] = allTokenImages[name][color]
       return dict
     }, {} as PNGsForFaction)
   }
@@ -525,14 +528,10 @@ const colorsByPlayer: Record<PLAYERS, BASE_FACTION_COLORS> = {
 
 const getImageFromDraggablePieceProps = ({ player, name, pieceNumber }: DraggablePieceProps, scaleFactor: number): React.ReactNode => {
   const [width, height] = pieceSize[name]
-  return <img
-    alt={`${getUidFromDraggablePieceProps({ player, name, pieceNumber })}`}
-    src={allPNGs[colorsByPlayer[player]][name]}
-    style={{
-      width: width,
-      height: height,
-    }}
-  />
+  return allPNGs[colorsByPlayer[player]][name](getAltTextFromDraggablePieceProps({ player, name, pieceNumber }), {
+    width: `${width}px`,
+    height: `${height}px`,
+  })
 }
 
 const DraggablePiece: React.FC<DraggablePieceProps> = ({ x, y, ...props }) => {
@@ -672,16 +671,16 @@ const HexBoard: React.FC = () => {
         console.error('Failed to load saved map:', e);
       }
     } else {
-      // Initialize corner tiles with ST_0.png if no saved map exists
+      // Initialize corner tiles with Green Tile if no saved map exists
       const initialTiles: Record<string, TILE_NUMBERS> = {};
 
-      // Set ST_0.png for each corner
+      // Set First Tile for each corner
       cornerCoordinates.forEach(coord => {
         const hexKey = `${coord.q},${coord.r},${coord.s}`;
         initialTiles[hexKey] = tileNumbers.tile0;
       });
 
-      // Set the central tile to ST_18.png (Mecatol Rex)
+      // Set the central tile to Tile 18 (Mecatol Rex)
       initialTiles['0,0,0'] = tileNumbers.tile18;
 
       setHexTiles(initialTiles);

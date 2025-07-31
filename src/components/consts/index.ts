@@ -51,24 +51,6 @@ export const pieceSize = {
     commandCounter: [40, 40],
 } as const;
 export type UNIT_SIZE = (typeof pieceSize)[keyof typeof pieceSize]
-// export type BASE_FACTION_COLORS_ENUM = (typeof baseFactionColors)[keyof BASE_FACTION_COLORS] {
-//     Black = ,
-//     Blue: Gray,
-//     Purple: Gray,
-//     Yellow: Gray,
-//     Red: Gray,
-//     Orange: Gray,
-//     Pink: Gray,
-//     Green: Gray,
-//     LightGrey: Gray,
-// }
-// type EXTRA_FACTION_COLORS = 'nvy'
-// 'mgm'
-// 'lgy'
-// 'cpr'
-// 'pch'
-// type SPLIT_EXTRA_FACTION_COLORS = 'splitlme'
-// 'splittan'
 
 export const units = {
     Infantry: "infantry",
