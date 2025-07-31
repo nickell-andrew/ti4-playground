@@ -13,6 +13,7 @@ import { TIER, tileTiers } from '../assets/data/tile-selection';
 import { allTiles, homeSystemTiles, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
 import allUnitImages from '../assets/units';
 import allTokenImages from '../assets/tokens';
+import { ImageComponentProps } from '../assets/units/black';
 
 
 // Define the corner coordinates based on the grid size
@@ -500,7 +501,7 @@ const getInitialCoordinates = ({ player, name, pieceNumber }: DraggablePieceProp
   return { x: base.x + offset.x, y: base.y + offset.y }
 }
 
-type PNGsForFaction = Record<ALL_PIECES, (alt: string, style: CSSProperties) => React.ReactElement>
+type PNGsForFaction = Record<ALL_PIECES, React.FC<ImageComponentProps>>
 type allPNGsType = Record<BASE_FACTION_COLORS, PNGsForFaction>
 
 const allPNGs: allPNGsType = Object.values(baseFactionColors).reduce((dict, color) => {
@@ -528,14 +529,14 @@ const colorsByPlayer: Record<PLAYERS, BASE_FACTION_COLORS> = {
 
 const getImageFromDraggablePieceProps = ({ player, name, pieceNumber }: DraggablePieceProps, scaleFactor: number): React.ReactNode => {
   const [width, height] = pieceSize[name]
-  return allPNGs[colorsByPlayer[player]][name](getAltTextFromDraggablePieceProps({ player, name, pieceNumber }), {
-    width: `${width}px`,
-    height: `${height}px`,
-  })
+  let Component = allPNGs[colorsByPlayer[player]][name]
+  return <Component
+    alt={getAltTextFromDraggablePieceProps({ player, name, pieceNumber })}
+    style={{ width: `${width}px`, height: `${height}px` }}
+  />
 }
 
 const DraggablePiece: React.FC<DraggablePieceProps> = ({ x, y, ...props }) => {
-  // const scaleFactor = getScaleFactor()
   const uid = useMemo(() => getUidFromDraggablePieceProps(props), [props])
   const svg = useMemo(() => getImageFromDraggablePieceProps(props, 1), [props])
   return (
