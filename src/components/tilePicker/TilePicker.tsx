@@ -3,6 +3,7 @@ import { TileMap, tilesInfo } from '../../assets/data/tiles';
 import { allTiles, homeSystemTilesByTileNumber, hyperlaneTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../../assets/tiles';
 import { TIER, tileTiers } from '../../assets/data/tile-selection';
 import { cornerCoordinates } from "../HexBoard";
+import './TilePicker.css'
 
 const tooltipTextForTile = (tile: TILE_NUMBERS, tileData: TileMap): string => {
     let tileInfo = tileData[tile]
