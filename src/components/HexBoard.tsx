@@ -14,6 +14,7 @@ import allTokenImages from '../assets/tokens';
 import { ImageComponentProps } from '../assets/units/black';
 import { TilePicker } from './tilePicker/TilePicker';
 import { BOARD_SIZE, HexTile } from './hexTile/HexTile';
+import classNames from 'classnames';
 
 
 // Define the corner coordinates based on the grid size
@@ -30,6 +31,7 @@ export const cornerCoordinates = [
 // Define a type for the map data
 interface MapData {
   hexTiles: Record<string, TILE_NUMBERS>;
+  playerCount: PLAYER_COUNT;
   allDraggablesByUid: DraggablePiecePropsByUid;
   timestamp: number;
 }
@@ -319,6 +321,8 @@ const getDraggablePieceProps = (player: number) => {
   return draggablesByUid
 }
 
+export type PLAYER_COUNT = 3 | 4 | 5 | 6 | 7 | 8
+
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
   const [selectedTile, setSelectedTile] = useState<TILE_NUMBERS | null>(null);
@@ -327,13 +331,15 @@ const HexBoard: React.FC = () => {
   const [pickerPosition, setPickerPosition] = useState<{ x: number, y: number } | null>(null);
   const [activeHex, setActiveHex] = useState<{ q: number, r: number, s: number } | null>(null);
   const [locked, setLocked] = useState<boolean>(false);
+  const [playerCount, setPlayerCount] = useState<PLAYER_COUNT>(6);
 
-  // DnD handlers
-  const [allDraggables, setAllDraggables] = useState<DraggablePiecePropsByUid>(
-    [1, 2, 3, 4, 5, 6].reduce((draggablesByUid, player) => {
+  const getInitialDraggables = useCallback(() => {
+    return [...Array(playerCount)].map((_, i) => i + 1).reduce((draggablesByUid, player) => {
       return Object.assign(draggablesByUid, getDraggablePieceProps(player))
     }, {} as DraggablePiecePropsByUid)
-  );
+  }, [playerCount])
+  // DnD handlers
+  const [allDraggables, setAllDraggables] = useState<DraggablePiecePropsByUid>(getInitialDraggables());
 
   const draggableItems = useMemo(() => {
     return Object.entries(allDraggables).map(([uid, props]) => {
@@ -366,6 +372,7 @@ const HexBoard: React.FC = () => {
         if (mapData.allDraggablesByUid && Object.keys(mapData.allDraggablesByUid).length > 0) {
           setAllDraggables(mapData.allDraggablesByUid)
         }
+        setPlayerCount(mapData.playerCount)
         setLocked(true)
       } catch (e) {
         console.error('Failed to load saved map:', e);
@@ -391,7 +398,9 @@ const HexBoard: React.FC = () => {
     };
   }, []);
 
-  const hexagons: { q: number; r: number; s: number, extraSystem?: boolean }[] = useMemo(generateTiles, []);
+  const hexagons: { q: number; r: number; s: number, extraSystem?: boolean }[] = useMemo(() => {
+    return generateTiles(playerCount)
+  }, [playerCount]);
 
   // Handle hex click to open the picker
   const handleHexClick = useCallback((q: number, r: number, s: number, event: React.MouseEvent) => {
@@ -425,19 +434,21 @@ const HexBoard: React.FC = () => {
   const handleClearBoard = useCallback(() => {
     if (window.confirm('Are you sure you want to clear the entire board?')) {
       setHexTiles({});
+      setAllDraggables(getInitialDraggables())
     }
-  }, [setHexTiles]);
+  }, [setHexTiles, setAllDraggables, getInitialDraggables]);
 
   // Save the current map to localStorage
   const handleSaveMap = useCallback(() => {
     const mapData: MapData = {
       hexTiles,
+      playerCount,
       allDraggablesByUid: allDraggables,
       timestamp: Date.now()
     };
     localStorage.setItem('tiMapData', JSON.stringify(mapData));
     alert('Map saved successfully!');
-  }, [hexTiles, allDraggables]);
+  }, [hexTiles, allDraggables, playerCount]);
 
   const toggleMapLock = useCallback(() => {
     setLocked(!locked);
@@ -447,6 +458,7 @@ const HexBoard: React.FC = () => {
   const handleExportMap = useCallback(() => {
     const mapData: MapData = {
       hexTiles,
+      playerCount,
       allDraggablesByUid: allDraggables,
       timestamp: Date.now()
     };
@@ -461,7 +473,7 @@ const HexBoard: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }, [hexTiles, allDraggables]);
+  }, [hexTiles, allDraggables, playerCount]);
 
   // Import a map from a JSON file
   const handleImportMap = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -476,6 +488,7 @@ const HexBoard: React.FC = () => {
         if (mapData.allDraggablesByUid && Object.keys(mapData.allDraggablesByUid).length > 0) {
           setAllDraggables(mapData.allDraggablesByUid)
         }
+        setPlayerCount(mapData.playerCount);
         alert('Map imported successfully!');
       } catch (error) {
         console.error('Error importing map:', error);
@@ -508,7 +521,7 @@ const HexBoard: React.FC = () => {
           <button disabled={locked} onClick={handleClearBoard}>Clear Board</button>
           <button onClick={handleSaveMap}>Save Map</button>
           <button onClick={handleExportMap}>Export Map</button>
-          <label className="import-button">
+          <label className={classNames("import-button", locked && "disabled")}>
             Import Map
             <input
               type="file"
@@ -534,6 +547,7 @@ const HexBoard: React.FC = () => {
                     key={index}
                     {...hex}
                     boardSize={boardSize}
+                    playerCount={playerCount}
                     tile={hexTiles[hexKey] ?? null}
                     isLocked={locked}
                     onClick={(e: React.MouseEvent) => handleHexClick(hex.q, hex.r, hex.s, e)}

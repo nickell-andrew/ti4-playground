@@ -29,9 +29,16 @@
   flex-direction: column;
   gap: 10px;
   flex-wrap: wrap;
+
+  button:disabled,
+  .import-button.disabled {
+    background-color: #808080;
+    cursor: default;
+  }
 }
 
-.control-group button, .import-button {
+.control-group button,
+.import-button {
   padding: 8px 16px;
   background-color: #4a90e2;
   color: white;
@@ -42,8 +49,14 @@
   transition: background-color 0.2s;
 }
 
-.control-group button:hover, .import-button:hover {
+.control-group button:hover,
+.import-button:hover {
   background-color: #3a7bc8;
+
+  &.disabled,
+  &:disabled {
+    background-color: #808080;
+  }
 }
 
 .import-button {
@@ -102,6 +115,7 @@
   align-items: center;
   cursor: pointer;
   transition: all 0.2s ease;
+
   &.drappable-overlay {
     opacity: 0;
   }
@@ -119,7 +133,8 @@
 
 /* Style for empty hexagons */
 .hexagon:not([style*="background-image"]) {
-  background-color: #e6f2ff; /* Light blue fill */
+  background-color: #e6f2ff;
+  /* Light blue fill */
 }
 
 .hexagon:hover {
@@ -150,7 +165,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* Ensure it's above the rotated board */
+  z-index: 2000;
+  /* Ensure it's above the rotated board */
 }
 
 /* Tile Picker Styles */
@@ -291,7 +307,7 @@
   padding: 5px 0;
 
   /* Position the tooltip */
-   width: 90px;
+  width: 90px;
   /*bottom: 100%;
   left: 50%;
   margin-left: -60px; Use half of the width (120/2 = 60), to center the tooltip */
@@ -360,7 +376,8 @@
 
 .draggable-container {
   position: relative;
-  > button {
+
+  >button {
     position: absolute;
     top: 0;
     left: 0;
@@ -370,6 +387,7 @@
 .draggable-background {
   z-index: 01;
 }
+
 .draggable-element {
   z-index: 11;
 }
@@ -379,17 +397,17 @@
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .control-group {
     width: 100%;
     justify-content: center;
   }
-  
+
   .selected-tile {
     width: 100%;
     justify-content: center;
   }
-  
+
   .tile-picker {
     max-width: 90%;
     max-height: 70vh;

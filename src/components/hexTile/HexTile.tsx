@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
 import { allTiles, TILE_NUMBERS } from "../../assets/tiles";
+import { PLAYER_COUNT } from "../HexBoard";
 
 export const BOARD_SIZE = 1000;
 
@@ -18,6 +19,7 @@ export interface HexProps {
     s: number;
     extraSystem?: boolean
     boardSize: number;
+    playerCount: PLAYER_COUNT;
     tile: TILE_NUMBERS | null;
     isLocked: boolean;
     onClick: (event: React.MouseEvent) => void;
