@@ -17,7 +17,18 @@ import { BOARD_SIZE, HexTile } from './hexTile/HexTile';
 import classNames from 'classnames';
 import { Mallice } from './hexTile/Mallice';
 
-
+// Initialize corner tiles with Green Tile if no saved map exists
+const initialTiles: Record<string, TILE_NUMBERS> = {
+  // Set First Tile for each corner
+  '-3,3,0': tileNumbers.tile0,
+  '-3,0,3': tileNumbers.tile0,
+  '0,-3,3': tileNumbers.tile0,
+  '3,-3,0': tileNumbers.tile0,
+  '3,0,-3': tileNumbers.tile0,
+  '0,3,-3': tileNumbers.tile0,
+  // Set the central tile to Tile 18 (Mecatol Rex)
+  '0,0,0': tileNumbers.tile18,
+} as const;
 // Define the corner coordinates based on the grid size
 // The grid is generated with q and r from -3 to 3, with s = -q - r
 export const cornerCoordinates = [
@@ -379,18 +390,6 @@ const HexBoard: React.FC = () => {
         console.error('Failed to load saved map:', e);
       }
     } else {
-      // Initialize corner tiles with Green Tile if no saved map exists
-      const initialTiles: Record<string, TILE_NUMBERS> = {};
-
-      // Set First Tile for each corner
-      cornerCoordinates.forEach(coord => {
-        const hexKey = `${coord.q},${coord.r},${coord.s}`;
-        initialTiles[hexKey] = tileNumbers.tile0;
-      });
-
-      // Set the central tile to Tile 18 (Mecatol Rex)
-      initialTiles['0,0,0'] = tileNumbers.tile18;
-
       setHexTiles(initialTiles);
     }
 
@@ -434,7 +433,7 @@ const HexBoard: React.FC = () => {
   // Clear all tiles from the board
   const handleClearBoard = useCallback(() => {
     if (window.confirm('Are you sure you want to clear the entire board?')) {
-      setHexTiles({});
+      setHexTiles(initialTiles);
       setAllDraggables(getInitialDraggables())
     }
   }, [setHexTiles, setAllDraggables, getInitialDraggables]);
