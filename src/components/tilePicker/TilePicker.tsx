@@ -40,6 +40,11 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
     const [activeCategory, setActiveCategory] = useState<string>(defaultActiveCategory);
     const [activeTier, setActiveTier] = useState<TIER | null>(null);
     const pickerRef = useRef<HTMLDivElement>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (searchInputRef.current) searchInputRef.current.focus()
+    }, [searchInputRef])
 
     // Close picker when clicking outside
     useEffect(() => {
@@ -136,6 +141,7 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
                         type="text"
                         placeholder="Search tiles (e.g. ST_18, DS_axis)"
                         value={filter}
+                        ref={searchInputRef}
                         onChange={(e) => setFilter(e.target.value)}
                     />
                     <div className="category-buttons">
