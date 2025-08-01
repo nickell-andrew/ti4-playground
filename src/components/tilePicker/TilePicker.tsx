@@ -142,7 +142,7 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
                         <input
                             className={"tile-picker-search"}
                             type="text"
-                            placeholder="Search tiles (e.g. ST_18, DS_axis)"
+                            placeholder="Search tiles (by Planet / Anomaly / Legendary / Wormhole)"
                             value={filter}
                             ref={searchInputRef}
                             onChange={(e) => setFilter(e.target.value)}

@@ -121,6 +121,15 @@
   }
 }
 
+.mallice {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+
+}
+
 .hexagon-droppable {
   z-index: -100;
   width: 100%;

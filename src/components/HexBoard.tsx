@@ -15,6 +15,7 @@ import { ImageComponentProps } from '../assets/units/black';
 import { TilePicker } from './tilePicker/TilePicker';
 import { BOARD_SIZE, HexTile } from './hexTile/HexTile';
 import classNames from 'classnames';
+import { Mallice } from './hexTile/Mallice';
 
 
 // Define the corner coordinates based on the grid size
@@ -540,6 +541,9 @@ const HexBoard: React.FC = () => {
               onDragEnd={onDragEnd}
               draggableItems={draggableItems}
             >
+              <Mallice
+                boardSize={boardSize}
+              />
               {hexagons.map((hex, index) => {
                 const hexKey = `${hex.q},${hex.r},${hex.s}`;
                 return (
