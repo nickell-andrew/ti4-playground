@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { TileMap, tilesInfo } from '../../assets/data/tiles';
 import { allTiles, homeSystemTilesByTileNumber, hyperlaneTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../../assets/tiles';
 import { TIER, tileTiers } from '../../assets/data/tile-selection';
-import { cornerCoordinates } from "../HexBoard";
+import { cornerCoordinates, TILE_NUMBER_AND_ROTATION } from "../HexBoard";
 import './TilePicker.css'
 
 const tooltipTextForTile = (tile: TILE_NUMBERS, tileData: TileMap): string => {
@@ -29,10 +29,33 @@ const tooltipTextForTile = (tile: TILE_NUMBERS, tileData: TileMap): string => {
 export interface TilePickerProps {
     selectedTile: string | null;
     activeHex: { q: number, r: number, s: number } | null;
-    onSelectTile: (tile: TILE_NUMBERS | null) => void;
+    onSelectTile: (tile: TILE_NUMBER_AND_ROTATION | null) => void;
     onClose: () => void;
     position: { x: number, y: number } | null;
 }
+
+export const degOptions = {
+    deg0: 0,
+    deg60: 60,
+    deg120: 120,
+    deg180: 180,
+    deg240: 240,
+    deg300: 300,
+} as const;
+export type ALL_DEG_OPTIONS = (typeof degOptions)[keyof typeof degOptions]
+export interface ROTATION {
+    deg: ALL_DEG_OPTIONS
+    next: ALL_DEG_OPTIONS
+    prev: ALL_DEG_OPTIONS
+}
+export const allRotations: Record<ALL_DEG_OPTIONS, ROTATION> = {
+    0: { deg: 0, next: 60, prev: 300 },
+    60: { deg: 60, next: 120, prev: 0 },
+    120: { deg: 120, next: 180, prev: 60 },
+    180: { deg: 180, next: 240, prev: 120 },
+    240: { deg: 240, next: 300, prev: 180 },
+    300: { deg: 300, next: 0, prev: 240 },
+} as const;
 
 export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSelectTile, onClose, position }) => {
     const [showAll, setShowAll] = useState<boolean>(false);
@@ -42,6 +65,7 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
     const [activeTier, setActiveTier] = useState<TIER | null>(null);
     const pickerRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const [rotation, setRotation] = useState<ROTATION>(allRotations[degOptions.deg0])
 
     useEffect(() => {
         if (searchInputRef.current) searchInputRef.current.focus()
@@ -125,7 +149,7 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
     if (!position) return null;
 
     const handleTileSelect = (tile: TILE_NUMBERS | null) => {
-        onSelectTile(tile);
+        onSelectTile(tile ? { number: tile, rotation } : null);
         onClose();
     };
 
@@ -215,6 +239,8 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
                     )}
 
                     <button onClick={() => handleTileSelect(null)}>Clear Selection</button>
+                    <button onClick={() => setRotation(r => allRotations[r.prev])}>Rotate Counter Clockwise</button>
+                    <button onClick={() => setRotation(r => allRotations[r.next])}>Rotate Clockwise</button>
                 </div>
                 <div className="tile-grid">
                     {displayedTiles.map((tile, index) => (
@@ -224,7 +250,11 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
                             className={`tile-option ${selectedTile === tile ? 'selected' : ''} tooltip`}
                             onClick={() => handleTileSelect(tile)}
                         >
-                            <img src={allTiles[tile]} alt={`Tile ${tile})}`} />
+                            <img
+                                src={allTiles[tile]}
+                                alt={`Tile ${tile})}`}
+                                style={{ transform: `rotate(${rotation.deg}deg)` }}
+                            />
                             <span className="tooltiptext"> {tooltipTextForTile(tile, tilesInfo)}</span>
                         </div>
                     ))}

@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
-import { allTiles, TILE_NUMBERS } from "../../assets/tiles";
-import { PLAYER_COUNT } from "../HexBoard";
+import { allTiles } from "../../assets/tiles";
+import { PLAYER_COUNT, TILE_NUMBER_AND_ROTATION } from "../HexBoard";
 
 export const BOARD_SIZE = 1000;
 
@@ -20,7 +20,7 @@ export interface HexProps {
     extraSystem?: boolean
     boardSize: number;
     playerCount: PLAYER_COUNT;
-    tile: TILE_NUMBERS | null;
+    tile: TILE_NUMBER_AND_ROTATION | null;
     isLocked: boolean;
     onClick: (event: React.MouseEvent) => void;
 }
@@ -60,10 +60,11 @@ export const HexTile: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked
 
     // Background style for the tile image
     const backgroundStyle = tile ? {
-        backgroundImage: `url(${allTiles[tile]})`,
+        backgroundImage: `url(${allTiles[tile.number]})`,
         // backgroundImage: `url(${urlBase}/${tile})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        transform: `rotate(${tile.rotation.deg}deg)`
     } : {};
 
     return (

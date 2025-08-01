@@ -12,22 +12,22 @@ import { TILE_NUMBERS, tileNumbers } from '../assets/tiles';
 import allUnitImages from '../assets/units';
 import allTokenImages from '../assets/tokens';
 import { ImageComponentProps } from '../assets/units/black';
-import { TilePicker } from './tilePicker/TilePicker';
+import { allRotations, ROTATION, TilePicker } from './tilePicker/TilePicker';
 import { BOARD_SIZE, HexTile } from './hexTile/HexTile';
 import classNames from 'classnames';
 import { Mallice } from './hexTile/Mallice';
 
 // Initialize corner tiles with Green Tile if no saved map exists
-const initialTiles: Record<string, TILE_NUMBERS> = {
+const initialTiles: Record<string, TILE_NUMBER_AND_ROTATION> = {
   // Set First Tile for each corner
-  '-3,3,0': tileNumbers.tile0,
-  '-3,0,3': tileNumbers.tile0,
-  '0,-3,3': tileNumbers.tile0,
-  '3,-3,0': tileNumbers.tile0,
-  '3,0,-3': tileNumbers.tile0,
-  '0,3,-3': tileNumbers.tile0,
+  '-3,3,0': { number: tileNumbers.tile0, rotation: allRotations[0] },
+  '-3,0,3': { number: tileNumbers.tile0, rotation: allRotations[0] },
+  '0,-3,3': { number: tileNumbers.tile0, rotation: allRotations[0] },
+  '3,-3,0': { number: tileNumbers.tile0, rotation: allRotations[0] },
+  '3,0,-3': { number: tileNumbers.tile0, rotation: allRotations[0] },
+  '0,3,-3': { number: tileNumbers.tile0, rotation: allRotations[0] },
   // Set the central tile to Tile 18 (Mecatol Rex)
-  '0,0,0': tileNumbers.tile18,
+  '0,0,0': { number: tileNumbers.tile18, rotation: allRotations[0] },
 } as const;
 // Define the corner coordinates based on the grid size
 // The grid is generated with q and r from -3 to 3, with s = -q - r
@@ -41,11 +41,22 @@ export const cornerCoordinates = [
 ];
 
 // Define a type for the map data
-interface MapData {
+interface MapDataV1 {
   hexTiles: Record<string, TILE_NUMBERS>;
   playerCount: PLAYER_COUNT;
   allDraggablesByUid: DraggablePiecePropsByUid;
+  timestamp: number
+}
+interface MapDataV2 {
+  hexTiles: Record<string, TILE_NUMBER_AND_ROTATION>;
+  playerCount: PLAYER_COUNT;
+  allDraggablesByUid: DraggablePiecePropsByUid;
   timestamp: number;
+}
+
+export interface TILE_NUMBER_AND_ROTATION {
+  number: TILE_NUMBERS
+  rotation: ROTATION
 }
 
 interface DraggablePieceProps {
@@ -338,7 +349,7 @@ export type PLAYER_COUNT = 3 | 4 | 5 | 6 | 7 | 8
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
   const [selectedTile, setSelectedTile] = useState<TILE_NUMBERS | null>(null);
-  const [hexTiles, setHexTiles] = useState<Record<string, TILE_NUMBERS>>({});
+  const [hexTiles, setHexTiles] = useState<Record<string, TILE_NUMBER_AND_ROTATION>>({});
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [pickerPosition, setPickerPosition] = useState<{ x: number, y: number } | null>(null);
   const [activeHex, setActiveHex] = useState<{ q: number, r: number, s: number } | null>(null);
@@ -379,15 +390,38 @@ const HexBoard: React.FC = () => {
     const savedMap = localStorage.getItem('tiMapData');
     if (savedMap) {
       try {
-        const mapData: MapData = JSON.parse(savedMap);
-        setHexTiles(mapData.hexTiles);
-        if (mapData.allDraggablesByUid && Object.keys(mapData.allDraggablesByUid).length > 0) {
-          setAllDraggables(mapData.allDraggablesByUid)
+        const mapData: any = JSON.parse(savedMap);
+        // check if we have V2
+        let mapDataV2: MapDataV2
+        if (mapData.hexTiles && Object.values(mapData.hexTiles).every(t => {
+          return (t as TILE_NUMBER_AND_ROTATION).number !== undefined
+        })) {
+          mapDataV2 = mapData as MapDataV2
+        } else {
+          const mapDataV1 = mapData as MapDataV1
+
+          mapDataV2 = {
+            ...mapDataV1,
+            hexTiles: {
+              ...Object.entries(mapDataV1.hexTiles).reduce((hexTiles, [key, value]) => {
+                hexTiles[key] = {
+                  number: value,
+                  rotation: allRotations[0],
+                }
+                return hexTiles
+              }, {} as Record<string, TILE_NUMBER_AND_ROTATION>)
+            }
+          }
         }
-        setPlayerCount(mapData.playerCount)
+        setHexTiles(mapDataV2.hexTiles)
+        if (mapDataV2.allDraggablesByUid && Object.keys(mapDataV2.allDraggablesByUid).length > 0) {
+          setAllDraggables(mapDataV2.allDraggablesByUid)
+        }
+        setPlayerCount(mapDataV2.playerCount)
         setLocked(true)
       } catch (e) {
         console.error('Failed to load saved map:', e);
+        return
       }
     } else {
       setHexTiles(initialTiles);
@@ -411,8 +445,8 @@ const HexBoard: React.FC = () => {
   }, [locked, setActiveHex, setShowPicker, setPickerPosition]);
 
   // Handle tile selection
-  const handleTileSelect = useCallback((tile: TILE_NUMBERS | null) => {
-    setSelectedTile(tile);
+  const handleTileSelect = useCallback((tile: TILE_NUMBER_AND_ROTATION | null) => {
+    setSelectedTile(tile ? tile.number : null);
 
     if (activeHex && tile) {
       const { q, r, s } = activeHex;
@@ -440,7 +474,7 @@ const HexBoard: React.FC = () => {
 
   // Save the current map to localStorage
   const handleSaveMap = useCallback(() => {
-    const mapData: MapData = {
+    const mapData: MapDataV2 = {
       hexTiles,
       playerCount,
       allDraggablesByUid: allDraggables,
@@ -456,7 +490,7 @@ const HexBoard: React.FC = () => {
 
   // Export the map as JSON file
   const handleExportMap = useCallback(() => {
-    const mapData: MapData = {
+    const mapData: MapDataV2 = {
       hexTiles,
       playerCount,
       allDraggablesByUid: allDraggables,
@@ -483,7 +517,7 @@ const HexBoard: React.FC = () => {
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const mapData: MapData = JSON.parse(event.target?.result as string);
+        const mapData: MapDataV2 = JSON.parse(event.target?.result as string);
         setHexTiles(mapData.hexTiles);
         if (mapData.allDraggablesByUid && Object.keys(mapData.allDraggablesByUid).length > 0) {
           setAllDraggables(mapData.allDraggablesByUid)
