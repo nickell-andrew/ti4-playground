@@ -556,18 +556,18 @@ const HexBoard: React.FC = () => {
               })}
               {draggableItems}
             </DraggableContainer>
-            {showPicker && (
-              <TilePicker
-                selectedTile={selectedTile}
-                activeHex={activeHex}
-                onSelectTile={handleTileSelect}
-                onClose={handleClosePicker}
-                position={pickerPosition}
-              />
-            )}
           </div>
         </div>
       </div>
+      {showPicker && (
+        <TilePicker
+          selectedTile={selectedTile}
+          activeHex={activeHex}
+          onSelectTile={handleTileSelect}
+          onClose={handleClosePicker}
+          position={pickerPosition}
+        />
+      )}
     </>
   );
 };

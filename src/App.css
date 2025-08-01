@@ -1,5 +1,7 @@
 .body {
   background-color: #f0f0f0;
+  width: 100dvw;
+  height: 100dvh;
 }
 
 .App {
@@ -11,23 +13,6 @@
   flex-direction: column;
 }
 
-.App-header {
-  background-color: #282c34;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  padding: 15px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.App-header h1 {
-  margin: 0;
-  font-size: clamp(24px, 4vw, 36px);
-}
 
 .App-main {
   overflow: visible;
@@ -40,12 +25,8 @@
   /* overflow-y: auto; */
 }
 
-@media (max-width: 768px) {
-  .App-header {
-    padding: 10px;
-  }
-  
+/* @media (max-width: 768px) {
   .App-main {
     padding: 10px;
   }
-}
+} */

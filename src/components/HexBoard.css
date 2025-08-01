@@ -1,12 +1,3 @@
-.hex-board-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-}
-
 .board-controls {
   position: absolute;
   top: 10px;
@@ -16,7 +7,7 @@
   flex-basis: min-content;
   height: fit-content;
   margin-bottom: 20px;
-  z-index: 10000;
+  z-index: 2000;
   padding: 10px;
   background-color: #fff;
   border-radius: 8px;
@@ -64,6 +55,33 @@
   text-align: center;
 }
 
+.hex-board-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  overflow: visible;
+  padding: 15px;
+}
+
+.hex-board-container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: calc(100% - 55px);
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.hex-board {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+}
+
 .selected-tile {
   display: flex;
   align-items: center;
@@ -85,24 +103,6 @@
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-}
-
-.hex-board-container {
-  display: flex;
-  position: relative;
-  width: 100%;
-  height: calc(100% - 55px);
-  margin: 0 auto;
-  overflow: visible;
-  /* padding-top: 50px; */
-  /* padding-bottom: 40px; */
-}
-
-.hex-board {
-  position: relative;
-  margin: 0 auto;
-  width: 100%;
-  height: 100%;
 }
 
 .hexagon {
@@ -172,7 +172,7 @@
   z-index: 11;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .board-controls {
     flex-direction: column;
     gap: 15px;
@@ -192,4 +192,4 @@
     max-width: 90%;
     max-height: 70vh;
   }
-}
+} */

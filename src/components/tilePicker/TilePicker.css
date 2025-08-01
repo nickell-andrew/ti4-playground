@@ -9,19 +9,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2000;
+    z-index: 3000;
+    padding-top: 15px;
     /* Ensure it's above the rotated board */
 }
 
 /* Tile Picker Styles */
 .tile-picker {
-    width: 100%;
-    max-width: 500px;
+    --padding: 15px;
+    padding: var(--padding);
+    max-width: calc(90% - 2 * var(--padding));
+    max-height: calc(90dwh - 2 * var(--padding));
     background-color: #fff;
     border-radius: 8px;
-    padding: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    max-height: 80vh;
     overflow-y: auto;
     position: relative;
 }
@@ -33,19 +34,28 @@
     margin-bottom: 15px;
     flex-wrap: wrap;
     gap: 10px;
+
+    .top-line {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-basis: 1;
+        gap: 10px;
+
+        .tile-picker-search {
+            flex-grow: 3;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+    }
 }
 
 .tile-picker-header h3 {
     margin: 0;
     font-size: 18px;
-}
-
-.tile-picker-header input {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    flex-grow: 1;
-    max-width: 300px;
 }
 
 .category-buttons {
@@ -116,11 +126,11 @@
 }
 
 .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
+    /* position: absolute; */
+    /* top: 10px; */
+    /* right: 10px; */
+    width: 33px;
+    height: 33px;
     border-radius: 50%;
     background-color: #f0f0f0;
     border: none;

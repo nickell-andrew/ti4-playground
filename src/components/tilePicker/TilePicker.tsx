@@ -137,14 +137,18 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
         <div className="tile-picker-overlay">
             <div className="tile-picker" ref={pickerRef}>
                 <div className="tile-picker-header">
-                    <h3>Select a Tile</h3>
-                    <input
-                        type="text"
-                        placeholder="Search tiles (e.g. ST_18, DS_axis)"
-                        value={filter}
-                        ref={searchInputRef}
-                        onChange={(e) => setFilter(e.target.value)}
-                    />
+                    <div className="top-line">
+                        <h3>Select a Tile</h3>
+                        <input
+                            className={"tile-picker-search"}
+                            type="text"
+                            placeholder="Search tiles (e.g. ST_18, DS_axis)"
+                            value={filter}
+                            ref={searchInputRef}
+                            onChange={(e) => setFilter(e.target.value)}
+                        />
+                        <button className="close-button" onClick={onClose}>×</button>
+                    </div>
                     <div className="category-buttons">
                         <button
                             className={activeCategory === "all" ? "active" : ""}
@@ -211,7 +215,6 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
                     )}
 
                     <button onClick={() => handleTileSelect(null)}>Clear Selection</button>
-                    <button className="close-button" onClick={onClose}>×</button>
                 </div>
                 <div className="tile-grid">
                     {displayedTiles.map((tile, index) => (
