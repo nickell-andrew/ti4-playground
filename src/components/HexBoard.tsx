@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef, useMemo, CSSProperties } from 'react';
+import React, { useCallback, useState, useEffect, useMemo, CSSProperties } from 'react';
 import { DndContext, DragEndEvent, UniqueIdentifier, useSensor, MouseSensor, TouchSensor, KeyboardSensor, useSensors } from '@dnd-kit/core';
 import './HexBoard.css';
 
@@ -8,17 +8,17 @@ import { Wrapper } from "./dragAndDrop/components"
 
 import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, PLAYERS, allPieces, pieceSize } from './consts';
 import { generateTiles } from './utils/generateTiles';
-import { TileMap, tilesInfo } from '../assets/data/tiles';
-import { TIER, tileTiers } from '../assets/data/tile-selection';
-import { allTiles, homeSystemTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
+import { TILE_NUMBERS, tileNumbers } from '../assets/tiles';
 import allUnitImages from '../assets/units';
 import allTokenImages from '../assets/tokens';
 import { ImageComponentProps } from '../assets/units/black';
+import { TilePicker } from './tilePicker/TilePicker';
+import { BOARD_SIZE, HexTile } from './hexTile/HexTile';
 
 
 // Define the corner coordinates based on the grid size
 // The grid is generated with q and r from -3 to 3, with s = -q - r
-const cornerCoordinates = [
+export const cornerCoordinates = [
   { q: -3, r: 3, s: 0 },   // Bottom-left
   { q: -3, r: 0, s: 3 },   // Top-left
   { q: 0, r: -3, s: 3 },   // Top
@@ -27,323 +27,12 @@ const cornerCoordinates = [
   { q: 0, r: 3, s: -3 }    // Bottom
 ];
 
-const tooltipTextForTile = (tile: TILE_NUMBERS, tileData: TileMap): string => {
-  let tileInfo = tileData[tile]
-
-  if (tileInfo.faction || tileInfo.planets.length > 0) {
-    return tileInfo?.faction ||
-      tileInfo?.planets.map(planet => planet.name).join(' ')
-  }
-
-  let wormholeText = tileInfo.wormhole ?? ""
-  let anomalyText = tileInfo.anomaly ?? ""
-  if (wormholeText.length > 0 && anomalyText.length > 0) {
-    return `${wormholeText} ${anomalyText}`
-  } else if (wormholeText.length > 0) {
-    return `${wormholeText} wormhole`
-  } else if (anomalyText.length > 0) {
-    return `${anomalyText}`
-  }
-  return "Empty"
-}
-
 // Define a type for the map data
 interface MapData {
   hexTiles: Record<string, TILE_NUMBERS>;
   allDraggablesByUid: DraggablePiecePropsByUid;
   timestamp: number;
 }
-
-interface HexProps {
-  q: number;
-  r: number;
-  s: number;
-  extraSystem?: boolean
-  boardSize: number;
-  tile: TILE_NUMBERS | null;
-  isLocked: boolean;
-  onClick: (event: React.MouseEvent) => void;
-}
-
-const getBoardSize = () => {
-  // return 9 * 168 + 12
-  return 1000
-  // Math.max(
-  //   Math.min(window.innerWidth - 40, window.innerHeight - 40),
-  //   1000
-  // );
-}
-
-const getScaleFactor = (boardSize?: number): number => {
-  // Calculate position based on relative percentages
-  const baseSize = Math.min(boardSize ?? getBoardSize(), 1000);
-
-  // Scale the positioning based on the current board size
-  const scaleFactor = baseSize / 1000;
-  return scaleFactor
-}
-
-const Hexagon: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked, extraSystem = false, onClick }) => {
-  let extraSystemStyle: CSSProperties = {}
-  if (extraSystem) {
-    extraSystemStyle = {
-      backgroundColor: "gray",
-      pointerEvents: "none"
-    }
-  }
-
-  const scaleFactor = getScaleFactor(boardSize)
-
-  // Calculate hexagon dimensions for pointy-top orientation
-  const hexWidth = 180 * scaleFactor;
-  const hexHeight = 160 * scaleFactor;
-
-  // For pointy-top hexagons:
-  // - Horizontal distance between centers: width * sqrt(3)/2 (≈ 0.866)
-  // - Vertical distance between centers: height * 3/4
-
-  const horizontalSpacing = hexWidth * 0.751; // sqrt(3)/2 of width
-  const verticalSpacing = hexHeight * 0.995
-
-  // Calculate position with proper offsets for pointy-top orientation
-  const left = (q + 1.1) * horizontalSpacing + (boardSize / 2) - (hexWidth / 2); // Center horizontally
-  const top = 240 + (r * verticalSpacing + q * verticalSpacing * 0.5) + (boardSize / 2) * 1 - (hexHeight / 2); // Center vertically with adjustment
-
-  const style = {
-    left: `${left}px`,
-    top: `${top}px`,
-    width: `${hexWidth}px`,
-    height: `${hexHeight}px`
-  };
-
-  // Background style for the tile image
-  const backgroundStyle = tile ? {
-    backgroundImage: `url(${allTiles[tile]})`,
-    // backgroundImage: `url(${urlBase}/${tile})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
-  } : {};
-
-  return (
-    <div
-      className="hexagon"
-      style={{ ...style, ...backgroundStyle, ...(isLocked ? { pointerEvents: 'none' } : {}), ...extraSystemStyle }}
-      onClick={onClick}
-    >
-      <div className="hexagon-content">
-        {!(tile || extraSystem) && `${q},${r},${s}`}
-      </div>
-    </div>
-  );
-};
-
-// TilePicker component
-interface TilePickerProps {
-  selectedTile: string | null;
-  activeHex: { q: number, r: number, s: number } | null;
-  onSelectTile: (tile: TILE_NUMBERS | null) => void;
-  onClose: () => void;
-  position: { x: number, y: number } | null;
-}
-
-const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSelectTile, onClose, position }) => {
-  const [showAll, setShowAll] = useState<boolean>(false);
-  const [filter, setFilter] = useState<string>("");
-  const defaultActiveCategory = cornerCoordinates.find(coord => coord.q === activeHex?.q && coord.r === activeHex?.r && coord.s === activeHex?.s) !== undefined ? "home" : "all";
-  const [activeCategory, setActiveCategory] = useState<string>(defaultActiveCategory);
-  const [activeTier, setActiveTier] = useState<TIER | null>(null);
-  const pickerRef = useRef<HTMLDivElement>(null);
-
-  // Close picker when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [onClose]);
-
-  // Filter tiles based on search input, active category, and active tier
-  const filteredTiles = useMemo(() => {
-    const filteredTiles = Object.values(tileNumbers).filter(tileNumber => {
-      const tile = tilesInfo[tileNumber]
-      const matchesSearch = `
-        ${tile.anomaly || ""}|
-        ${tile.faction || ""}|
-        ${tile.planets.map(p => {
-        return `
-            ${p.name}|
-            ${p.trait || ""}|
-            ${p.legendary ? "legendary" : ""}|
-            ${p.specialty}
-          `
-      }).join('|')}|
-        ${tile.type || ""}
-        ${tile.wormhole || ""}
-      `.toLowerCase().includes(filter.toLowerCase())
-
-      // For home systems category
-      if (activeCategory === "home") {
-        return !!homeSystemTilesByTileNumber[tileNumber] && matchesSearch;
-      }
-
-      // For all tiles category (excluding home systems)
-      if (activeCategory === "all") {
-        // Remove home system tiles from All Tiles category
-        if (tile.faction != null) {
-          return false;
-        }
-
-        // If a tier filter is active, apply it
-        if (activeTier) {
-          return tileTiers[activeTier].includes(tileNumber) && matchesSearch;
-        }
-
-        return matchesSearch;
-      }
-
-      if (activeCategory === "hyperlanes") {
-        return false
-      }
-
-      return false;
-    });
-    return filteredTiles
-  }, [filter, activeCategory, activeTier])
-
-  const isShowingAll = useMemo(() => {
-    return filteredTiles.length <= 25 || showAll
-  }, [showAll, filteredTiles])
-
-  // Display a subset of tiles or all if showAll is true
-  const displayedTiles = useMemo(() => {
-    return isShowingAll ? filteredTiles : filteredTiles.slice(0, 25)
-  }, [isShowingAll, filteredTiles]);
-
-  const displayShowLess = useMemo(() => {
-    return isShowingAll && filteredTiles.length > 25
-  }, [isShowingAll, filteredTiles])
-
-  if (!position) return null;
-
-  const handleTileSelect = (tile: TILE_NUMBERS | null) => {
-    onSelectTile(tile);
-    onClose();
-  };
-
-  const handleTierSelect = (tier: TIER | null) => {
-    setActiveTier(tier);
-  };
-
-  return (
-    <div className="tile-picker-overlay">
-      <div className="tile-picker" ref={pickerRef}>
-        <div className="tile-picker-header">
-          <h3>Select a Tile</h3>
-          <input
-            type="text"
-            placeholder="Search tiles (e.g. ST_18, DS_axis)"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          />
-          <div className="category-buttons">
-            <button
-              className={activeCategory === "all" ? "active" : ""}
-              onClick={() => {
-                setActiveCategory("all");
-                setActiveTier(null);
-              }}
-            >
-              All Tiles
-            </button>
-            <button
-              className={activeCategory === "home" ? "active" : ""}
-              onClick={() => {
-                setActiveCategory("home");
-                setActiveTier(null);
-              }}
-            >
-              Home Systems
-            </button>
-            <button
-              className={activeCategory === "hyperlanes" ? "active" : ""}
-              onClick={() => {
-                setActiveCategory("hyperlanes");
-                setActiveTier(null);
-              }}
-            >
-              Hyperlanes
-            </button>
-          </div>
-
-          {activeCategory === "all" && (
-            <div className="tier-buttons">
-              <button
-                className={activeTier === null ? "active" : ""}
-                onClick={() => handleTierSelect(null)}
-              >
-                All
-              </button>
-              <button
-                className={activeTier === "high" ? "active" : ""}
-                onClick={() => handleTierSelect("high")}
-              >
-                High Value
-              </button>
-              <button
-                className={activeTier === "mid" ? "active" : ""}
-                onClick={() => handleTierSelect("mid")}
-              >
-                Mid Value
-              </button>
-              <button
-                className={activeTier === "low" ? "active" : ""}
-                onClick={() => handleTierSelect("low")}
-              >
-                Low Value
-              </button>
-              <button
-                className={activeTier === "red" ? "active" : ""}
-                onClick={() => handleTierSelect("red")}
-              >
-                Red
-              </button>
-            </div>
-          )}
-
-          <button onClick={() => handleTileSelect(null)}>Clear Selection</button>
-          <button className="close-button" onClick={onClose}>×</button>
-        </div>
-        <div className="tile-grid">
-          {displayedTiles.map((tile, index) => (
-
-            <div
-              key={index}
-              className={`tile-option ${selectedTile === tile ? 'selected' : ''} tooltip`}
-              onClick={() => handleTileSelect(tile)}
-            >
-              <img src={allTiles[tile]} alt={`Tile ${tile})}`} />
-              <span className="tooltiptext"> {tooltipTextForTile(tile, tilesInfo)}</span>
-            </div>
-          ))}
-          {!isShowingAll && (
-            <button onClick={() => setShowAll(true)}>
-              Show {filteredTiles.length - 24} more...
-            </button>
-          )}
-          {displayShowLess && (
-            <button onClick={() => setShowAll(false)}>Show less</button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 interface DraggablePieceProps {
   player: PLAYERS;
@@ -631,7 +320,7 @@ const getDraggablePieceProps = (player: number) => {
 }
 
 const HexBoard: React.FC = () => {
-  const [boardSize, setBoardSize] = useState<number>(getBoardSize());
+  const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
   const [selectedTile, setSelectedTile] = useState<TILE_NUMBERS | null>(null);
   const [hexTiles, setHexTiles] = useState<Record<string, TILE_NUMBERS>>({});
   const [showPicker, setShowPicker] = useState<boolean>(false);
@@ -663,7 +352,7 @@ const HexBoard: React.FC = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setBoardSize(getBoardSize());
+      setBoardSize(BOARD_SIZE);
     };
 
     window.addEventListener('resize', handleResize);
@@ -841,7 +530,7 @@ const HexBoard: React.FC = () => {
               {hexagons.map((hex, index) => {
                 const hexKey = `${hex.q},${hex.r},${hex.s}`;
                 return (
-                  <Hexagon
+                  <HexTile
                     key={index}
                     {...hex}
                     boardSize={boardSize}
