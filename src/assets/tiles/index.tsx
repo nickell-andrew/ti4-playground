@@ -349,3 +349,11 @@ export const hyperlaneTiles: TileMap = {
         return map
     }, {} as TileMap)
 } as const;
+
+export const hyperlaneTilesByTileNumber: TILES_BY_TILE_NUMBER = {
+    ...Object.entries(hyperlaneTiles).reduce((dict, [tile, value]) => {
+        let t = (tile as any) as TILE_NUMBERS
+        dict[t] = value
+        return dict
+    }, {} as TILES_BY_TILE_NUMBER)
+} as const;

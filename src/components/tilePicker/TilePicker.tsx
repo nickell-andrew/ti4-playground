@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TileMap, tilesInfo } from '../../assets/data/tiles';
-import { allTiles, homeSystemTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../../assets/tiles';
+import { allTiles, homeSystemTilesByTileNumber, hyperlaneTiles, hyperlaneTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../../assets/tiles';
 import { TIER, tileTiers } from '../../assets/data/tile-selection';
 import { cornerCoordinates } from "../HexBoard";
 
@@ -95,7 +95,7 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
             }
 
             if (activeCategory === "hyperlanes") {
-                return false
+                return !!hyperlaneTilesByTileNumber[tileNumber] && matchesSearch
             }
 
             return false;
