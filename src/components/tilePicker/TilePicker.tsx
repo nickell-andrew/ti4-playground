@@ -154,7 +154,6 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
     const displayedTiles = useMemo(() => {
         const toShow = isShowingAll ? filteredTiles : filteredTiles.slice(0, 25)
         return toShow.map(tileNumber => {
-            let tileInfo = tilesInfo[tileNumber]
             let tooltipText = tooltipTextForTile(tileNumber, tilesInfo)
             return { tileNumber, tooltipText } as { tileNumber: TILE_NUMBERS, tooltipText: String }
         }).sort((tileA, tileB) => {
