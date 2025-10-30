@@ -10,16 +10,25 @@ export interface Tile {
     wormhole: string | null;
     anomaly?: string | null;
     planets: Planet[];
+    stations?: Station[] | null;
     hyperlanes?: edgeConnection[] | null;
 }
 
+export type Station = {
+    name: string;
+    resources: number;
+    influence: number;
+    // specialties: string[] | null;
+    trait?: Trait;
+    // legendary: false | string;
+}
 export type Trait = "cultural" | "industrial" | "hazardous" | null
 export interface Planet {
     name: string;
     resources: number;
     influence: number;
-    specialty: string | null;
-    trait?: Trait;
+    specialties: string[] | null;
+    traits?: Trait[];
     legendary: false | string;
 }
 
@@ -42,8 +51,8 @@ export const tilesInfo: TileMap = {
             "name": "Jord",
             "resources": 4,
             "influence": 2,
-            "specialty": null,
-            "trait": null,
+            "specialties": null,
+
             "legendary": false
         }]
     },
@@ -56,8 +65,8 @@ export const tilesInfo: TileMap = {
             "name": "Moll Primus",
             "resources": 4,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -69,8 +78,8 @@ export const tilesInfo: TileMap = {
             "name": "Darien",
             "resources": 4,
             "influence": 4,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -82,8 +91,8 @@ export const tilesInfo: TileMap = {
             "name": "Muaat",
             "resources": 4,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -95,8 +104,8 @@ export const tilesInfo: TileMap = {
             "name": "Nestphar",
             "resources": 3,
             "influence": 2,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -108,8 +117,8 @@ export const tilesInfo: TileMap = {
             "name": "[0.0.0]",
             "resources": 5,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -121,8 +130,8 @@ export const tilesInfo: TileMap = {
             "name": "Winnu",
             "resources": 3,
             "influence": 4,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -134,8 +143,8 @@ export const tilesInfo: TileMap = {
             "name": "Mordai II",
             "resources": 4,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -147,16 +156,16 @@ export const tilesInfo: TileMap = {
             "name": "Maaluuk",
             "resources": 0,
             "influence": 2,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Druaa",
             "resources": 3,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -169,16 +178,16 @@ export const tilesInfo: TileMap = {
             "name": "Arc Prime",
             "resources": 4,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Wren Terra",
             "resources": 2,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -191,16 +200,16 @@ export const tilesInfo: TileMap = {
             "name": "Lisis II",
             "resources": 1,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Ragh",
             "resources": 2,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -213,16 +222,16 @@ export const tilesInfo: TileMap = {
             "name": "Nar",
             "resources": 2,
             "influence": 3,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Jol",
             "resources": 1,
             "influence": 2,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -235,16 +244,16 @@ export const tilesInfo: TileMap = {
             "name": "Tren'lak",
             "resources": 1,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Quinarra",
             "resources": 3,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -257,16 +266,16 @@ export const tilesInfo: TileMap = {
             "name": "Archon Ren",
             "resources": 2,
             "influence": 3,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Archon Tau",
             "resources": 1,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -279,16 +288,16 @@ export const tilesInfo: TileMap = {
             "name": "Retillion",
             "resources": 2,
             "influence": 3,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Shalloq",
             "resources": 1,
             "influence": 2,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -301,24 +310,24 @@ export const tilesInfo: TileMap = {
             "name": "Arretze",
             "resources": 2,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Hercant",
             "resources": 1,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Kamdorn",
             "resources": 0,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -336,8 +345,8 @@ export const tilesInfo: TileMap = {
             "name": "Mecatol Rex",
             "resources": 1,
             "influence": 6,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -348,8 +357,8 @@ export const tilesInfo: TileMap = {
             "name": "Wellon",
             "resources": 1,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": "cybernetic",
+            "traits": ["industrial"],
+            "specialties": ["cybernetic"],
             "legendary": false
         }]
     },
@@ -360,8 +369,8 @@ export const tilesInfo: TileMap = {
             "name": "Vefut II",
             "resources": 2,
             "influence": 2,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -372,8 +381,8 @@ export const tilesInfo: TileMap = {
             "name": "Thibah",
             "resources": 1,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": "propulsion",
+            "traits": ["industrial"],
+            "specialties": ["propulsion"],
             "legendary": false
         }]
     },
@@ -384,8 +393,8 @@ export const tilesInfo: TileMap = {
             "name": "Tar'mann",
             "resources": 1,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": "biotic",
+            "traits": ["industrial"],
+            "specialties": ["biotic"],
             "legendary": false
         }]
     },
@@ -396,8 +405,8 @@ export const tilesInfo: TileMap = {
             "name": "Saudor",
             "resources": 2,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -408,8 +417,8 @@ export const tilesInfo: TileMap = {
             "name": "Mehar Xull",
             "resources": 1,
             "influence": 3,
-            "trait": "hazardous",
-            "specialty": "warfare",
+            "traits": ["hazardous"],
+            "specialties": ["warfare"],
             "legendary": false
         }]
     },
@@ -420,8 +429,8 @@ export const tilesInfo: TileMap = {
             "name": "Quann",
             "resources": 2,
             "influence": 1,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -432,8 +441,8 @@ export const tilesInfo: TileMap = {
             "name": "Lodor",
             "resources": 3,
             "influence": 1,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -444,16 +453,16 @@ export const tilesInfo: TileMap = {
             "name": "New Albion",
             "resources": 1,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": "biotic",
+            "traits": ["industrial"],
+            "specialties": ["biotic"],
             "legendary": false
         },
         {
             "name": "Starpoint",
             "resources": 3,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -465,16 +474,16 @@ export const tilesInfo: TileMap = {
             "name": "Tequ'ran",
             "resources": 2,
             "influence": 0,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Torkan",
             "resources": 0,
             "influence": 3,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -486,16 +495,16 @@ export const tilesInfo: TileMap = {
             "name": "Qucen'n",
             "resources": 1,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Rarron",
             "resources": 0,
             "influence": 3,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -507,16 +516,16 @@ export const tilesInfo: TileMap = {
             "name": "Mellon",
             "resources": 0,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Zohbat",
             "resources": 3,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -528,16 +537,16 @@ export const tilesInfo: TileMap = {
             "name": "Lazar",
             "resources": 1,
             "influence": 0,
-            "trait": "industrial",
-            "specialty": "cybernetic",
+            "traits": ["industrial"],
+            "specialties": ["cybernetic"],
             "legendary": false
         },
         {
             "name": "Sakulag",
             "resources": 2,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -549,16 +558,16 @@ export const tilesInfo: TileMap = {
             "name": "Dal Bootha",
             "resources": 0,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Xxehan",
             "resources": 1,
             "influence": 1,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -570,16 +579,16 @@ export const tilesInfo: TileMap = {
             "name": "Corneeq",
             "resources": 1,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Resulon",
             "resources": 2,
             "influence": 0,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -591,16 +600,16 @@ export const tilesInfo: TileMap = {
             "name": "Centauri",
             "resources": 1,
             "influence": 3,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Gral",
             "resources": 1,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": "propulsion",
+            "traits": ["industrial"],
+            "specialties": ["propulsion"],
             "legendary": false
         }
         ]
@@ -612,16 +621,16 @@ export const tilesInfo: TileMap = {
             "name": "Bereg",
             "resources": 3,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Lirta IV",
             "resources": 2,
             "influence": 3,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -633,16 +642,16 @@ export const tilesInfo: TileMap = {
             "name": "Arnor",
             "resources": 2,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Lor",
             "resources": 1,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -654,16 +663,16 @@ export const tilesInfo: TileMap = {
             "name": "Arinam",
             "resources": 1,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Meer",
             "resources": 0,
             "influence": 4,
-            "trait": "hazardous",
-            "specialty": "warfare",
+            "traits": ["hazardous"],
+            "specialties": ["warfare"],
             "legendary": false
         }
         ]
@@ -675,16 +684,16 @@ export const tilesInfo: TileMap = {
             "name": "Abyz",
             "resources": 3,
             "influence": 0,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Fria",
             "resources": 2,
             "influence": 0,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -768,7 +777,7 @@ export const tilesInfo: TileMap = {
             "name": "Creuss",
             "resources": 4,
             "influence": 2,
-            "specialty": null,
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -780,8 +789,8 @@ export const tilesInfo: TileMap = {
             "name": "Ixth",
             "resources": 3,
             "influence": 5,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -793,8 +802,8 @@ export const tilesInfo: TileMap = {
             "name": "Arcturus",
             "resources": 4,
             "influence": 4,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -806,8 +815,8 @@ export const tilesInfo: TileMap = {
             "name": "Acheron",
             "resources": 4,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -819,8 +828,8 @@ export const tilesInfo: TileMap = {
             "name": "Elysium",
             "resources": 4,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -832,8 +841,8 @@ export const tilesInfo: TileMap = {
             "name": "The Dark",
             "resources": 3,
             "influence": 4,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -845,16 +854,16 @@ export const tilesInfo: TileMap = {
             "name": "Naazir",
             "resources": 2,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Rokha",
             "resources": 1,
             "influence": 2,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -867,24 +876,24 @@ export const tilesInfo: TileMap = {
             "name": "Valk",
             "resources": 2,
             "influence": 0,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Avar",
             "resources": 1,
             "influence": 1,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Ylir",
             "resources": 0,
             "influence": 2,
-            "trait": null,
-            "specialty": null,
+
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -896,8 +905,8 @@ export const tilesInfo: TileMap = {
             "name": "Archon Vail",
             "resources": 1,
             "influence": 3,
-            "trait": "hazardous",
-            "specialty": "propulsion",
+            "traits": ["hazardous"],
+            "specialties": ["propulsion"],
             "legendary": false
         }]
     },
@@ -908,8 +917,8 @@ export const tilesInfo: TileMap = {
             "name": "Perimeter",
             "resources": 2,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -920,8 +929,8 @@ export const tilesInfo: TileMap = {
             "name": "Ang",
             "resources": 2,
             "influence": 0,
-            "trait": "industrial",
-            "specialty": "warfare",
+            "traits": ["industrial"],
+            "specialties": ["warfare"],
             "legendary": false
         }]
     },
@@ -932,8 +941,8 @@ export const tilesInfo: TileMap = {
             "name": "Sem-Lore",
             "resources": 3,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": "cybernetic",
+            "traits": ["cultural"],
+            "specialties": ["cybernetic"],
             "legendary": false
         }]
     },
@@ -944,8 +953,8 @@ export const tilesInfo: TileMap = {
             "name": "Vorhal",
             "resources": 0,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": "biotic",
+            "traits": ["cultural"],
+            "specialties": ["biotic"],
             "legendary": false
         }]
     },
@@ -956,8 +965,8 @@ export const tilesInfo: TileMap = {
             "name": "Atlas",
             "resources": 3,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -968,8 +977,8 @@ export const tilesInfo: TileMap = {
             "name": "Primor",
             "resources": 2,
             "influence": 1,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": "You may exhaust this card at the end of your turn to place up to 2 infantry from your reinforcements on any planet you control"
         }]
     },
@@ -980,8 +989,8 @@ export const tilesInfo: TileMap = {
             "name": "Hope's End",
             "resources": 3,
             "influence": 0,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": "You may exhaust this card at the end of your turn to place 1 mech from your reinforcements on any planet you control, or draw 1 action card"
         }]
     },
@@ -993,8 +1002,8 @@ export const tilesInfo: TileMap = {
             "name": "Cormund",
             "resources": 2,
             "influence": 0,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -1006,8 +1015,8 @@ export const tilesInfo: TileMap = {
             "name": "Everra",
             "resources": 3,
             "influence": 1,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }]
     },
@@ -1018,16 +1027,16 @@ export const tilesInfo: TileMap = {
             "name": "Accoen",
             "resources": 2,
             "influence": 3,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Jeol Ir",
             "resources": 2,
             "influence": 3,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -1039,16 +1048,16 @@ export const tilesInfo: TileMap = {
             "name": "Kraag",
             "resources": 2,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Siig",
             "resources": 0,
             "influence": 2,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -1060,16 +1069,16 @@ export const tilesInfo: TileMap = {
             "name": "Ba'Kal",
             "resources": 3,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Alio Prima",
             "resources": 1,
             "influence": 1,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -1081,16 +1090,16 @@ export const tilesInfo: TileMap = {
             "name": "Lisis",
             "resources": 2,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Velnor",
             "resources": 2,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": "warfare",
+            "traits": ["industrial"],
+            "specialties": ["warfare"],
             "legendary": false
         }
         ]
@@ -1102,16 +1111,16 @@ export const tilesInfo: TileMap = {
             "name": "Cealdri",
             "resources": 0,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": "cybernetic",
+            "traits": ["cultural"],
+            "specialties": ["cybernetic"],
             "legendary": false
         },
         {
             "name": "Xanhact",
             "resources": 0,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -1123,16 +1132,16 @@ export const tilesInfo: TileMap = {
             "name": "Vega Major",
             "resources": 2,
             "influence": 1,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Vega Minor",
             "resources": 1,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": "propulsion",
+            "traits": ["cultural"],
+            "specialties": ["propulsion"],
             "legendary": false
         }
         ]
@@ -1144,24 +1153,24 @@ export const tilesInfo: TileMap = {
             "name": "Loki",
             "resources": 1,
             "influence": 2,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Abaddon",
             "resources": 1,
             "influence": 0,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Ashtroth",
             "resources": 2,
             "influence": 0,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         }
         ]
@@ -1173,24 +1182,24 @@ export const tilesInfo: TileMap = {
             "name": "Rigel I",
             "resources": 0,
             "influence": 1,
-            "trait": "hazardous",
-            "specialty": null,
+            "traits": ["hazardous"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Rigel II",
             "resources": 1,
             "influence": 2,
-            "trait": "industrial",
-            "specialty": null,
+            "traits": ["industrial"],
+            "specialties": null,
             "legendary": false
         },
         {
             "name": "Rigel III",
             "resources": 1,
             "influence": 1,
-            "trait": "industrial",
-            "specialty": "biotic",
+            "traits": ["industrial"],
+            "specialties": ["biotic"],
             "legendary": false
         }
         ]
@@ -1232,8 +1241,8 @@ export const tilesInfo: TileMap = {
             "name": "Mallice",
             "resources": 0,
             "influence": 3,
-            "trait": "cultural",
-            "specialty": null,
+            "traits": ["cultural"],
+            "specialties": null,
             "legendary": "You may exhaust this card at the end of your turn to gain 2 trade goods or convert all of your commodities into trade goods"
         }]
     },
@@ -1404,4 +1413,505 @@ export const tilesInfo: TileMap = {
         "wormhole": null,
         "planets": []
     },
+    "92": {
+        "type": "green",
+        "faction": "Last Bastion",
+        "wormhole": null,
+        "anomaly": "nebula",
+        "planets": [
+            {
+                "name": "Ordinian",
+                "resources": 0,
+                "influence": 0,
+
+                "legendary": "You may exhaust this card when you pass to draw 1 action card and gain 1 command token",
+                "specialties": []
+            }
+        ],
+        "stations": [
+            {
+                "name": "Revelation",
+                "resources": 1,
+                "influence": 2
+            }
+        ]
+    },
+    "93": {
+        "type": "green",
+        "faction": "The Ral Nel Consortium",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Mez Lo Orz Fei Zsha",
+                "resources": 2,
+                "influence": 1,
+
+                "legendary": false,
+                "specialties": []
+            },
+            {
+                "name": "Rep Lo Orz Qet",
+                "resources": 1,
+                "influence": 3,
+
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "94": {
+        "type": "green",
+        "faction": "The Crimson Rebellion",
+        "wormhole": "epsilon",
+        "planets": []
+    },
+    "95": {
+        "type": "green",
+        "faction": "The Deepwrought Scholarate",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Ikatena",
+                "resources": 4,
+                "influence": 4,
+
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "96a": {
+        "type": "green",
+        "faction": "The Firmament",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Cronos",
+                "resources": 2,
+                "influence": 1,
+
+                "legendary": false,
+                "specialties": []
+            },
+            {
+                "name": "Tallin",
+                "resources": 1,
+                "influence": 2,
+
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "96b": {
+        "type": "green",
+        "faction": "The Obsidian",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Cronos Hollow",
+                "resources": 3,
+                "influence": 0,
+
+                "legendary": false,
+                "specialties": []
+            },
+            {
+                "name": "Tallin Hollow",
+                "resources": 3,
+                "influence": 0,
+
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "97": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Paunus",
+                "resources": 1,
+                "influence": 3,
+                "traits": ["industrial"],
+                "legendary": "You may exhaust this card when you pass to gain control of a non-home, non-legendary planet that contains no units and has no attachments.",
+                "specialties": [
+                    "biotic"
+                ]
+            }
+        ]
+    },
+    "98": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Garbozia",
+                "resources": 2,
+                "influence": 1,
+                "traits": ["hazardous"],
+                "legendary": "You may exhaust this card when you pass to place 1 action card from the discard pile faceup on this card; you can purge cards on this card to play them as if they were in your hand.",
+                "specialties": []
+            }
+        ]
+    },
+    "99": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Emelpar",
+                "resources": 0,
+                "influence": 2,
+                "traits": ["cultural"],
+                "legendary": "You may exhaust this card at the end of your turn to ready another component that isn't a strategy card.",
+                "specialties": []
+            }
+        ]
+    },
+    "100": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Tempesta",
+                "resources": 1,
+                "influence": 1,
+                "traits": ["hazardous"],
+                "legendary": "You may exhaust this card after you activate a system to apply +1 to the move value of 1 of your ships during this tactical action.",
+                "specialties": [
+                    "propulsion"
+                ]
+            }
+        ]
+    },
+    "101": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Olergodt",
+                "resources": 2,
+                "influence": 1,
+                "traits": [
+                    "cultural",
+                    "hazardous"
+                ],
+                "legendary": false,
+                "specialties": [
+                    "cybernetic",
+                    "warfare"
+                ]
+            }
+        ]
+    },
+    "102": {
+        "type": "blue",
+        "wormhole": "alpha",
+        "planets": [
+            {
+                "name": "Andeara",
+                "resources": 1,
+                "influence": 1,
+                "traits": ["industrial"],
+                "legendary": false,
+                "specialties": [
+                    "propulsion"
+                ]
+            }
+        ]
+    },
+    "103": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Vira-Pics III",
+                "resources": 2,
+                "influence": 3,
+                "traits": [
+                    "cultural",
+                    "hazardous"
+                ],
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "104": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Lesab",
+                "resources": 2,
+                "influence": 1,
+                "traits": [
+                    "hazardous",
+                    "industrial"
+                ],
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "105": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "New Terra",
+                "resources": 1,
+                "influence": 1,
+                "traits": ["industrial"],
+                "legendary": false,
+                "specialties": [
+                    "biotic"
+                ]
+            },
+            {
+                "name": "Tinnes",
+                "resources": 2,
+                "influence": 1,
+                "traits": [
+                    "hazardous",
+                    "industrial"
+                ],
+                "legendary": false,
+                "specialties": [
+                    "biotic"
+                ]
+            }
+        ]
+    },
+    "106": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Cresius",
+                "resources": 0,
+                "influence": 1,
+                "traits": ["hazardous"],
+                "legendary": false,
+                "specialties": []
+            },
+            {
+                "name": "Lazul Rex",
+                "resources": 2,
+                "influence": 2,
+                "traits": ["industrial"],
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "107": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Tiamat",
+                "resources": 1,
+                "influence": 2,
+                "traits": ["cultural"],
+                "legendary": false,
+                "specialties": [
+                    "cybernetic",
+                    "cybernetic"
+                ]
+            },
+            {
+                "name": "Hercalor",
+                "resources": 1,
+                "influence": 0,
+                "traits": ["industrial"],
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "108": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Kosboth",
+                "resources": 0,
+                "influence": 1,
+                "traits": ["industrial"],
+                "legendary": false,
+                "specialties": []
+            },
+            {
+                "name": "Capha",
+                "resources": 3,
+                "influence": 0,
+                "traits": ["hazardous"],
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "109": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Bellatrix",
+                "resources": 1,
+                "influence": 2,
+                "traits": ["industrial"],
+                "legendary": false,
+                "specialties": []
+            }
+        ],
+        "stations": [
+            {
+                "name": "Tsion Station",
+                "resources": 1,
+                "influence": 1
+            }
+        ]
+    },
+    "110": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Horizon",
+                "resources": 1,
+                "influence": 2,
+                "traits": ["cultural"],
+                "legendary": false,
+                "specialties": []
+            },
+            {
+                "name": "Elnath",
+                "resources": 2,
+                "influence": 0,
+                "traits": ["hazardous"],
+                "legendary": false,
+                "specialties": []
+            },
+            {
+                "name": "Luthien VI",
+                "resources": 3,
+                "influence": 1,
+                "traits": ["hazardous"],
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "111": {
+        "type": "blue",
+        "wormhole": null,
+        "planets": [
+            {
+                "name": "Tarana",
+                "resources": 1,
+                "influence": 2,
+                "traits": [
+                    "industrial",
+                    "cultural"
+                ],
+                "legendary": false,
+                "specialties": []
+            }
+        ],
+        "stations": [
+            {
+                "name": "Oluz Station",
+                "resources": 1,
+                "influence": 1
+            }
+        ]
+    },
+    "112": {
+        "type": "blue",
+        "wormhole": null,
+        "anomaly": null,
+        "planets": [
+            {
+                "name": "Mecatol Rex",
+                "resources": 1,
+                "influence": 6,
+
+                "legendary": "",
+                "specialties": []
+            }
+        ]
+    },
+    "113": {
+        "type": "red",
+        "wormhole": "beta",
+        "anomaly": "gravity rift",
+        "planets": []
+    },
+    "114": {
+        "type": "red",
+        "wormhole": null,
+        "anomaly": "entropic scar",
+        "planets": []
+    },
+    "115": {
+        "type": "red",
+        "wormhole": null,
+        "anomaly": "asteroid field",
+        "planets": [
+            {
+                "name": "Industrex",
+                "resources": 2,
+                "influence": 0,
+                "traits": ["industrial"],
+                "legendary": "You may exhaust this card when you pass to place 1 ship that matches a unit upgrade technology you owm from your reinforcements into a system that contains your ships.",
+                "specialties": [
+                    "warfare"
+                ]
+            }
+        ]
+    },
+    "116": {
+        "type": "red",
+        "wormhole": null,
+        "anomaly": "entropic scar",
+        "planets": [
+            {
+                "name": "Lemox",
+                "resources": 0,
+                "influence": 3,
+                "traits": ["cultural"],
+                "legendary": false,
+                "specialties": []
+            }
+        ]
+    },
+    "117": {
+        "type": "red",
+        "wormhole": null,
+        "planets": [],
+        "stations": [
+            {
+                "name": "The Watchtower",
+                "resources": 1,
+                "influence": 1
+            }
+        ]
+    },
+    // "118": {
+    //     "type": "green",
+    //     "wormhole": "epsilon",
+    //     "planets": [
+    //         {
+    //             "name": "Ahk Creuxx",
+    //             "resources": 4,
+    //             "influence": 2,
+
+    //             "legendary": false,
+    //             "specialties": []
+    //         }
+    //     ]
+    // },
 }

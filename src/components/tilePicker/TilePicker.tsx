@@ -8,9 +8,15 @@ import './TilePicker.css'
 const tooltipTextForTile = (tile: TILE_NUMBERS, tileData: TileMap): string => {
     let tileInfo = tileData[tile]
 
-    if (tileInfo.faction || tileInfo.planets.length > 0) {
+    if (tileInfo.faction ||
+        tileInfo.planets.length > 0 ||
+        (tileInfo.stations?.length && tileInfo.stations.length > 0)
+    ) {
         return tileInfo?.faction ||
-            tileInfo?.planets.map(planet => planet.name).join(' ')
+            [
+                ...tileInfo?.planets.map(planet => planet.name),
+                ...(tileInfo?.stations ?? []).map(station => station.name)
+            ].join(' ')
     }
 
     let wormholeText = tileInfo.wormhole ?? ""
@@ -58,7 +64,7 @@ export const allRotations: Record<ALL_DEG_OPTIONS, ROTATION> = {
 } as const;
 
 export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSelectTile, onClose, position }) => {
-    const [showAll, setShowAll] = useState<boolean>(false);
+    const [showAll, setShowAll] = useState<boolean>(true);
     const [filter, setFilter] = useState<string>("");
     const defaultActiveCategory = cornerCoordinates.find(coord => coord.q === activeHex?.q && coord.r === activeHex?.r && coord.s === activeHex?.s) !== undefined ? "home" : "all";
     const [activeCategory, setActiveCategory] = useState<string>(defaultActiveCategory);
@@ -90,14 +96,21 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
         const filteredTiles = Object.values(tileNumbers).filter(tileNumber => {
             const tile = tilesInfo[tileNumber]
             const matchesSearch = `
+          ${tileNumber}|
           ${tile.anomaly || ""}|
           ${tile.faction || ""}|
           ${tile.planets.map(p => {
                 return `
               ${p.name}|
-              ${p.trait || ""}|
+              ${p.traits?.join(', ') || ""}|
               ${p.legendary ? "legendary" : ""}|
-              ${p.specialty}
+              ${p.specialties?.join(', ') || ""}
+            `
+            }).join('|')}|
+          ${tile.stations?.map(s => {
+                return `
+            ${s.name}|
+            ${s.trait ? s.trait : ""}
             `
             }).join('|')}|
           ${tile.type || ""}
@@ -139,7 +152,39 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
 
     // Display a subset of tiles or all if showAll is true
     const displayedTiles = useMemo(() => {
-        return isShowingAll ? filteredTiles : filteredTiles.slice(0, 25)
+        const toShow = isShowingAll ? filteredTiles : filteredTiles.slice(0, 25)
+        return toShow.map(tileNumber => {
+            let tileInfo = tilesInfo[tileNumber]
+            let tooltipText = tooltipTextForTile(tileNumber, tilesInfo)
+            return { tileNumber, tooltipText } as { tileNumber: TILE_NUMBERS, tooltipText: String }
+        }).sort((tileA, tileB) => {
+            var aIsEmpty = false
+            var bIsEmpty = false
+            var compareA = tileA.tooltipText
+            if (compareA.startsWith("The ")) {
+                compareA = compareA.slice(4)
+            }
+            if (compareA === "Empty" || compareA === "") {
+                aIsEmpty = true
+            }
+
+            var compareB = tileB.tooltipText
+            if (compareB.startsWith("The")) {
+                compareB = compareB.slice(4)
+            }
+            if (compareB === "Empty" || compareB === "") {
+                bIsEmpty = true
+            }
+            if (aIsEmpty && !bIsEmpty) {
+                return 1
+            } else if (!aIsEmpty && bIsEmpty) {
+                return -1
+            } else if ((aIsEmpty && bIsEmpty) || (compareA === compareB)) {
+                return 0
+            } else {
+                return compareA > compareB ? 1 : -1
+            }
+        })
     }, [isShowingAll, filteredTiles]);
 
     const displayShowLess = useMemo(() => {
@@ -247,15 +292,15 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
 
                         <div
                             key={index}
-                            className={`tile-option ${selectedTile === tile ? 'selected' : ''} tooltip`}
-                            onClick={() => handleTileSelect(tile)}
+                            className={`tile-option ${selectedTile === tile.tileNumber ? 'selected' : ''} tooltip`}
+                            onClick={() => handleTileSelect(tile.tileNumber)}
                         >
                             <img
-                                src={allTiles[tile]}
+                                src={allTiles[tile.tileNumber]}
                                 alt={`Tile ${tile})}`}
                                 style={{ transform: `rotate(${rotation.deg}deg)` }}
                             />
-                            <span className="tooltiptext"> {tooltipTextForTile(tile, tilesInfo)}</span>
+                            <span className="tooltiptext"> {tile.tooltipText}</span>
                         </div>
                     ))}
                     {!isShowingAll && (

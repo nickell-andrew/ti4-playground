@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo, CSSProperties } from 'react';
+import React, { useCallback, useState, useEffect, useMemo, CSSProperties, useRef } from 'react';
 import { DndContext, DragEndEvent, UniqueIdentifier, useSensor, MouseSensor, TouchSensor, KeyboardSensor, useSensors } from '@dnd-kit/core';
 import './HexBoard.css';
 
@@ -8,7 +8,7 @@ import { Wrapper } from "./dragAndDrop/components"
 
 import { UNITS, TOKENS, BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, PLAYERS, allPieces, pieceSize } from './consts';
 import { generateTiles } from './utils/generateTiles';
-import { TILE_NUMBERS, tileNumbers } from '../assets/tiles';
+import { isTileNumber, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
 import allUnitImages from '../assets/units';
 import allTokenImages from '../assets/tokens';
 import { ImageComponentProps } from '../assets/units/black';
@@ -355,6 +355,9 @@ const HexBoard: React.FC = () => {
   const [activeHex, setActiveHex] = useState<{ q: number, r: number, s: number } | null>(null);
   const [locked, setLocked] = useState<boolean>(false);
   const [playerCount, setPlayerCount] = useState<PLAYER_COUNT>(6);
+  const [showImportModal, setShowImportModal] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [importString, setImportString] = useState<string>('');
 
   const getInitialDraggables = useCallback(() => {
     return [...Array(playerCount)].map((_, i) => i + 1).reduce((draggablesByUid, player) => {
@@ -523,6 +526,7 @@ const HexBoard: React.FC = () => {
           setAllDraggables(mapData.allDraggablesByUid)
         }
         setPlayerCount(mapData.playerCount);
+        setShowImportModal(false);
         alert('Map imported successfully!');
       } catch (error) {
         console.error('Error importing map:', error);
@@ -530,7 +534,67 @@ const HexBoard: React.FC = () => {
       }
     };
     reader.readAsText(file);
-  }, [setHexTiles, setAllDraggables]);
+  }, [setHexTiles, setAllDraggables, setShowImportModal]);
+
+  const handleImportTTSString = useCallback(() => {
+    let hexOrder = [
+      // Central Ring
+      "0,-1,1",
+      "1,-1,0",
+      "1,0,-1",
+      "0,1,-1",
+      "-1,1,0",
+      "-1,0,1",
+      // Inner Ring
+      "0,-2,2",
+      "1,-2,1",
+      "2,-2,0",
+      "2,-1,-1",
+      "2,0,-2",
+      "1,1,-2",
+      "0,2,-2",
+      "-1,2,-1",
+      "-2,2,0",
+      "-2,1,1",
+      "-2,0,2",
+      "-1,-1,2",
+      // Outer Ring
+      "0,-3,3",
+      "1,-3,2",
+      "2,-3,1",
+      "3,-3,0",
+      "3,-2,-1",
+      "3,-1,-2",
+      "3,0,-3",
+      "2,1,-3",
+      "1,2,-3",
+      "0,3,-3",
+      "-1,3,-2",
+      "-2,3,-1",
+      "-3,3,0",
+      "-3,2,1",
+      "-3,1,2",
+      "-3,0,3",
+      "-2,-1,3",
+      "-1,-2,3"
+    ]
+    let tiles = importString.trim().split(" ")
+    if (tiles.every(t => isTileNumber(t)) && tiles.length === 36) {
+      let newHexTiles: typeof hexTiles = hexOrder.reduce((newTiles, key, idx) => {
+        newTiles[key] = {
+          number: tiles[idx] as TILE_NUMBERS,
+          rotation: allRotations[0]
+        }
+        return newTiles
+      }, {} as typeof hexTiles)
+      newHexTiles["0,0,0"] = {
+        number: tileNumbers.tile18,
+        rotation: allRotations[0]
+      }
+      setHexTiles(newHexTiles)
+      setLocked(true)
+    }
+  }, [setHexTiles, setLocked, importString])
 
   const onDragEnd = useCallback(({ delta, active }: DragEndEvent): void => {
     setAllDraggables(prev => {
@@ -555,16 +619,13 @@ const HexBoard: React.FC = () => {
           <button disabled={locked} onClick={handleClearBoard}>Clear Board</button>
           <button onClick={handleSaveMap}>Save Map</button>
           <button onClick={handleExportMap}>Export Map</button>
-          <label className={classNames("import-button", locked && "disabled")}>
+          <button
+            className={classNames("import-button", locked && "disabled")}
+            disabled={locked}
+            onClick={() => setShowImportModal(true)}
+          >
             Import Map
-            <input
-              type="file"
-              accept=".json"
-              disabled={locked}
-              onChange={handleImportMap}
-              style={{ display: 'none' }}
-            />
-          </label>
+          </button>
         </div>
       </div>
       <div className="hex-board-wrapper">
@@ -604,6 +665,56 @@ const HexBoard: React.FC = () => {
           onClose={handleClosePicker}
           position={pickerPosition}
         />
+      )}
+      {showImportModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '20px',
+              borderRadius: '8px',
+              minWidth: '300px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+            }}
+          >
+            <h3 style={{ marginTop: 0 }}>Import Map</h3>
+            <div style={{ marginBottom: '12px' }}>
+              <label htmlFor="import-string" style={{ display: 'block', marginBottom: '6px', fontWeight: 600 }}>Paste map string</label>
+              <textarea
+                id="import-string"
+                value={importString}
+                onChange={(e) => setImportString(e.target.value)}
+                placeholder="Paste a map string here..."
+                style={{ width: '100%', minHeight: '90px', resize: 'vertical', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontFamily: 'inherit', fontSize: '14px' }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button className="import-button" onClick={() => fileInputRef.current?.click()}>Import From JSON</button>
+              <button className="import-button" onClick={handleImportTTSString}>{"Import TTS String"}</button>
+              <button className="import-button secondary-button" onClick={() => setShowImportModal(false)}>Cancel</button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleImportMap}
+              style={{ display: 'none' }}
+            />
+          </div>
+        </div>
       )}
     </>
   );

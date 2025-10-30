@@ -100,6 +100,33 @@ import st90A from './ST_90A.png'
 import st90B from './ST_90B.png'
 import st91A from './ST_91A.png'
 import st91B from './ST_91B.png'
+import st92 from './ST_92.png'
+import st93 from './ST_93.png'
+import st94 from './ST_94.png'
+import st95 from './ST_95.png'
+import st96A from './ST_96a.png'
+import st96B from './ST_96b.png'
+import st97 from './ST_97.png'
+import st98 from './ST_98.png'
+import st99 from './ST_99.png'
+import st100 from './ST_100.png'
+import st101 from './ST_101.png'
+import st102 from './ST_102.png'
+import st103 from './ST_103.png'
+import st104 from './ST_104.png'
+import st105 from './ST_105.png'
+import st106 from './ST_106.png'
+import st107 from './ST_107.png'
+import st108 from './ST_108.png'
+import st109 from './ST_109.png'
+import st110 from './ST_110.png'
+import st111 from './ST_111.png'
+import st112 from './ST_112.png'
+import st113 from './ST_113.png'
+import st114 from './ST_114.png'
+import st115 from './ST_115.png'
+import st116 from './ST_116.png'
+import st117 from './ST_117.png'
 import { allFactions, ALL_FACTIONS, factionInfo } from '../data/factions'
 import { Tile, TileMap } from '../data/tiles'
 import { tilesInfo } from '../data/tiles'
@@ -216,8 +243,43 @@ export const tileNumbers = {
     tile90B: "90B",
     tile91A: "91A",
     tile91B: "91B",
+    tile92: "92",
+    tile93: "93",
+    tile94: "94",
+    tile95: "95",
+    tile96A: "96a",
+    tile96B: "96b",
+    tile97: "97",
+    tile98: "98",
+    tile99: "99",
+    tile100: "100",
+    tile101: "101",
+    tile102: "102",
+    tile103: "103",
+    tile104: "104",
+    tile105: "105",
+    tile106: "106",
+    tile107: "107",
+    tile108: "108",
+    tile109: "109",
+    tile110: "110",
+    tile111: "111",
+    tile112: "112",
+    tile113: "113",
+    tile114: "114",
+    tile115: "115",
+    tile116: "116",
+    tile117: "117",
 } as const;
 export type TILE_NUMBERS = (typeof tileNumbers)[keyof typeof tileNumbers]
+
+export function isTileNumber(value: string): value is TILE_NUMBERS {
+    if (allTiles[(value as unknown as TILE_NUMBERS)] === undefined) {
+        return false
+    } else {
+        return true
+    }
+}
 
 export const allTiles: Record<TILE_NUMBERS, string> = {
     "-1": stEmpty,
@@ -322,6 +384,33 @@ export const allTiles: Record<TILE_NUMBERS, string> = {
     "90B": st90B,
     "91A": st91A,
     "91B": st91B,
+    "92": st92,
+    "93": st93,
+    "94": st94,
+    "95": st95,
+    "96a": st96A,
+    "96b": st96B,
+    "97": st97,
+    "98": st98,
+    "99": st99,
+    "100": st100,
+    "101": st101,
+    "102": st102,
+    "103": st103,
+    "104": st104,
+    "105": st105,
+    "106": st106,
+    "107": st107,
+    "108": st108,
+    "109": st109,
+    "110": st110,
+    "111": st111,
+    "112": st112,
+    "113": st113,
+    "114": st114,
+    "115": st115,
+    "116": st116,
+    "117": st117,
 }
 export type HOME_SYSTEM_TILES = Record<ALL_FACTIONS, Tile>
 export const homeSystemTiles: HOME_SYSTEM_TILES = {

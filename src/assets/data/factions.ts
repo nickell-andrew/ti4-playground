@@ -11,31 +11,36 @@ export interface Faction {
 }
 
 export const allFactions = {
-    sardakk: "Sardakk N'orr",
     arborec: "The Arborec",
+    argentFlight: "The Argent Flight",
     barony: "The Barony of Letnev",
-    saar: "The Clan of Saar",
-    muaat: "The Embers of Muaat",
-    hacan: "The Emirates of Hacan",
-    sol: "The Federation of Sol",
+    cabal: "The Vuil'raith Cabal",
+    crimsonRebellion: "The Crimson Rebellion",
+    deepwroughtScholarate: "The Deepwrought Scholarate",
+    empyrean: "The Empyrean",
+    firmamentObsidian: "The Firmament / The Obsidian",
     ghosts: "The Ghosts of Creuss",
-    l1z1x: "The L1z1x Mindnet",
-    mentak: "The Mentak Coalition",
-    naalu: "The Naalu Collective",
-    nekro: "The Nekro Virus",
+    hacan: "The Emirates of Hacan",
     jolNar: "The Universities of Jol-Nar",
+    keleres: "The Council Keleres",
+    lastBastion: "Last Bastion",
+    l1z1x: "The L1z1x Mindnet",
+    mahact: "The Mahact Gene-sorcerers",
+    mentak: "The Mentak Coalition",
+    muaat: "The Embers of Muaat",
+    naalu: "The Naalu Collective",
+    naazRokha: "The Naaz-Rokha Alliance",
+    nekro: "The Nekro Virus",
+    nomad: "The Nomad",
+    ralNel: "The Ral Nel Consortium",
+    saar: "The Clan of Saar",
+    sardakk: "Sardakk N'orr",
+    sol: "The Federation of Sol",
+    titans: "The Titans of Ul",
     winnu: "The Winnu",
     xxcha: "The Xxcha Kingdom",
     yin: "The Yin Brotherhood",
     yssaril: "The Yssaril Tribes",
-    argentFlight: "The Argent Flight",
-    empyrean: "The Empyrean",
-    mahact: "The Mahact Gene-sorcerers",
-    naazRokha: "The Naaz-Rokha Alliance",
-    nomad: "The Nomad",
-    titans: "The Titans of Ul",
-    cabal: "The Vuil'raith Cabal",
-    keleres: "The Council Keleres",
 } as const;
 export type ALL_FACTIONS = (typeof allFactions)[keyof typeof allFactions]
 
@@ -215,5 +220,40 @@ export const factionInfo: Record<ALL_FACTIONS, Faction> = {
         "options": ["The Mentak Coalition", "The Xxcha Kingdom", "The Argent Flight"],
         "homesystem": "0",
         "set": "keleres"
+    },
+    "Last Bastion": {
+        "id": "last_bastion",
+        "name": "Last Bastion",
+        "homesystem": "92",
+        "wiki": "https://twilight-imperium.fandom.com/wiki/Last_Bastion",
+        "set": "te"
+    },
+    "The Ral Nel Consortium": {
+        "id": "ral_nel",
+        "name": "The Ral Nel Consortium",
+        "homesystem": "93",
+        "wiki": "https://twilight-imperium.fandom.com/wiki/The_Ral_Nel_Consortium",
+        "set": "te"
+    },
+    "The Deepwrought Scholarate": {
+        "id": "deepwrought_scholarate",
+        "name": "The Deepwrought Scholarate",
+        "homesystem": "95",
+        "wiki": "https://twilight-imperium.fandom.com/wiki/The_Deepwrought_Scholarate",
+        "set": "te"
+    },
+    "The Crimson Rebellion": {
+        "id": "crimson_rebellion",
+        "name": "The Crimson Rebellion",
+        "homesystem": "94",
+        "wiki": "https://twilight-imperium.fandom.com/wiki/The_Crimson_Rebellion",
+        "set": "te"
+    },
+    "The Firmament / The Obsidian": {
+        "id": "firmament_obsidian",
+        "name": "The Firmament / The Obsidian",
+        "homesystem": "96a",
+        "wiki": "https://twilight-imperium.fandom.com/wiki/The_Firmament_/_The_Obsidian",
+        "set": "te"
     }
 }

@@ -55,6 +55,16 @@
   text-align: center;
 }
 
+/* Secondary/neutral button style for non-primary actions */
+.import-button.secondary-button {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.import-button.secondary-button:hover {
+  background-color: #cfcfcf;
+}
+
 .hex-board-wrapper {
   display: flex;
   flex-direction: column;
