@@ -17,6 +17,48 @@ import { BOARD_SIZE, HexTile } from './hexTile/HexTile';
 import classNames from 'classnames';
 import { Mallice } from './hexTile/Mallice';
 
+const TTSStringHexOrder = [
+  // Central Ring
+  "0,-1,1",
+  "1,-1,0",
+  "1,0,-1",
+  "0,1,-1",
+  "-1,1,0",
+  "-1,0,1",
+  // Inner Ring
+  "0,-2,2",
+  "1,-2,1",
+  "2,-2,0",
+  "2,-1,-1",
+  "2,0,-2",
+  "1,1,-2",
+  "0,2,-2",
+  "-1,2,-1",
+  "-2,2,0",
+  "-2,1,1",
+  "-2,0,2",
+  "-1,-1,2",
+  // Outer Ring
+  "0,-3,3",
+  "1,-3,2",
+  "2,-3,1",
+  "3,-3,0",
+  "3,-2,-1",
+  "3,-1,-2",
+  "3,0,-3",
+  "2,1,-3",
+  "1,2,-3",
+  "0,3,-3",
+  "-1,3,-2",
+  "-2,3,-1",
+  "-3,3,0",
+  "-3,2,1",
+  "-3,1,2",
+  "-3,0,3",
+  "-2,-1,3",
+  "-1,-2,3"
+]
+
 // Initialize corner tiles with Green Tile if no saved map exists
 const initialTiles: Record<string, TILE_NUMBER_AND_ROTATION> = {
   // Set First Tile for each corner
@@ -356,6 +398,7 @@ const HexBoard: React.FC = () => {
   const [locked, setLocked] = useState<boolean>(false);
   const [playerCount, setPlayerCount] = useState<PLAYER_COUNT>(6);
   const [showImportModal, setShowImportModal] = useState<boolean>(false);
+  const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [importString, setImportString] = useState<string>('');
 
@@ -439,6 +482,10 @@ const HexBoard: React.FC = () => {
     return generateTiles(playerCount)
   }, [playerCount]);
 
+  const currentTTSSTring: string = useMemo(() => {
+    return TTSStringHexOrder.map(t => hexTiles[t]?.number ?? "0").join(" ")
+  }, [hexTiles])
+
   // Handle hex click to open the picker
   const handleHexClick = useCallback((q: number, r: number, s: number, event: React.MouseEvent) => {
     if (locked) return;
@@ -492,7 +539,7 @@ const HexBoard: React.FC = () => {
   }, [setLocked, locked])
 
   // Export the map as JSON file
-  const handleExportMap = useCallback(() => {
+  const handleExportMapToFile = useCallback(() => {
     const mapData: MapDataV2 = {
       hexTiles,
       playerCount,
@@ -537,50 +584,9 @@ const HexBoard: React.FC = () => {
   }, [setHexTiles, setAllDraggables, setShowImportModal]);
 
   const handleImportTTSString = useCallback(() => {
-    let hexOrder = [
-      // Central Ring
-      "0,-1,1",
-      "1,-1,0",
-      "1,0,-1",
-      "0,1,-1",
-      "-1,1,0",
-      "-1,0,1",
-      // Inner Ring
-      "0,-2,2",
-      "1,-2,1",
-      "2,-2,0",
-      "2,-1,-1",
-      "2,0,-2",
-      "1,1,-2",
-      "0,2,-2",
-      "-1,2,-1",
-      "-2,2,0",
-      "-2,1,1",
-      "-2,0,2",
-      "-1,-1,2",
-      // Outer Ring
-      "0,-3,3",
-      "1,-3,2",
-      "2,-3,1",
-      "3,-3,0",
-      "3,-2,-1",
-      "3,-1,-2",
-      "3,0,-3",
-      "2,1,-3",
-      "1,2,-3",
-      "0,3,-3",
-      "-1,3,-2",
-      "-2,3,-1",
-      "-3,3,0",
-      "-3,2,1",
-      "-3,1,2",
-      "-3,0,3",
-      "-2,-1,3",
-      "-1,-2,3"
-    ]
     let tiles = importString.trim().split(" ")
     if (tiles.every(t => isTileNumber(t)) && tiles.length === 36) {
-      let newHexTiles: typeof hexTiles = hexOrder.reduce((newTiles, key, idx) => {
+      let newHexTiles: typeof hexTiles = TTSStringHexOrder.reduce((newTiles, key, idx) => {
         newTiles[key] = {
           number: tiles[idx] as TILE_NUMBERS,
           rotation: allRotations[0]
@@ -618,7 +624,7 @@ const HexBoard: React.FC = () => {
           <button onClick={toggleMapLock}>{locked ? "Unlock Map" : "Lock Map"}</button>
           <button disabled={locked} onClick={handleClearBoard}>Clear Board</button>
           <button onClick={handleSaveMap}>Save Map</button>
-          <button onClick={handleExportMap}>Export Map</button>
+          <button onClick={() => setShowExportModal(true)}>Export Map</button>
           <button
             className={classNames("import-button", locked && "disabled")}
             disabled={locked}
@@ -713,6 +719,45 @@ const HexBoard: React.FC = () => {
               onChange={handleImportMap}
               style={{ display: 'none' }}
             />
+          </div>
+        </div>
+      )}
+      {showExportModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '20px',
+              borderRadius: '8px',
+              minWidth: '300px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+            }}
+          >
+            <h3 style={{ marginTop: 0 }}>Export Map</h3>
+            <div style={{ marginBottom: '12px' }}>
+              <textarea
+                value={currentTTSSTring}
+                readOnly
+                style={{ width: '100%', minHeight: '120px', resize: 'vertical', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontFamily: 'inherit', fontSize: '14px', textAlign: 'center' }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button className="import-button" onClick={() => { handleExportMapToFile(); setShowExportModal(false); }}>Export to file</button>
+              <button className="import-button secondary-button" onClick={() => setShowExportModal(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
