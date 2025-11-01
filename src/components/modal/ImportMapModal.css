@@ -1,0 +1,39 @@
+.modal-title {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.form-textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.form-textarea-export {
+    text-align: center;
+    min-height: 120px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.hidden-input {
+    display: none;
+}

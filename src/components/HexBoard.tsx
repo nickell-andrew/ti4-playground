@@ -13,9 +13,11 @@ import allUnitImages from '../assets/units';
 import allTokenImages from '../assets/tokens';
 import { ImageComponentProps } from '../assets/units/black';
 import { allRotations, ROTATION, TilePicker } from './tilePicker/TilePicker';
-import { BOARD_SIZE, HexTile } from './hexTile/HexTile';
-import classNames from 'classnames';
-import { Mallice } from './hexTile/Mallice';
+import { BOARD_SIZE } from './hexTile/HexTile';
+import { BoardControls } from './BoardControls';
+import { HexBoardGrid } from './HexBoardGrid';
+import { ImportMapModal } from './modal/ImportMapModal';
+import { ExportMapModal } from './modal/ExportMapModal';
 
 const TTSStringHexOrder = [
   // Central Ring
@@ -325,7 +327,7 @@ interface DraggableContainerProps {
 
 type DraggablePiecePropsByUid = Record<UniqueIdentifier, DraggablePieceProps>
 
-const DraggableContainer: React.FC<DraggableContainerProps> = ({
+export const DraggableContainer: React.FC<DraggableContainerProps> = ({
   children,
   onDragEnd,
   draggableItems,
@@ -386,7 +388,7 @@ const getDraggablePieceProps = (player: number) => {
   return draggablesByUid
 }
 
-export type PLAYER_COUNT = 3 | 4 | 5 | 6 | 7 | 8
+export type PLAYER_COUNT = 3 | 4 | 5 | 6 | 7 | 8;
 
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
@@ -619,50 +621,24 @@ const HexBoard: React.FC = () => {
 
   return (
     <>
-      <div className="board-controls">
-        <div className="control-group">
-          <button onClick={toggleMapLock}>{locked ? "Unlock Map" : "Lock Map"}</button>
-          <button disabled={locked} onClick={handleClearBoard}>Clear Board</button>
-          <button onClick={handleSaveMap}>Save Map</button>
-          <button onClick={() => setShowExportModal(true)}>Export Map</button>
-          <button
-            className={classNames("import-button", locked && "disabled")}
-            disabled={locked}
-            onClick={() => setShowImportModal(true)}
-          >
-            Import Map
-          </button>
-        </div>
-      </div>
-      <div className="hex-board-wrapper">
-        <div className="hex-board-container">
-          <div className="hex-board">
-            <DraggableContainer
-              onDragEnd={onDragEnd}
-              draggableItems={draggableItems}
-            >
-              <Mallice
-                boardSize={boardSize}
-              />
-              {hexagons.map((hex, index) => {
-                const hexKey = `${hex.q},${hex.r},${hex.s}`;
-                return (
-                  <HexTile
-                    key={index}
-                    {...hex}
-                    boardSize={boardSize}
-                    playerCount={playerCount}
-                    tile={hexTiles[hexKey] ?? null}
-                    isLocked={locked}
-                    onClick={(e: React.MouseEvent) => handleHexClick(hex.q, hex.r, hex.s, e)}
-                  />
-                );
-              })}
-              {draggableItems}
-            </DraggableContainer>
-          </div>
-        </div>
-      </div>
+      <BoardControls
+        locked={locked}
+        onToggleLock={toggleMapLock}
+        onClearBoard={handleClearBoard}
+        onSaveMap={handleSaveMap}
+        onExportClick={() => setShowExportModal(true)}
+        onImportClick={() => setShowImportModal(true)}
+      />
+      <HexBoardGrid
+        boardSize={boardSize}
+        hexagons={hexagons}
+        hexTiles={hexTiles}
+        playerCount={playerCount}
+        locked={locked}
+        onHexClick={handleHexClick}
+        onDragEnd={onDragEnd}
+        draggableItems={draggableItems}
+      />
       {showPicker && (
         <TilePicker
           selectedTile={selectedTile}
@@ -672,95 +648,21 @@ const HexBoard: React.FC = () => {
           position={pickerPosition}
         />
       )}
-      {showImportModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              background: '#fff',
-              padding: '20px',
-              borderRadius: '8px',
-              minWidth: '300px',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
-            }}
-          >
-            <h3 style={{ marginTop: 0 }}>Import Map</h3>
-            <div style={{ marginBottom: '12px' }}>
-              <label htmlFor="import-string" style={{ display: 'block', marginBottom: '6px', fontWeight: 600 }}>Paste map string</label>
-              <textarea
-                id="import-string"
-                value={importString}
-                onChange={(e) => setImportString(e.target.value)}
-                placeholder="Paste a map string here..."
-                style={{ width: '100%', minHeight: '90px', resize: 'vertical', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontFamily: 'inherit', fontSize: '14px' }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button className="import-button" onClick={() => fileInputRef.current?.click()}>Import From JSON</button>
-              <button className="import-button" onClick={handleImportTTSString}>{"Import TTS String"}</button>
-              <button className="import-button secondary-button" onClick={() => setShowImportModal(false)}>Cancel</button>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleImportMap}
-              style={{ display: 'none' }}
-            />
-          </div>
-        </div>
-      )}
-      {showExportModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              background: '#fff',
-              padding: '20px',
-              borderRadius: '8px',
-              minWidth: '300px',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
-            }}
-          >
-            <h3 style={{ marginTop: 0 }}>Export Map</h3>
-            <div style={{ marginBottom: '12px' }}>
-              <textarea
-                value={currentTTSSTring}
-                readOnly
-                style={{ width: '100%', minHeight: '120px', resize: 'vertical', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontFamily: 'inherit', fontSize: '14px', textAlign: 'center' }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button className="import-button" onClick={() => { handleExportMapToFile(); setShowExportModal(false); }}>Export to file</button>
-              <button className="import-button secondary-button" onClick={() => setShowExportModal(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ImportMapModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        importString={importString}
+        setImportString={setImportString}
+        fileInputRef={fileInputRef}
+        onImportMap={handleImportMap}
+        onImportTTSString={handleImportTTSString}
+      />
+      <ExportMapModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        currentTTSString={currentTTSSTring}
+        onExportToFile={handleExportMapToFile}
+      />
     </>
   );
 };
