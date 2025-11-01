@@ -253,6 +253,14 @@ const HexBoard: React.FC = () => {
     })
   }, [setAllDraggables])
 
+  const onExportClick = useCallback(() => {
+    setShowExportModal(true)
+  }, [setShowExportModal])
+
+  const onImportClick = useCallback(() => {
+    setShowImportModal(true)
+  }, [setShowImportModal])
+
   return (
     <>
       <BoardControls
@@ -260,8 +268,8 @@ const HexBoard: React.FC = () => {
         onToggleLock={toggleMapLock}
         onClearBoard={handleClearBoard}
         onSaveMap={handleSaveMap}
-        onExportClick={() => setShowExportModal(true)}
-        onImportClick={() => setShowImportModal(true)}
+        onExportClick={onExportClick}
+        onImportClick={onImportClick}
       />
       <HexBoardGrid
         boardSize={boardSize}
