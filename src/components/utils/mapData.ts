@@ -1,4 +1,4 @@
-import { allRotations, ROTATION } from '../tilePicker/TilePicker';
+import { allRotations, ROTATION } from '../tilePicker/rotations';
 import { tileNumbers, TILE_NUMBERS } from '../../assets/tiles';
 import type { DraggablePiecePropsByUid } from '../dragAndDrop/draggablePieceUtils';
 

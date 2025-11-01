@@ -4,7 +4,8 @@ import './HexBoard.css';
 
 import { generateTiles } from './utils/generateTiles';
 import { isTileNumber, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
-import { allRotations, TilePicker } from './tilePicker/TilePicker';
+import { TilePicker } from './tilePicker/TilePicker';
+import { allRotations } from './tilePicker/rotations';
 import { BOARD_SIZE } from './hexTile/HexTile';
 import { BoardControls } from './BoardControls';
 import { HexBoardGrid } from './HexBoardGrid';
