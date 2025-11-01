@@ -24,10 +24,6 @@ import {
 } from './dragAndDrop/draggablePieceUtils';
 import { getDraggablePieceProps } from './dragAndDrop/draggablePieceFactory';
 
-// Re-export types for backward compatibility
-export type { TILE_NUMBER_AND_ROTATION, PLAYER_COUNT } from './utils/mapData';
-export { cornerCoordinates } from './utils/mapData';
-
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
   const [selectedTile, setSelectedTile] = useState<TILE_NUMBERS | null>(null);

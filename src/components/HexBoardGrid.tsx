@@ -3,7 +3,7 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { DraggableContainer } from './dragAndDrop/DraggableContainer';
 import { Mallice } from './hexTile/Mallice';
 import { HexTile } from './hexTile/HexTile';
-import type { TILE_NUMBER_AND_ROTATION, PLAYER_COUNT } from './HexBoard';
+import type { TILE_NUMBER_AND_ROTATION, PLAYER_COUNT } from './utils/mapData';
 
 interface HexBoardGridProps {
     boardSize: number;

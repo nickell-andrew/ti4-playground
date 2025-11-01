@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { TileMap, tilesInfo } from '../../assets/data/tiles';
 import { allTiles, homeSystemTilesByTileNumber, hyperlaneTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../../assets/tiles';
 import { TIER, tileTiers } from '../../assets/data/tile-selection';
-import { cornerCoordinates, TILE_NUMBER_AND_ROTATION } from "../HexBoard";
+import { cornerCoordinates, TILE_NUMBER_AND_ROTATION } from "../utils/mapData";
 import './TilePicker.css'
 
 const tooltipTextForTile = (tile: TILE_NUMBERS, tileData: TileMap): string => {

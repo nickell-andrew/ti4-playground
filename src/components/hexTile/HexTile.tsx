@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
 import { allTiles } from "../../assets/tiles";
-import { PLAYER_COUNT, TILE_NUMBER_AND_ROTATION } from "../HexBoard";
+import { PLAYER_COUNT, TILE_NUMBER_AND_ROTATION } from "../utils/mapData";
 
 export const BOARD_SIZE = 1000;
 
