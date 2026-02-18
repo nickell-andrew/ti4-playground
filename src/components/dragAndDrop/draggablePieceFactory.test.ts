@@ -1,25 +1,26 @@
-import { getDraggablePieceProps } from './draggablePieceFactory';
-
-// Unit counts from draggablePieceFactory.ts:
-// infantry:12, mech:4, spacedock:3, pds:6, fighter:10, destroyer:8,
-// cruiser:8, carrier:4, dreadnought:5, warsun:2, flagship:1 = 63 units
-// commandCounter:16 tokens
-const UNITS_PER_PLAYER = 63;
-const TOKENS_PER_PLAYER = 16;
-const PIECES_PER_PLAYER = UNITS_PER_PLAYER + TOKENS_PER_PLAYER;
+import { getDraggablePieceProps, COMMAND_COUNTERS_PRE_PLACED } from './draggablePieceFactory';
 
 describe('getDraggablePieceProps', () => {
   describe('piece count', () => {
-    it('creates the correct total number of pieces for a player', () => {
+    it('creates only the pre-placed command counter pieces (no units)', () => {
       const pieces = getDraggablePieceProps(1);
-      expect(Object.keys(pieces)).toHaveLength(PIECES_PER_PLAYER);
+      expect(Object.keys(pieces)).toHaveLength(COMMAND_COUNTERS_PRE_PLACED);
     });
 
     it('all 6 players produce the same piece count', () => {
       for (let player = 1; player <= 6; player++) {
         const pieces = getDraggablePieceProps(player);
-        expect(Object.keys(pieces)).toHaveLength(PIECES_PER_PLAYER);
+        expect(Object.keys(pieces)).toHaveLength(COMMAND_COUNTERS_PRE_PLACED);
       }
+    });
+
+    it('does not pre-place any unit pieces', () => {
+      const pieces = getDraggablePieceProps(1);
+      const unitNames = ['infantry', 'mech', 'spacedock', 'pds', 'fighter',
+        'destroyer', 'cruiser', 'carrier', 'dreadnought', 'warsun', 'flagship'];
+      Object.values(pieces).forEach(piece => {
+        expect(unitNames).not.toContain(piece.name);
+      });
     });
   });
 
@@ -80,30 +81,14 @@ describe('getDraggablePieceProps', () => {
   });
 
   describe('piece number sequences', () => {
-    it('infantry pieces are numbered 1 through 12', () => {
-      const pieces = getDraggablePieceProps(1);
-      const infantryNums = Object.values(pieces)
-        .filter(p => p.name === 'infantry')
-        .map(p => p.pieceNumber)
-        .sort((a, b) => a - b);
-      expect(infantryNums).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    });
-
-    it('flagship pieces are numbered 1 through 1', () => {
-      const pieces = getDraggablePieceProps(1);
-      const flagshipNums = Object.values(pieces)
-        .filter(p => p.name === 'flagship')
-        .map(p => p.pieceNumber);
-      expect(flagshipNums).toEqual([1]);
-    });
-
-    it('command counters are numbered 1 through 16', () => {
+    it('pre-placed command counters are numbered 1 through COMMAND_COUNTERS_PRE_PLACED', () => {
       const pieces = getDraggablePieceProps(1);
       const ccNums = Object.values(pieces)
         .filter(p => p.name === 'commandCounter')
         .map(p => p.pieceNumber)
         .sort((a, b) => a - b);
-      expect(ccNums).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+      const expected = Array.from({ length: COMMAND_COUNTERS_PRE_PLACED }, (_, i) => i + 1);
+      expect(ccNums).toEqual(expected);
     });
   });
 });

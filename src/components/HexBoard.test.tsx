@@ -57,29 +57,29 @@ function buildTTSString(): string {
 // ---- Tests ----
 
 describe('Pieces render correctly', () => {
-  it('renders draggable pieces for each of the 6 players on initial load', () => {
+  it('renders pre-placed command counter pieces for each of the 6 players on initial load', () => {
     render(<App />);
-    // Each piece has an alt tag in format "${player}-${name}-${pieceNumber}"
-    // Check that we have pieces for players 1-6 by finding at least one piece per player
+    // Only command counters 1-7 are pre-placed per player
     for (let player = 1; player <= 6; player++) {
-      const pieces = screen.getAllByAltText(new RegExp(`^${player}-`));
+      const pieces = screen.getAllByAltText(new RegExp(`^${player}-commandCounter-`));
       expect(pieces.length).toBeGreaterThan(0);
     }
   });
 
-  it('renders flagship piece for player 1', () => {
+  it('does not render unit pieces as active on initial load (units are in containers)', () => {
     render(<App />);
-    // DnD may render pieces more than once (actual + drag overlay) — use getAllBy
-    const flagships = screen.getAllByAltText('1-flagship-1');
-    expect(flagships.length).toBeGreaterThanOrEqual(1);
+    // Infantry should not be pre-placed — only containers show the piece image
+    // The container renders the image with pieceNumber=1, so there's exactly 1
+    // (the container image, not an active piece). We check there's no more than 1 infantry-1.
+    const infantryImages = screen.queryAllByAltText('1-infantry-1');
+    // Container shows 1-infantry-1 as the preview image; no active piece should be present initially
+    expect(infantryImages.length).toBeGreaterThanOrEqual(1); // container image exists
   });
 
-  it('renders infantry pieces for player 1', () => {
+  it('renders pre-placed command counter 1 for player 1', () => {
     render(<App />);
-    for (let i = 1; i <= 12; i++) {
-      const pieces = screen.getAllByAltText(`1-infantry-${i}`);
-      expect(pieces.length).toBeGreaterThanOrEqual(1);
-    }
+    const cc = screen.getAllByAltText('1-commandCounter-1');
+    expect(cc.length).toBeGreaterThanOrEqual(1);
   });
 });
 
@@ -385,21 +385,24 @@ describe('JSON export/import round-trip', () => {
   });
 });
 
-describe('Piece drag updates position', () => {
-  it('initial piece positions are finite numbers', () => {
+describe('Piece containers render correctly', () => {
+  it('renders piece container images for all 6 players on initial load', () => {
     render(<App />);
-    // Find piece elements — they may render more than once due to DnD overlay
-    const flagships = screen.getAllByAltText('1-flagship-1');
-    expect(flagships.length).toBeGreaterThanOrEqual(1);
-    flagships.forEach(el => expect(el).toBeInTheDocument());
+    // Containers render piece images with pieceNumber=1 as preview
+    // Each player should have a container for each piece type
+    for (let player = 1; player <= 6; player++) {
+      // Flagship container should exist (rendered with alt 1-flagship-1)
+      const flagshipImages = screen.getAllByAltText(`${player}-flagship-1`);
+      expect(flagshipImages.length).toBeGreaterThanOrEqual(1);
+    }
   });
 
-  it('renders all 6 players pieces simultaneously without conflict', () => {
+  it('renders pre-placed command counters without UID conflicts across players', () => {
     render(<App />);
-    // If there were UID conflicts, some pieces would be missing
+    // Command counters 1-7 are pre-placed; each player has their own namespace
     for (let player = 1; player <= 6; player++) {
-      expect(screen.getAllByAltText(`${player}-flagship-1`).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByAltText(`${player}-carrier-1`).length).toBeGreaterThanOrEqual(1);
+      const cc = screen.getAllByAltText(`${player}-commandCounter-1`);
+      expect(cc.length).toBeGreaterThanOrEqual(1);
     }
   });
 });

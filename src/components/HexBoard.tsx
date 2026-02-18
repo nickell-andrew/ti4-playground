@@ -21,9 +21,13 @@ import {
 } from './utils/mapData';
 import { DraggablePiece } from './dragAndDrop/DraggablePiece';
 import {
-  DraggablePiecePropsByUid
+  DraggablePiecePropsByUid,
+  getUidFromDraggablePieceProps,
 } from './dragAndDrop/draggablePieceUtils';
-import { getDraggablePieceProps } from './dragAndDrop/draggablePieceFactory';
+import { getDraggablePieceProps, maxPieceCounts, unitTypes } from './dragAndDrop/draggablePieceFactory';
+import { PieceContainer, getContainerUid } from './dragAndDrop/PieceContainer';
+import { tokens, PLAYERS } from './consts';
+import { getContainerCoordinates } from './utils/pieceCoordinates';
 
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
@@ -61,6 +65,55 @@ const HexBoard: React.FC = () => {
       />
     })
   }, [allDraggables])
+
+  // Build container items - one per player per piece type
+  const containerItems = useMemo(() => {
+    const items: React.ReactNode[] = [];
+    const players = [...Array(playerCount)].map((_, i) => (i + 1) as PLAYERS);
+
+    for (const player of players) {
+      // Unit containers
+      for (const name of unitTypes) {
+        const activeCount = Object.values(allDraggables).filter(
+          p => p.player === player && p.name === name
+        ).length;
+        const maxCount = maxPieceCounts[name];
+        const coords = getContainerCoordinates(player, name);
+        items.push(
+          <PieceContainer
+            key={getContainerUid(player, name)}
+            player={player}
+            name={name}
+            x={coords.x}
+            y={coords.y}
+            activeCount={activeCount}
+            maxCount={maxCount}
+          />
+        );
+      }
+
+      // Command counter container
+      const ccName = tokens.CommandCounter;
+      const ccActiveCount = Object.values(allDraggables).filter(
+        p => p.player === player && p.name === ccName
+      ).length;
+      const ccMaxCount = maxPieceCounts[ccName];
+      const ccCoords = getContainerCoordinates(player, ccName);
+      items.push(
+        <PieceContainer
+          key={getContainerUid(player, ccName)}
+          player={player}
+          name={ccName}
+          x={ccCoords.x}
+          y={ccCoords.y}
+          activeCount={ccActiveCount}
+          maxCount={ccMaxCount}
+        />
+      );
+    }
+
+    return items;
+  }, [allDraggables, playerCount])
 
   useEffect(() => {
     let resizeTimer: ReturnType<typeof setTimeout>;
@@ -244,9 +297,64 @@ const HexBoard: React.FC = () => {
     }
   }, [setHexTiles, setLocked, importString])
 
-  const onDragEnd = useCallback(({ delta, active }: DragEndEvent): void => {
+  const onDragEnd = useCallback(({ delta, active, over }: DragEndEvent): void => {
+    const activeId = active.id as string;
+    const overId = over?.id as string | undefined;
+
+    // Container dragged → spawn a new piece
+    if (activeId.startsWith('container-')) {
+      const [, playerStr, name] = activeId.split('-');
+      const player = parseInt(playerStr) as PLAYERS;
+
+      // Don't spawn if dropped back on its own container
+      if (overId === activeId) return;
+
+      const maxCount = maxPieceCounts[name as keyof typeof maxPieceCounts];
+      const existingForType = Object.values(allDraggables).filter(
+        p => p.player === player && p.name === name
+      );
+      if (existingForType.length >= maxCount) return;
+
+      // Find next available piece number
+      const usedNumbers = new Set(existingForType.map(p => p.pieceNumber));
+      let pieceNumber = 1;
+      while (usedNumbers.has(pieceNumber) && pieceNumber <= maxCount) pieceNumber++;
+      if (pieceNumber > maxCount) return;
+
+      // Position at where the drag ended (container's board-relative coords + delta)
+      const containerCoords = getContainerCoordinates(player, name);
+      const spawnX = containerCoords.x + delta.x;
+      const spawnY = containerCoords.y + delta.y;
+
+      const newProps = { player, name: name as any, pieceNumber };
+      const uid = getUidFromDraggablePieceProps(newProps);
+      setAllDraggables(prev => ({
+        ...prev,
+        [uid]: { ...newProps, x: spawnX, y: spawnY },
+      }));
+      return;
+    }
+
+    // Active piece dropped on its matching container → delete
+    if (overId && overId.startsWith('container-')) {
+      const [, playerStr, name] = overId.split('-');
+      const player = parseInt(playerStr) as PLAYERS;
+      // Only delete if the piece belongs to the same player and piece type
+      const pieceProps = allDraggables[activeId];
+      if (pieceProps && pieceProps.player === player && pieceProps.name === name) {
+        setAllDraggables(prev => {
+          const next = { ...prev };
+          delete next[activeId];
+          return next;
+        });
+      }
+      return;
+    }
+
+    // Default: update position
     setAllDraggables(prev => {
       const props = prev[active.id];
+      if (!props) return prev;
       let { x, y } = props
       return {
         ...prev,
@@ -257,7 +365,7 @@ const HexBoard: React.FC = () => {
         }
       }
     })
-  }, [setAllDraggables])
+  }, [setAllDraggables, allDraggables])
 
   const onExportClick = useCallback(() => {
     setShowExportModal(true)
@@ -286,6 +394,7 @@ const HexBoard: React.FC = () => {
         onHexClick={handleHexClick}
         onDragEnd={onDragEnd}
         draggableItems={draggableItems}
+        containerItems={containerItems}
       />
       {showPicker && (
         <TilePicker

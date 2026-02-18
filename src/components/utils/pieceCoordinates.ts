@@ -65,18 +65,60 @@ export const referencePoints: Record<string, Coordinates> = {
     p6h3: { x: measurements['col-3'], y: measurements['row-5'] },
 };
 
-export const pieceOffsetInHex: Record<string, Coordinates> = {
-    "commandCounter1": { x: -25, y: -40 },
-    "commandCounter2": { x: -5, y: -47 },
-    "commandCounter3": { x: 15, y: -42 },
+// Token positions relative to hex center, in player-local space:
+// "up" = away from board center, "right" = clockwise from up.
+// 3 tokens at top, 3 at upper-right, 2 at lower-right.
+// These are rotated per player using playerAngleDeg below.
+const tokenLocalOffsets: Coordinates[] = [
+    // top group (3) — spread left-to-right across the top edge
+    { x: -25, y: -52 },
+    { x:   0, y: -60 },
+    { x:  25, y: -52 },
+    // upper-right group (3) — along the upper-right face
+    { x:  52, y: -25 },
+    { x:  60, y:   0 },
+    { x:  52, y:  25 },
+    // lower-right group (2) — along the lower-right face
+    { x:  25, y:  52 },
+    { x:   0, y:  60 },
+];
 
-    "commandCounter4": { x: 60, y: -5 },
-    "commandCounter5": { x: 25, y: -1 },
-    "commandCounter6": { x: 51, y: 20 },
-
-    "commandCounter7": { x: 5, y: 50 },
-    "commandCounter8": { x: 25, y: 65 },
+// Rotation angle (degrees, clockwise) for each player's home orientation.
+// Player 1 is at the top (faces down), each subsequent player is +60°.
+const playerAngleDeg: Record<number, number> = {
+    1: 0,
+    2: 60,
+    3: 120,
+    4: 180,
+    5: 240,
+    6: 300,
 };
+
+function rotateOffset(offset: Coordinates, angleDeg: number): Coordinates {
+    const rad = (angleDeg * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    return {
+        x: Math.round(offset.x * cos - offset.y * sin),
+        y: Math.round(offset.x * sin + offset.y * cos),
+    };
+}
+
+// Build pieceOffsetInHex for command counters 1-8 × 6 players
+// Key format: "commandCounter{n}_p{player}" for per-player, fallback to generic for p1
+export const getPieceOffsetForPlayer = (name: string, pieceNumber: number, player: number): Coordinates => {
+    if (name === 'commandCounter' && pieceNumber >= 1 && pieceNumber <= 8) {
+        const localOffset = tokenLocalOffsets[pieceNumber - 1];
+        const angle = playerAngleDeg[player] ?? 0;
+        return rotateOffset(localOffset, angle);
+    }
+    return { x: 0, y: 0 };
+};
+
+// Legacy record kept for any code that still references it directly (player 1 only)
+export const pieceOffsetInHex: Record<string, Coordinates> = Object.fromEntries(
+    tokenLocalOffsets.map((offset, i) => [`commandCounter${i + 1}`, offset])
+);
 
 export const coordOffsetsAllPieces: CoordinateOffsets = {
     [allPieces.Carrier]: { x: 25, y: 40 },
@@ -91,6 +133,22 @@ export const coordOffsetsAllPieces: CoordinateOffsets = {
     [allPieces.PDS]: { x: 0, y: -55 },
     [allPieces.Warsun]: { x: 30, y: 50 },
     [allPieces.CommandCounter]: { x: 40, y: -40 },
+};
+
+// Returns the position for a piece container (same as initial coordinates for units;
+// for commandCounter uses the center grey hex h2 instead of the rightmost h3)
+export const getContainerCoordinates = (
+    player: number,
+    name: string
+): Coordinates => {
+    // CommandCounter container lives in center grey hex (h2)
+    if (name === 'commandCounter') {
+        const base = referencePoints[`p${player}h2`];
+        const offset = coordOffsetsAllPieces[allPieces.CommandCounter];
+        return { x: base.x + offset.x, y: base.y + offset.y };
+    }
+    // All other pieces use the same logic as getInitialCoordinates with pieceNumber=1
+    return getInitialCoordinates({ player, name: name as any, pieceNumber: 1 });
 };
 
 export const getInitialCoordinates = (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DragEndEvent } from '@dnd-kit/core';
+import { DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import { DraggableContainer } from './dragAndDrop/DraggableContainer';
 import { Mallice } from './hexTile/Mallice';
 import { HexTile } from './hexTile/HexTile';
@@ -13,7 +13,9 @@ interface HexBoardGridProps {
     locked: boolean;
     onHexClick: (q: number, r: number, s: number, event: React.MouseEvent) => void;
     onDragEnd: (event: DragEndEvent) => void;
+    onDragOver?: (event: DragOverEvent) => void;
     draggableItems: React.ReactNode;
+    containerItems: React.ReactNode;
 }
 
 export const HexBoardGrid: React.FC<HexBoardGridProps> = React.memo(({
@@ -24,7 +26,9 @@ export const HexBoardGrid: React.FC<HexBoardGridProps> = React.memo(({
     locked,
     onHexClick,
     onDragEnd,
+    onDragOver,
     draggableItems,
+    containerItems,
 }) => {
     return (
         <div className="hex-board-wrapper">
@@ -32,7 +36,9 @@ export const HexBoardGrid: React.FC<HexBoardGridProps> = React.memo(({
                 <div className="hex-board">
                     <DraggableContainer
                         onDragEnd={onDragEnd}
+                        onDragOver={onDragOver}
                         draggableItems={draggableItems}
+                        containerItems={containerItems}
                     >
                         <Mallice
                             boardSize={boardSize}
@@ -51,11 +57,9 @@ export const HexBoardGrid: React.FC<HexBoardGridProps> = React.memo(({
                                 />
                             );
                         })}
-                        {draggableItems}
                     </DraggableContainer>
                 </div>
             </div>
         </div>
     );
 });
-
