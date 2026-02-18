@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import React, { useCallback, CSSProperties } from "react";
 import { allTiles } from "../../assets/tiles";
 import { PLAYER_COUNT, TILE_NUMBER_AND_ROTATION } from "../utils/mapData";
 
@@ -22,10 +22,14 @@ export interface HexProps {
     playerCount: PLAYER_COUNT;
     tile: TILE_NUMBER_AND_ROTATION | null;
     isLocked: boolean;
-    onClick: (event: React.MouseEvent) => void;
+    onHexClick: (q: number, r: number, s: number, event: React.MouseEvent) => void;
 }
 
-export const HexTile: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked, extraSystem = false, onClick }) => {
+export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, tile, isLocked, extraSystem = false, onHexClick }) => {
+    const handleClick = useCallback((e: React.MouseEvent) => {
+        onHexClick(q, r, s, e);
+    }, [q, r, s, onHexClick]);
+
     let extraSystemStyle: CSSProperties = {}
     if (extraSystem) {
         extraSystemStyle = {
@@ -71,11 +75,11 @@ export const HexTile: React.FC<HexProps> = ({ q, r, s, boardSize, tile, isLocked
         <div
             className="hexagon"
             style={{ ...style, ...backgroundStyle, ...(isLocked ? { pointerEvents: 'none' } : {}), ...extraSystemStyle }}
-            onClick={onClick}
+            onClick={handleClick}
         >
             <div className="hexagon-content">
                 {!(tile || extraSystem) && `${q},${r},${s}`}
             </div>
         </div>
     );
-};
+});

@@ -63,8 +63,12 @@ const HexBoard: React.FC = () => {
   }, [allDraggables])
 
   useEffect(() => {
+    let resizeTimer: ReturnType<typeof setTimeout>;
     const handleResize = () => {
-      setBoardSize(BOARD_SIZE);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        setBoardSize(BOARD_SIZE);
+      }, 150);
     };
 
     window.addEventListener('resize', handleResize);
@@ -194,6 +198,7 @@ const HexBoard: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }, [hexTiles, allDraggables, playerCount]);
 
   // Import a map from a JSON file

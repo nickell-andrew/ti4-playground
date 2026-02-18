@@ -16,7 +16,7 @@ interface HexBoardGridProps {
     draggableItems: React.ReactNode;
 }
 
-export const HexBoardGrid: React.FC<HexBoardGridProps> = ({
+export const HexBoardGrid: React.FC<HexBoardGridProps> = React.memo(({
     boardSize,
     hexagons,
     hexTiles,
@@ -37,17 +37,17 @@ export const HexBoardGrid: React.FC<HexBoardGridProps> = ({
                         <Mallice
                             boardSize={boardSize}
                         />
-                        {hexagons.map((hex, index) => {
+                        {hexagons.map((hex) => {
                             const hexKey = `${hex.q},${hex.r},${hex.s}`;
                             return (
                                 <HexTile
-                                    key={index}
+                                    key={hexKey}
                                     {...hex}
                                     boardSize={boardSize}
                                     playerCount={playerCount}
                                     tile={hexTiles[hexKey] ?? null}
                                     isLocked={locked}
-                                    onClick={(e: React.MouseEvent) => onHexClick(hex.q, hex.r, hex.s, e)}
+                                    onHexClick={onHexClick}
                                 />
                             );
                         })}
@@ -57,5 +57,5 @@ export const HexBoardGrid: React.FC<HexBoardGridProps> = ({
             </div>
         </div>
     );
-};
+});
 

@@ -124,7 +124,7 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
 
   &.drappable-overlay {
     opacity: 0;
@@ -159,10 +159,7 @@
 .hexagon:hover {
   filter: brightness(1.1);
   z-index: 10;
-  width: calc(100% + 5px);
-  height: calc(100% + 5px);
-  margin-top: -2.5px;
-  margin-left: -2.5px;
+  transform: scale(1.03);
 }
 
 .hexagon-content {
@@ -191,7 +188,7 @@
   z-index: 11;
 }
 
-/* @media (max-width: 768px) {
+@media (max-width: 768px) {
   .board-controls {
     flex-direction: column;
     gap: 15px;
@@ -211,4 +208,4 @@
     max-width: 90%;
     max-height: 70vh;
   }
-} */
+}
