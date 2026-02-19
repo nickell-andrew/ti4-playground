@@ -1,6 +1,6 @@
 # TI4 Playground — Roadmap
 
-## 1. Trade Goods
+## ~~1. Trade Goods~~ ✅
 
 Add draggable trade good tokens to each player's play area.
 
