@@ -1,27 +1,13 @@
 # TI4 Playground — Roadmap
 
-## ~~1. Trade Goods~~ ✅
+## Conventions
 
-Add draggable trade good tokens to each player's play area.
+- **Adding items**: Append to the bottom of the active list with the next number, fully specced with `- [ ]` checkboxes on actionable bullets
+- **Completing a milestone**: Check the box — `- [x]`
+- **Completing a full item**: Move to `## Completed` as a single-line summary (`- ~~**N. Name**~~ ✅ — one sentence`), then renumber remaining items
+- **Prioritization**: Item order = priority; renumber to reprioritize
 
-### Containers
-
-- Two container types per player:
-  - **Single TG container** — holds individual trade good tokens (1 TG each)
-  - **Triple TG container** — holds 3-trade-good bundles
-- Container behavior mirrors existing unit containers (drag in/out, per-player color), except **no max-total badge** is shown
-- Each player's play area shows a **total TG count** — the sum of singles plus triples × 3
-
-### Implementation Notes
-
-- Add `tradeGood` and `tradeGoodBundle` to piece constants in `consts/index.ts`
-- Add TG token images to `/src/assets/tokens/`
-- Extend `PieceContainer` or add a `TGContainer` variant that omits the max display
-- Store TG counts in `allDraggables` alongside existing pieces
-
----
-
-## 2. Exploration Decks
+## 1. Exploration Decks
 
 Add exploration card management for the five deck types.
 
@@ -41,28 +27,28 @@ The five decks to support:
 
 Each deck is shown as a face-down stack in a dedicated area of the board (outside the hex grid). For each deck:
 
-- **Draw** — click to draw a random card from the deck; the card goes to the drawing player
-- **View remaining** — click to open a modal showing all cards in the deck in a randomized order (so no player gains information about what's on top)
-- **Return card** — players can drag or click a card back into the deck
+- [ ] **Draw** — click to draw a random card from the deck; the card goes to the drawing player
+- [ ] **View remaining** — click to open a modal showing all cards in the deck in a randomized order (so no player gains information about what's on top)
+- [ ] **Return card** — players can drag or click a card back into the deck
 
 ### Discard Piles
 
 Each of the five decks has a paired discard pile:
 
-- Shown as a face-up stack next to its deck
-- **View discard pile** — click to open a modal showing all discarded cards in order (oldest at bottom)
-- **Drag cards out** — players can drag a card from the discard pile (e.g. for faction abilities that reclaim exploration cards)
+- [ ] Shown as a face-up stack next to its deck
+- [ ] **View discard pile** — click to open a modal showing all discarded cards in order (oldest at bottom)
+- [ ] **Drag cards out** — players can drag a card from the discard pile (e.g. for faction abilities that reclaim exploration cards)
 
 ### Implementation Notes
 
-- Add exploration card data to `/src/assets/data/` (card names, types, effects, images)
-- Track deck state: remaining cards (shuffled array) and discard pile (ordered array)
-- State lives in `HexBoard.tsx` alongside `hexTiles` and `allDraggables`
-- A `DeckModal` component can be shared between "view remaining" and "view discard" displays, parameterized by ordered vs. randomized display
+- [ ] Add exploration card data to `/src/assets/data/` (card names, types, effects, images)
+- [ ] Track deck state: remaining cards (shuffled array) and discard pile (ordered array)
+- [ ] State lives in `HexBoard.tsx` alongside `hexTiles` and `allDraggables`
+- [ ] A `DeckModal` component can be shared between "view remaining" and "view discard" displays, parameterized by ordered vs. randomized display
 
 ---
 
-## 3. Conditional Home Systems
+## 2. Conditional Home Systems
 
 Display the home systems for factions whose gate/portal tile is currently on the board.
 
@@ -78,7 +64,13 @@ Display the home systems for factions whose gate/portal tile is currently on the
 
 ### Implementation Notes
 
-- Detect the presence of tile 17 / tile 94 in `hexTiles` (already tracked in `HexBoard.tsx`)
-- Render the conditional tile in `HexBoardGrid.tsx` alongside the `Mallice` background and Nexus — positioned via absolute coordinates outside the grid
-- Tile images are already available in `/src/assets/tiles/`
-- No new state needed; this is a pure derived render from existing `hexTiles` state
+- [ ] Detect the presence of tile 17 / tile 94 in `hexTiles` (already tracked in `HexBoard.tsx`)
+- [ ] Render the conditional tile in `HexBoardGrid.tsx` alongside the `Mallice` background and Nexus — positioned via absolute coordinates outside the grid
+- [ ] Tile images are already available in `/src/assets/tiles/`
+- [ ] No new state needed; this is a pure derived render from existing `hexTiles` state
+
+---
+
+## Completed
+
+- ~~**1. Trade Goods**~~ ✅ — Add draggable trade good tokens to each player's play area.
