@@ -30,7 +30,12 @@ export const DraggableContainer: React.FC<DraggableContainerProps> = ({
 
     const handleDragStart = (event: DragStartEvent) => {
         const id = event.active.id as string;
-        if (id.startsWith('container-')) {
+        if (id.startsWith('container-shared-')) {
+            // Shared TG containers: use player 1 just for (color-agnostic) image lookup
+            const name = id.replace('container-shared-', '') as ALL_PIECES;
+            const image = getImageFromDraggablePieceProps({ player: 1 as PLAYERS, name, pieceNumber: 1 }, 1);
+            setDragOverlayImage(image);
+        } else if (id.startsWith('container-')) {
             const [, playerStr, name] = id.split('-');
             const player = parseInt(playerStr) as PLAYERS;
             const image = getImageFromDraggablePieceProps({ player, name: name as ALL_PIECES, pieceNumber: 1 }, 1);

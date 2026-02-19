@@ -24,10 +24,12 @@ import {
   DraggablePiecePropsByUid,
   getUidFromDraggablePieceProps,
 } from './dragAndDrop/draggablePieceUtils';
-import { getDraggablePieceProps, maxPieceCounts, unitTypes } from './dragAndDrop/draggablePieceFactory';
+import { getDraggablePieceProps, maxPieceCounts, unitTypes, tgTokenTypes } from './dragAndDrop/draggablePieceFactory';
 import { PieceContainer, getContainerUid } from './dragAndDrop/PieceContainer';
+import { TGContainer, getTGContainerUid } from './dragAndDrop/TGContainer';
+import { TGTotalBadge } from './dragAndDrop/TGTotalBadge';
 import { tokens, PLAYERS } from './consts';
-import { getContainerCoordinates } from './utils/pieceCoordinates';
+import { getContainerCoordinates, referencePoints, tgContainerPositions, H3_PROXIMITY_RADIUS } from './utils/pieceCoordinates';
 
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
@@ -108,6 +110,66 @@ const HexBoard: React.FC = () => {
           y={ccCoords.y}
           activeCount={ccActiveCount}
           maxCount={ccMaxCount}
+        />
+      );
+
+    }
+
+    // Two shared TG containers (not per-player)
+    for (const tgName of tgTokenTypes) {
+      const tgCoords = tgContainerPositions[tgName];
+      items.push(
+        <TGContainer
+          key={getTGContainerUid(tgName)}
+          name={tgName}
+          x={tgCoords.x}
+          y={tgCoords.y}
+        />
+      );
+    }
+
+    return items;
+  }, [allDraggables, playerCount])
+
+  // Per-player TG total badges — count tokens physically within each player's h3 hex
+  const tgTotalItems = useMemo(() => {
+    const items: React.ReactNode[] = [];
+    const players = [...Array(playerCount)].map((_, i) => (i + 1) as PLAYERS);
+
+    for (const player of players) {
+      const h2 = referencePoints[`p${player}h2`];
+      const h3 = referencePoints[`p${player}h3`];
+      const r = H3_PROXIMITY_RADIUS;
+
+      const isInH3 = (x: number | undefined, y: number | undefined) => {
+        if (x === undefined || y === undefined) return false;
+        return Math.abs(x - h3.x) <= r && Math.abs(y - h3.y) <= r;
+      };
+
+      const singles = Object.values(allDraggables).filter(
+        p => p.name === tokens.TradeGood && isInH3(p.x, p.y)
+      ).length;
+      const bundles = Object.values(allDraggables).filter(
+        p => p.name === tokens.TradeGoodBundle && isInH3(p.x, p.y)
+      ).length;
+
+      // Position the badge outside the player's H area:
+      // project outward from the board center through h3, past h3
+      const mecatol = referencePoints['mecatol'];
+      const outX = h3.x - mecatol.x;
+      const outY = h3.y - mecatol.y;
+      const len = Math.sqrt(outX * outX + outY * outY);
+      const badgeX = Math.round(h3.x + (outX / len) * 110);
+      const badgeY = Math.round(h3.y + (outY / len) * 110);
+
+      items.push(
+        <TGTotalBadge
+          key={`tg-total-${player}`}
+          player={player}
+          singles={singles}
+          bundles={bundles}
+          x={badgeX}
+          y={badgeY}
         />
       );
     }
@@ -301,7 +363,35 @@ const HexBoard: React.FC = () => {
     const activeId = active.id as string;
     const overId = over?.id as string | undefined;
 
-    // Container dragged → spawn a new piece
+    // Shared TG container dragged → spawn a new TG token (no player association)
+    if (activeId.startsWith('container-shared-')) {
+      if (overId === activeId) return;
+      const name = activeId.replace('container-shared-', '') as any;
+
+      const maxCount = maxPieceCounts[name as keyof typeof maxPieceCounts];
+      const existingForType = Object.values(allDraggables).filter(p => p.name === name);
+      if (existingForType.length >= maxCount) return;
+
+      const usedNumbers = new Set(existingForType.map(p => p.pieceNumber));
+      let pieceNumber = 1;
+      while (usedNumbers.has(pieceNumber) && pieceNumber <= maxCount) pieceNumber++;
+      if (pieceNumber > maxCount) return;
+
+      // Spawn at container position + drag delta; player:1 is just for image lookup
+      const containerCoords = tgContainerPositions[name];
+      const spawnX = containerCoords.x + delta.x;
+      const spawnY = containerCoords.y + delta.y;
+
+      const newProps = { player: 1 as PLAYERS, name, pieceNumber };
+      const uid = getUidFromDraggablePieceProps(newProps);
+      setAllDraggables(prev => ({
+        ...prev,
+        [uid]: { ...newProps, x: spawnX, y: spawnY },
+      }));
+      return;
+    }
+
+    // Per-player container dragged → spawn a new piece
     if (activeId.startsWith('container-')) {
       const [, playerStr, name] = activeId.split('-');
       const player = parseInt(playerStr) as PLAYERS;
@@ -335,7 +425,21 @@ const HexBoard: React.FC = () => {
       return;
     }
 
-    // Active piece dropped on its matching container → delete
+    // Piece dropped on a shared TG container → delete
+    if (overId && overId.startsWith('container-shared-')) {
+      const name = overId.replace('container-shared-', '');
+      const pieceProps = allDraggables[activeId];
+      if (pieceProps && pieceProps.name === name) {
+        setAllDraggables(prev => {
+          const next = { ...prev };
+          delete next[activeId];
+          return next;
+        });
+      }
+      return;
+    }
+
+    // Active piece dropped on its matching per-player container → delete
     if (overId && overId.startsWith('container-')) {
       const [, playerStr, name] = overId.split('-');
       const player = parseInt(playerStr) as PLAYERS;
@@ -394,7 +498,7 @@ const HexBoard: React.FC = () => {
         onHexClick={handleHexClick}
         onDragEnd={onDragEnd}
         draggableItems={draggableItems}
-        containerItems={containerItems}
+        containerItems={[...containerItems, ...tgTotalItems]}
       />
       {showPicker && (
         <TilePicker

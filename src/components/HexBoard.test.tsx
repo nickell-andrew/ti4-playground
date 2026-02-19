@@ -406,3 +406,115 @@ describe('Piece containers render correctly', () => {
     }
   });
 });
+
+describe('Trade Goods', () => {
+  describe('shared TG containers render on initial load', () => {
+    it('renders exactly one shared TG container (not one per player)', () => {
+      render(<App />);
+      const tgContainers = screen.getAllByAltText('1-tradeGood-1');
+      expect(tgContainers).toHaveLength(1);
+    });
+
+    it('renders exactly one shared 3TG container (not one per player)', () => {
+      render(<App />);
+      const tgBundleContainers = screen.getAllByAltText('1-tradeGoodBundle-1');
+      expect(tgBundleContainers).toHaveLength(1);
+    });
+  });
+
+  describe('TG total badges render on initial load', () => {
+    it('renders a TG total badge for each of the 6 players', () => {
+      render(<App />);
+      // Each badge shows "0 TG" when no tokens are present
+      const badges = screen.getAllByText('0 TG');
+      expect(badges).toHaveLength(6);
+    });
+
+    it('each badge shows 0 TG when no tokens have been placed', () => {
+      render(<App />);
+      const badges = screen.getAllByText('0 TG');
+      badges.forEach(badge => {
+        expect(badge).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('TG badge total calculation', () => {
+    it('shows correct total when TG tokens are pre-loaded from saved state', () => {
+      // Pre-load a map with TG tokens near player 1's h3 (referencePoint p1h3 = col1/row-7 = 764,150)
+      // Place 2 singles and 1 bundle near player 1's h3
+      const mapData = buildMapData({
+        allDraggablesByUid: {
+          '1-tradeGood-1':       { player: 1, name: 'tradeGood',       pieceNumber: 1, x: 764, y: 150 },
+          '1-tradeGood-2':       { player: 1, name: 'tradeGood',       pieceNumber: 2, x: 764, y: 160 },
+          '1-tradeGoodBundle-1': { player: 1, name: 'tradeGoodBundle', pieceNumber: 1, x: 764, y: 170 },
+        },
+      });
+      localStorage.setItem('tiMapData', JSON.stringify(mapData));
+      render(<App />);
+      // Total = 2 singles + 1 bundle*3 = 5 TG for player 1
+      // Other players still show 0 TG
+      expect(screen.getByText('5 TG')).toBeInTheDocument();
+      const zeroBadges = screen.getAllByText('0 TG');
+      expect(zeroBadges).toHaveLength(5);
+    });
+
+    it('bundles count as 3 TG each', () => {
+      const mapData = buildMapData({
+        allDraggablesByUid: {
+          '1-tradeGoodBundle-1': { player: 1, name: 'tradeGoodBundle', pieceNumber: 1, x: 764, y: 150 },
+          '1-tradeGoodBundle-2': { player: 1, name: 'tradeGoodBundle', pieceNumber: 2, x: 764, y: 160 },
+        },
+      });
+      localStorage.setItem('tiMapData', JSON.stringify(mapData));
+      render(<App />);
+      expect(screen.getByText('6 TG')).toBeInTheDocument();
+    });
+
+    it('tokens far from a player\'s h3 do not count toward that player\'s total', () => {
+      // Place token at x=0, y=0 — far from any player's h3
+      const mapData = buildMapData({
+        allDraggablesByUid: {
+          '1-tradeGood-1': { player: 1, name: 'tradeGood', pieceNumber: 1, x: 0, y: 0 },
+        },
+      });
+      localStorage.setItem('tiMapData', JSON.stringify(mapData));
+      render(<App />);
+      // All 6 badges should still show 0 TG (token is far from all h3 hexes)
+      const zeroBadges = screen.getAllByText('0 TG');
+      expect(zeroBadges).toHaveLength(6);
+    });
+
+    it('tokens near player 2\'s h3 count for player 2, not player 1', () => {
+      // p2h3 = col4/row-2 = 1170,550
+      const mapData = buildMapData({
+        allDraggablesByUid: {
+          '1-tradeGood-1': { player: 1, name: 'tradeGood', pieceNumber: 1, x: 1170, y: 550 },
+        },
+      });
+      localStorage.setItem('tiMapData', JSON.stringify(mapData));
+      render(<App />);
+      expect(screen.getByText('1 TG')).toBeInTheDocument();
+      const zeroBadges = screen.getAllByText('0 TG');
+      expect(zeroBadges).toHaveLength(5);
+    });
+  });
+
+  describe('TG tokens persist in saved map data', () => {
+    it('TG token positions are included when saving', () => {
+      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
+      const mapData = buildMapData({
+        allDraggablesByUid: {
+          '1-tradeGood-1': { player: 1, name: 'tradeGood', pieceNumber: 1, x: 764, y: 150 },
+        },
+      });
+      localStorage.setItem('tiMapData', JSON.stringify(mapData));
+      render(<App />);
+      fireEvent.click(screen.getByText('Save Map'));
+
+      const saved: MapDataV2 = JSON.parse(setItemSpy.mock.calls[setItemSpy.mock.calls.length - 1][1]);
+      expect(saved.allDraggablesByUid['1-tradeGood-1']).toBeDefined();
+      expect(saved.allDraggablesByUid['1-tradeGood-1'].name).toBe('tradeGood');
+    });
+  });
+});

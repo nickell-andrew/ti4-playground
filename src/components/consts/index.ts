@@ -49,6 +49,8 @@ export const pieceSize = {
     flagship: [70, 70],
     warsun: [60, 60],
     commandCounter: [40, 40],
+    tradeGood: [30, 30],
+    tradeGoodBundle: [42, 42],
 } as const;
 export type UNIT_SIZE = (typeof pieceSize)[keyof typeof pieceSize]
 
@@ -68,7 +70,9 @@ export const units = {
 export type UNITS = (typeof units)[keyof typeof units];
 
 export const tokens = {
-    CommandCounter: "commandCounter"
+    CommandCounter: "commandCounter",
+    TradeGood: "tradeGood",
+    TradeGoodBundle: "tradeGoodBundle",
 } as const;
 export type TOKENS = (typeof tokens)[keyof typeof tokens];
 

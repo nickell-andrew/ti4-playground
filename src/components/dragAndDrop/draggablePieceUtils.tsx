@@ -3,6 +3,7 @@ import { UniqueIdentifier } from '@dnd-kit/core';
 import { BASE_FACTION_COLORS, baseFactionColors, units, tokens, ALL_PIECES, PLAYERS } from '../consts';
 import allUnitImages from '../../assets/units';
 import allTokenImages from '../../assets/tokens';
+import type { TokenImageEntry } from '../../assets/tokens';
 import { ImageComponentProps } from '../../assets/units/black';
 import { pieceSize } from '../consts';
 
@@ -28,6 +29,16 @@ export const getAltTextFromDraggablePieceProps = ({ player, name, pieceNumber }:
 type PNGsForFaction = Record<ALL_PIECES, React.FC<ImageComponentProps>>;
 type allPNGsType = Record<BASE_FACTION_COLORS, PNGsForFaction>;
 
+function getTokenComponent(
+    entry: TokenImageEntry,
+    color: BASE_FACTION_COLORS
+): React.FC<ImageComponentProps> {
+    if (typeof entry === 'function') {
+        return entry;
+    }
+    return entry[color];
+}
+
 const allPNGs: allPNGsType = Object.values(baseFactionColors).reduce((dict, color) => {
     dict[color] = {
         ...Object.values(units).reduce((dict, name) => {
@@ -35,7 +46,8 @@ const allPNGs: allPNGsType = Object.values(baseFactionColors).reduce((dict, colo
             return dict;
         }, {} as PNGsForFaction),
         ...Object.values(tokens).reduce((dict, name) => {
-            dict[name] = allTokenImages[name][color];
+            const entry = allTokenImages[name];
+            dict[name] = getTokenComponent(entry, color);
             return dict;
         }, {} as PNGsForFaction)
     };
@@ -64,4 +76,3 @@ export const getImageFromDraggablePieceProps = (
         />
     );
 };
-

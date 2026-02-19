@@ -15,6 +15,8 @@ export type CoordinateOffsets = {
     [allPieces.Spacedock]: Coordinates;
     [allPieces.PDS]: Coordinates;
     [allPieces.Warsun]: Coordinates;
+    [allPieces.TradeGood]: Coordinates;
+    [allPieces.TradeGoodBundle]: Coordinates;
 }
 
 type columns = 'col-4' | 'col-3' | 'col-2' | 'col-1' | 'col0' | 'col1' | 'col3' | 'col4';
@@ -42,6 +44,15 @@ export const measurements: Record<columns | rows, number> = {
     'row7': 1270,
     'row8': 1350,
 };
+
+// Fixed screen positions for the two shared TG containers (outside the hex grid, right side)
+export const tgContainerPositions: Record<string, Coordinates> = {
+    tradeGood:       { x: 1255, y: measurements['row0'] - 35 },
+    tradeGoodBundle: { x: 1255, y: measurements['row0'] + 25 },
+};
+
+// Radius (px) used to decide whether a TG token is "inside" a player's h3 hex
+export const H3_PROXIMITY_RADIUS = 90;
 
 export const referencePoints: Record<string, Coordinates> = {
     mecatol: { x: measurements['col0'], y: measurements['row0'] },
@@ -133,10 +144,13 @@ export const coordOffsetsAllPieces: CoordinateOffsets = {
     [allPieces.PDS]: { x: 0, y: -55 },
     [allPieces.Warsun]: { x: 30, y: 50 },
     [allPieces.CommandCounter]: { x: 40, y: -40 },
+    [allPieces.TradeGood]: { x: -25, y: 30 },
+    [allPieces.TradeGoodBundle]: { x: 25, y: 30 },
 };
 
 // Returns the position for a piece container (same as initial coordinates for units;
-// for commandCounter uses the center grey hex h2 instead of the rightmost h3)
+// for commandCounter uses the center grey hex h2 instead of the rightmost h3;
+// for TG tokens uses the right grey hex h3)
 export const getContainerCoordinates = (
     player: number,
     name: string
@@ -145,6 +159,12 @@ export const getContainerCoordinates = (
     if (name === 'commandCounter') {
         const base = referencePoints[`p${player}h2`];
         const offset = coordOffsetsAllPieces[allPieces.CommandCounter];
+        return { x: base.x + offset.x, y: base.y + offset.y };
+    }
+    // TG containers live in right grey hex (h3)
+    if (name === 'tradeGood' || name === 'tradeGoodBundle') {
+        const base = referencePoints[`p${player}h3`];
+        const offset = coordOffsetsAllPieces[name as typeof allPieces.TradeGood | typeof allPieces.TradeGoodBundle];
         return { x: base.x + offset.x, y: base.y + offset.y };
     }
     // All other pieces use the same logic as getInitialCoordinates with pieceNumber=1
@@ -207,6 +227,11 @@ export const getInitialCoordinates = (
             break;
         case allPieces.Fighter:
             base = referencePoints[`p${player}h1`];
+            offset = coordOffsetsAllPieces[name];
+            break;
+        case allPieces.TradeGood:
+        case allPieces.TradeGoodBundle:
+            base = referencePoints[`p${player}h3`];
             offset = coordOffsetsAllPieces[name];
             break;
         default:

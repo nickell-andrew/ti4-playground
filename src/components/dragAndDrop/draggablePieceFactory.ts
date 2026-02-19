@@ -1,4 +1,4 @@
-import { UNITS, TOKENS, ALL_PIECES } from '../consts';
+import { UNITS, TOKENS, ALL_PIECES, tokens } from '../consts';
 import { DraggablePieceProps, DraggablePiecePropsByUid, getUidFromDraggablePieceProps } from './draggablePieceUtils';
 import { referencePoints, pieceOffsetInHex } from '../utils/pieceCoordinates';
 
@@ -19,11 +19,18 @@ export const maxPieceCounts: Record<ALL_PIECES, number> = {
     warsun: 2,
     flagship: 1,
     commandCounter: 16,
+    tradeGood: 12,
+    tradeGoodBundle: 4,
 };
 
 export const unitTypes: UNITS[] = [
     "infantry", "mech", "spacedock", "pds", "fighter",
     "destroyer", "cruiser", "carrier", "dreadnought", "warsun", "flagship",
+];
+
+export const tgTokenTypes: TOKENS[] = [
+    tokens.TradeGood,
+    tokens.TradeGoodBundle,
 ];
 
 export const getDraggablePieceProps = (player: number): DraggablePiecePropsByUid => {
