@@ -71,6 +71,17 @@ Display the home systems for factions whose gate/portal tile is currently on the
 
 ---
 
+## 3. Enable ESLint for Test Files
+
+Test files are currently excluded from the pre-commit ESLint hook due to pre-existing violations.
+
+- [ ] Fix unused variable warnings in `HexBoard.test.tsx` (`within`, `userEvent`, `TTSStringHexOrder`, `mockOnLoad`)
+- [ ] Fix `testing-library/no-node-access` errors in `HexBoard.test.tsx` and `TGTotalBadge.test.tsx`
+- [ ] Fix `no-template-curly-in-string` warning in `draggablePieceFactory.test.ts`
+- [ ] Remove `--ignore-pattern "**/*.test.*"` from `.git/hooks/pre-commit`
+
+---
+
 ## Completed
 
 - ~~**1. Trade Goods**~~ ✅ — Add draggable trade good tokens to each player's play area.

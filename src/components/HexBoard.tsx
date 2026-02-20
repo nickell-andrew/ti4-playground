@@ -137,7 +137,6 @@ const HexBoard: React.FC = () => {
     const players = [...Array(playerCount)].map((_, i) => (i + 1) as PLAYERS);
 
     for (const player of players) {
-      const h2 = referencePoints[`p${player}h2`];
       const h3 = referencePoints[`p${player}h3`];
       const r = H3_PROXIMITY_RADIUS;
 
