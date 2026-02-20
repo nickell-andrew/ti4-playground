@@ -13,10 +13,10 @@
 
 Establish a coherent type scale and eliminate the inconsistent mix of font sizes and spacing values.
 
-- [ ] Set `font-size: 15px; line-height: 1.5` on `body` in `index.css`
-- [ ] Normalize to a 4-step scale: 11px (xs), 13px (sm), 15px (base), 18px (lg)
-- [ ] Elevate all `font-weight: 300` occurrences to `400` minimum (see `Draggable.module.css`)
-- [ ] Normalize button padding using design tokens
+- [x] Set `font-size: 15px; line-height: 1.5` on `body` in `index.css`
+- [x] Normalize to a 4-step scale: 11px (xs), 13px (sm), 15px (base), 18px (lg)
+- [x] Elevate all `font-weight: 300` occurrences to `400` minimum (see `Draggable.module.css`)
+- [x] Normalize button padding using design tokens
 
 ---
 
@@ -39,6 +39,16 @@ Give hex tiles a polished, thematic hover state and make the active-editing hex 
 - [x] Replace raw `q,r,s` coordinate text in empty hexes with a subtle `+` or crosshair icon indicating "click to place"
 - [ ] Add `.hexagon.active` CSS class with a ring highlight for the hex whose tile picker is currently open
 - [ ] Wire `isActive` prop through `HexTile.tsx` from the `activeHex` state in `HexBoard.tsx`
+
+---
+
+## Persistent Toolbar / Sidebar
+
+Move the floating button overlay into a proper persistent toolbar or collapsible sidebar to give controls a spatial home.
+
+- [ ] Design a bottom toolbar or left sidebar layout to replace the fixed top-left overlay
+- [ ] Ensure controls remain accessible when the board is scrolled/panned in any direction
+- [ ] Maintain existing button grouping (state controls vs. persistence controls) in the new layout
 
 ---
 
@@ -73,16 +83,6 @@ Expose the player count setting in the UI and add a legend mapping player colors
 - [ ] Add a player count selector (3–8) to the `BoardControls` panel
 - [ ] Wire `setPlayerCount` from `HexBoard.tsx` through `BoardControls.tsx` props
 - [ ] Add a toggleable color legend in `BoardControls` mapping player numbers to their piece colors
-
----
-
-## Persistent Toolbar / Sidebar
-
-Move the floating button overlay into a proper persistent toolbar or collapsible sidebar to give controls a spatial home.
-
-- [ ] Design a bottom toolbar or left sidebar layout to replace the fixed top-left overlay
-- [ ] Ensure controls remain accessible when the board is scrolled/panned in any direction
-- [ ] Maintain existing button grouping (state controls vs. persistence controls) in the new layout
 
 ---
 
@@ -181,8 +181,20 @@ Test files are currently excluded from the pre-commit ESLint hook due to pre-exi
 
 ---
 
+## Selective Reset
+
+Let users reset pieces only, or wipe the entire board state, from the control panel.
+
+- [ ] Add a "Reset Pieces" action that clears `allDraggables` back to initial positions without touching `hexTiles`
+- [ ] Add a "Reset Board" action (rename/extend existing "Clear Board") that resets both `hexTiles` and `allDraggables`
+- [ ] Show a `ConfirmModal` for both actions with distinct messages ("Reset pieces to starting positions?" vs. "Clear the entire board?")
+- [ ] Group both reset actions visually in `BoardControls` under a "Reset" section or submenu to avoid accidental clicks
+
+---
+
 ## Completed
 
 - ~~**Trade Goods**~~ ✅ — Add draggable trade good tokens to each player's play area.
 - ~~**CSS Design Token System**~~ ✅ — Replace magic-number colors, spacing, and radii with CSS custom properties in `:root`.
 - ~~**Dark Space Theme**~~ ✅ — Dark near-black radial gradient background, translucent frosted-glass control panel, dark empty hexes, and updated button/text colors throughout.
+- ~~**Typography & Spacing Normalization**~~ ✅ — Set base font-size/line-height on body, replace hardcoded font-sizes and weights with design tokens, normalize button padding throughout.
