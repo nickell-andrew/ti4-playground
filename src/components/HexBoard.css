@@ -10,10 +10,14 @@
   z-index: 2000;
   padding: var(--space-2);
   background-color: var(--color-surface);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 1px 4px rgba(0, 0, 0, 0.4);
   max-width: 1200px;
 }
+
 
 .control-group {
   display: flex;
@@ -57,12 +61,13 @@
 
 /* Secondary/neutral button style for non-primary actions */
 .import-button.secondary-button {
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.12);
   color: var(--color-text);
+  border: 1px solid var(--color-border);
 }
 
 .import-button.secondary-button:hover {
-  background-color: #cfcfcf;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .hex-board-wrapper {
@@ -152,8 +157,7 @@
 
 /* Style for empty hexagons */
 .hexagon:not([style*="background-image"]) {
-  background-color: #e6f2ff;
-  /* Light blue fill */
+  background-color: rgba(30, 50, 90, 0.55);
 }
 
 .hexagon:hover {
@@ -164,7 +168,7 @@
 
 .hexagon-content {
   font-size: var(--font-size-sm);
-  color: var(--color-text);
+  color: rgba(160, 180, 220, 0.7);
   text-align: center;
   z-index: 11;
   opacity: 1;

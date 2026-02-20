@@ -7,15 +7,6 @@
 - **Completing a full item**: Move to `## Completed` as a single-line summary (`- ~~**Name**~~ ✅ — one sentence`)
 - **Prioritization**: Item order = priority; reorder headings to reprioritize
 
-## Dark Space Theme
-
-Shift the app shell to a dark, space-themed palette so the tile artwork is framed rather than competing with a generic gray background.
-
-- [ ] Change app background (`App.css`) to a deep near-black with blue tint (e.g. `#0d1117` or radial gradient `#111827` → `#0a0f1a`)
-- [ ] Restyle `.board-controls` panel (`HexBoard.css`): dark translucent surface (`rgba(15, 20, 35, 0.92)`), `backdrop-filter: blur(8px)`, subtle white border, stronger drop shadow
-- [ ] Change empty hex color from `#e6f2ff` to a dark space color like `rgba(10, 20, 40, 0.6)` — makes empty hexes feel like unexplored space
-- [ ] Update button and text colors in the control panel for legibility on dark backgrounds
-
 ---
 
 ## Typography & Spacing Normalization
@@ -45,7 +36,7 @@ Fix a latent z-index bug in `ConfirmModal` and clean up the parallel modal syste
 Give hex tiles a polished, thematic hover state and make the active-editing hex visually distinct.
 
 - [ ] Update hover filter in `HexBoard.css` from plain `brightness(1.1)` to a blue glow: `filter: brightness(1.05) drop-shadow(0 0 8px rgba(74, 144, 226, 0.6))`
-- [ ] Replace raw `q,r,s` coordinate text in empty hexes with a subtle `+` or crosshair icon indicating "click to place"
+- [x] Replace raw `q,r,s` coordinate text in empty hexes with a subtle `+` or crosshair icon indicating "click to place"
 - [ ] Add `.hexagon.active` CSS class with a ring highlight for the hex whose tile picker is currently open
 - [ ] Wire `isActive` prop through `HexTile.tsx` from the `activeHex` state in `HexBoard.tsx`
 
@@ -59,7 +50,7 @@ Improve visual hierarchy in the control panel: group related actions, distinguis
 - [ ] Add a visual separator between state controls (Lock/Clear) and persistence controls (Save/Export/Import)
 - [ ] Style "Clear Board" as a warning variant — dark background with muted red/amber border
 - [ ] Style "Lock Map" as a toggle — use `--color-accent-gold` (#D4A017) when map is locked
-- [ ] Replace `window.confirm()` in `handleClearBoard` (`HexBoard.tsx` ~line 274) with the existing `ConfirmModal` component
+- [x] Replace `window.confirm()` in `handleClearBoard` (`HexBoard.tsx` ~line 274) with the existing `ConfirmModal` component
 
 ---
 
@@ -82,6 +73,36 @@ Expose the player count setting in the UI and add a legend mapping player colors
 - [ ] Add a player count selector (3–8) to the `BoardControls` panel
 - [ ] Wire `setPlayerCount` from `HexBoard.tsx` through `BoardControls.tsx` props
 - [ ] Add a toggleable color legend in `BoardControls` mapping player numbers to their piece colors
+
+---
+
+## Persistent Toolbar / Sidebar
+
+Move the floating button overlay into a proper persistent toolbar or collapsible sidebar to give controls a spatial home.
+
+- [ ] Design a bottom toolbar or left sidebar layout to replace the fixed top-left overlay
+- [ ] Ensure controls remain accessible when the board is scrolled/panned in any direction
+- [ ] Maintain existing button grouping (state controls vs. persistence controls) in the new layout
+
+---
+
+## New Map / Onboarding Flow
+
+Add a first-use experience and "new map" flow so users aren't dropped into a cold board with no guidance.
+
+- [ ] Detect empty/fresh state and show a "Start" prompt (player count selector + preset map options)
+- [ ] Add a persistent help button or `?` tooltip explaining the tool's two modes (editing vs. playing)
+- [ ] Offer quick-start presets: standard 6-player, 8-player, etc.
+
+---
+
+## Tile Picker: Highlight Already-Placed Tiles
+
+Show which tiles are currently on the board while the picker is open, so users don't accidentally double-place.
+
+- [ ] Derive a set of currently-placed tile numbers from `hexTiles` state in `HexBoard.tsx`
+- [ ] Pass the set down to `TilePicker.tsx`
+- [ ] Apply a "placed" visual state to matching tiles (e.g. dimmed with a checkmark overlay)
 
 ---
 
@@ -164,3 +185,4 @@ Test files are currently excluded from the pre-commit ESLint hook due to pre-exi
 
 - ~~**Trade Goods**~~ ✅ — Add draggable trade good tokens to each player's play area.
 - ~~**CSS Design Token System**~~ ✅ — Replace magic-number colors, spacing, and radii with CSS custom properties in `:root`.
+- ~~**Dark Space Theme**~~ ✅ — Dark near-black radial gradient background, translucent frosted-glass control panel, dark empty hexes, and updated button/text colors throughout.

@@ -78,10 +78,9 @@ export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, til
             className="hexagon"
             style={{ ...style, ...backgroundStyle, ...(isLocked ? { pointerEvents: 'none' } : {}), ...extraSystemStyle }}
             onClick={handleClick}
+            data-testid={!tile && !extraSystem ? 'empty-hex' : undefined}
         >
-            <div className="hexagon-content">
-                {!(tile || extraSystem) && `${q},${r},${s}`}
-            </div>
+            <div className="hexagon-content" />
         </div>
     );
 });

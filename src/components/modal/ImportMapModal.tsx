@@ -33,6 +33,9 @@ export const ImportMapModal: React.FC<ImportMapModalProps> = ({
                     onChange={(e) => setImportString(e.target.value)}
                     placeholder="Paste a map string here..."
                 />
+                <p className="form-hint">
+                    Accepts a <strong>TTS string</strong> (space-separated tile numbers from Tabletop Simulator) or a <strong>JSON export</strong> from this app. Use the buttons below to choose the format.
+                </p>
             </div>
             <div className="form-actions">
                 <button className="import-button" onClick={() => fileInputRef.current?.click()}>Import From JSON</button>

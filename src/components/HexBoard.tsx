@@ -30,6 +30,7 @@ import { TGContainer, getTGContainerUid } from './dragAndDrop/TGContainer';
 import { TGTotalBadge } from './dragAndDrop/TGTotalBadge';
 import { tokens, PLAYERS } from './consts';
 import { getContainerCoordinates, referencePoints, tgContainerPositions, H3_PROXIMITY_RADIUS } from './utils/pieceCoordinates';
+import { ConfirmModal } from './dragAndDrop/components';
 
 const HexBoard: React.FC = () => {
   const [boardSize, setBoardSize] = useState<number>(BOARD_SIZE);
@@ -42,6 +43,7 @@ const HexBoard: React.FC = () => {
   const [playerCount, setPlayerCount] = useState<PLAYER_COUNT>(6);
   const [showImportModal, setShowImportModal] = useState<boolean>(false);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
+  const [showClearConfirm, setShowClearConfirm] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [importString, setImportString] = useState<string>('');
 
@@ -271,10 +273,13 @@ const HexBoard: React.FC = () => {
 
   // Clear all tiles from the board
   const handleClearBoard = useCallback(() => {
-    if (window.confirm('Are you sure you want to clear the entire board?')) {
-      setHexTiles(initialTiles);
-      setAllDraggables(getInitialDraggables())
-    }
+    setShowClearConfirm(true);
+  }, []);
+
+  const handleConfirmClear = useCallback(() => {
+    setHexTiles(initialTiles);
+    setAllDraggables(getInitialDraggables());
+    setShowClearConfirm(false);
   }, [setHexTiles, setAllDraggables, getInitialDraggables]);
 
   // Save the current map to localStorage
@@ -523,6 +528,14 @@ const HexBoard: React.FC = () => {
         currentTTSString={currentTTSSTring}
         onExportToFile={handleExportMapToFile}
       />
+      {showClearConfirm && (
+        <ConfirmModal
+          onConfirm={handleConfirmClear}
+          onDeny={() => setShowClearConfirm(false)}
+        >
+          Clear the entire board?
+        </ConfirmModal>
+      )}
     </>
   );
 };

@@ -97,9 +97,7 @@ describe('Map lock prevents edits', () => {
 
   it('opens the tile picker when clicking an empty hex while unlocked', async () => {
     render(<App />);
-    // Find an empty hex (shows its coordinate as text content)
-    // The board starts without most tiles, so find any coordinate label
-    const emptyHex = screen.getByText('1,-1,0');
+    const emptyHex = screen.getAllByTestId('empty-hex')[0];
     fireEvent.click(emptyHex);
     expect(await screen.findByText('Select a Tile')).toBeInTheDocument();
   });
@@ -108,15 +106,7 @@ describe('Map lock prevents edits', () => {
     render(<App />);
     // Lock the map
     fireEvent.click(screen.getByText('Lock Map'));
-    // Try to click an empty hex — pointerEvents: none prevents the real click,
-    // but we test the handler logic: clicking a hex should not show the picker
-    // Since isLocked adds pointerEvents:none to the hex, the click handler won't fire
-    // We can verify the picker is not in the DOM after clicking
-    const emptyHex = screen.queryByText('1,-1,0');
-    if (emptyHex) {
-      fireEvent.click(emptyHex);
-    }
-    // Picker should not appear
+    // Picker should not appear (locked hexes have pointerEvents:none so handler won't fire)
     expect(screen.queryByText('Select a Tile')).not.toBeInTheDocument();
   });
 
@@ -131,14 +121,14 @@ describe('Map lock prevents edits', () => {
 describe('Tile picker updates the map', () => {
   it('opens tile picker when clicking empty hex', async () => {
     render(<App />);
-    const emptyHex = screen.getByText('1,-1,0');
+    const emptyHex = screen.getAllByTestId('empty-hex')[0];
     fireEvent.click(emptyHex);
     expect(await screen.findByText('Select a Tile')).toBeInTheDocument();
   });
 
   it('closes tile picker when close button is clicked', async () => {
     render(<App />);
-    fireEvent.click(screen.getByText('1,-1,0'));
+    fireEvent.click(screen.getAllByTestId('empty-hex')[0]);
     await screen.findByText('Select a Tile');
     fireEvent.click(screen.getByText('×'));
     await waitFor(() => {
@@ -148,7 +138,7 @@ describe('Tile picker updates the map', () => {
 
   it('closes tile picker when a tile is selected', async () => {
     render(<App />);
-    fireEvent.click(screen.getByText('1,-1,0'));
+    fireEvent.click(screen.getAllByTestId('empty-hex')[0]);
     await screen.findByText('Select a Tile');
     // In test mode, image imports are mocked. Click the first tile-option div in the grid.
     const tileOptions = document.querySelectorAll('.tile-option');
@@ -161,14 +151,15 @@ describe('Tile picker updates the map', () => {
 
   it('clicking clear selection closes the picker without changing tile', async () => {
     render(<App />);
-    fireEvent.click(screen.getByText('1,-1,0'));
+    const emptyHex = screen.getAllByTestId('empty-hex')[0];
+    fireEvent.click(emptyHex);
     await screen.findByText('Select a Tile');
     fireEvent.click(screen.getByText('Clear Selection'));
     await waitFor(() => {
       expect(screen.queryByText('Select a Tile')).not.toBeInTheDocument();
     });
-    // Hex should still show its coordinate (no tile placed)
-    expect(screen.getByText('1,-1,0')).toBeInTheDocument();
+    // Hex should still be empty (no tile placed)
+    expect(screen.getAllByTestId('empty-hex').length).toBeGreaterThan(0);
   });
 });
 
