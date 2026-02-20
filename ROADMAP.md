@@ -2,24 +2,12 @@
 
 ## Conventions
 
-- **Adding items**: Append to the bottom of the active list with the next number, fully specced with `- [ ]` checkboxes on actionable bullets
+- **Adding items**: Append to the bottom of the active list, fully specced with `- [ ]` checkboxes on actionable bullets
 - **Completing a milestone**: Check the box — `- [x]`
-- **Completing a full item**: Move to `## Completed` as a single-line summary (`- ~~**N. Name**~~ ✅ — one sentence`), then renumber remaining items
-- **Prioritization**: Item order = priority; renumber to reprioritize
+- **Completing a full item**: Move to `## Completed` as a single-line summary (`- ~~**Name**~~ ✅ — one sentence`)
+- **Prioritization**: Item order = priority; reorder headings to reprioritize
 
-## 1. CSS Design Token System
-
-Replace magic-number colors, spacing, and border radii scattered across CSS files with CSS custom properties.
-
-- [ ] Add `:root` block to `index.css` with color tokens (`--color-primary`, `--color-primary-hover`, `--color-surface`, `--color-bg`, `--color-text`, `--color-border`, `--color-disabled`, `--color-accent-gold`)
-- [ ] Add spacing scale tokens `--space-1` (4px) through `--space-6` (32px)
-- [ ] Add radius tokens `--radius-sm` (4px), `--radius-md` (8px), `--radius-lg` (12px), `--radius-full` (9999px)
-- [ ] Add typography tokens `--font-size-xs` (11px) through `--font-size-lg` (18px) and `--font-weight-normal` / `--font-weight-bold`
-- [ ] Replace all magic-number occurrences in `HexBoard.css`, `TilePicker.css`, `Modal.css`, `ImportMapModal.css`, and all `*.module.css` files with the new variables
-
----
-
-## 2. Dark Space Theme
+## Dark Space Theme
 
 Shift the app shell to a dark, space-themed palette so the tile artwork is framed rather than competing with a generic gray background.
 
@@ -30,18 +18,18 @@ Shift the app shell to a dark, space-themed palette so the tile artwork is frame
 
 ---
 
-## 3. Typography & Spacing Normalization
+## Typography & Spacing Normalization
 
 Establish a coherent type scale and eliminate the inconsistent mix of font sizes and spacing values.
 
 - [ ] Set `font-size: 15px; line-height: 1.5` on `body` in `index.css`
 - [ ] Normalize to a 4-step scale: 11px (xs), 13px (sm), 15px (base), 18px (lg)
 - [ ] Elevate all `font-weight: 300` occurrences to `400` minimum (see `Draggable.module.css`)
-- [ ] Normalize button padding using tokens from Item 1
+- [ ] Normalize button padding using design tokens
 
 ---
 
-## 4. Modal System Consistency & Bug Fix
+## Modal System Consistency & Bug Fix
 
 Fix a latent z-index bug in `ConfirmModal` and clean up the parallel modal systems.
 
@@ -52,7 +40,7 @@ Fix a latent z-index bug in `ConfirmModal` and clean up the parallel modal syste
 
 ---
 
-## 5. Hex Hover Micro-interactions
+## Hex Hover Micro-interactions
 
 Give hex tiles a polished, thematic hover state and make the active-editing hex visually distinct.
 
@@ -63,7 +51,7 @@ Give hex tiles a polished, thematic hover state and make the active-editing hex 
 
 ---
 
-## 6. BoardControls Panel Redesign
+## BoardControls Panel Redesign
 
 Improve visual hierarchy in the control panel: group related actions, distinguish destructive actions, and add iconography.
 
@@ -75,7 +63,7 @@ Improve visual hierarchy in the control panel: group related actions, distinguis
 
 ---
 
-## 7. TilePicker Modal Polish
+## TilePicker Modal Polish
 
 Refine the most-used interaction surface with cleaner controls, better focus, and a more thematic visual treatment.
 
@@ -83,11 +71,11 @@ Refine the most-used interaction surface with cleaner controls, better focus, an
 - [ ] Style category/tier filter rows as pill-style segmented controls instead of flat rectangular buttons
 - [ ] Increase overlay opacity from `rgba(0,0,0,0.3)` to `rgba(0,0,0,0.65)` for proper modal focus
 - [ ] Add fade-in transition (0.15s ease) to the tile picker overlay
-- [ ] Update modal surface color to match dark theme if Item 2 is implemented
+- [ ] Update modal surface color to match dark theme if Item 1 is implemented
 
 ---
 
-## 8. Player Count Selector & Color Legend
+## Player Count Selector & Color Legend
 
 Expose the player count setting in the UI and add a legend mapping player colors to numbers.
 
@@ -97,7 +85,7 @@ Expose the player count setting in the UI and add a legend mapping player colors
 
 ---
 
-## 9. Exploration Decks
+## Exploration Decks
 
 Add exploration card management for the five deck types.
 
@@ -138,7 +126,7 @@ Each of the five decks has a paired discard pile:
 
 ---
 
-## 10. Conditional Home Systems
+## Conditional Home Systems
 
 Display the home systems for factions whose gate/portal tile is currently on the board.
 
@@ -161,7 +149,7 @@ Display the home systems for factions whose gate/portal tile is currently on the
 
 ---
 
-## 11. Enable ESLint for Test Files
+## Enable ESLint for Test Files
 
 Test files are currently excluded from the pre-commit ESLint hook due to pre-existing violations.
 
@@ -174,4 +162,5 @@ Test files are currently excluded from the pre-commit ESLint hook due to pre-exi
 
 ## Completed
 
-- ~~**1. Trade Goods**~~ ✅ — Add draggable trade good tokens to each player's play area.
+- ~~**Trade Goods**~~ ✅ — Add draggable trade good tokens to each player's play area.
+- ~~**CSS Design Token System**~~ ✅ — Replace magic-number colors, spacing, and radii with CSS custom properties in `:root`.

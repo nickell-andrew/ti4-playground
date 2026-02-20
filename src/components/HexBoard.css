@@ -1,16 +1,16 @@
 .board-controls {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: var(--space-2);
+  left: var(--space-2);
   display: flex;
   justify-content: space-between;
   flex-basis: min-content;
   height: fit-content;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
   z-index: 2000;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 8px;
+  padding: var(--space-2);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   max-width: 1200px;
 }
@@ -18,35 +18,35 @@
 .control-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-2);
   flex-wrap: wrap;
 
   button:disabled,
   .import-button.disabled {
-    background-color: #808080;
+    background-color: var(--color-disabled);
     cursor: default;
   }
 }
 
 .control-group button,
 .import-button {
-  padding: 8px 16px;
-  background-color: #4a90e2;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   transition: background-color 0.2s;
 }
 
 .control-group button:hover,
 .import-button:hover {
-  background-color: #3a7bc8;
+  background-color: var(--color-primary-hover);
 
   &.disabled,
   &:disabled {
-    background-color: #808080;
+    background-color: var(--color-disabled);
   }
 }
 
@@ -58,7 +58,7 @@
 /* Secondary/neutral button style for non-primary actions */
 .import-button.secondary-button {
   background-color: #e0e0e0;
-  color: #333;
+  color: var(--color-text);
 }
 
 .import-button.secondary-button:hover {
@@ -95,14 +95,14 @@
 .selected-tile {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .selected-tile-preview {
   width: 60px;
   height: 60px;
-  border: 2px solid #4a90e2;
-  border-radius: 4px;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -119,7 +119,7 @@
   position: absolute;
   /* Change clip-path to create pointy-top hexagons */
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  background-color: #f0f0f0;
+  background-color: var(--color-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -163,8 +163,8 @@
 }
 
 .hexagon-content {
-  font-size: 14px;
-  color: #333;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
   text-align: center;
   z-index: 11;
   opacity: 1;

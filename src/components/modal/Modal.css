@@ -12,9 +12,9 @@
 }
 
 .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
+    background: var(--color-surface);
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
     min-width: 300px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
