@@ -1,5 +1,5 @@
 import React, { useCallback, CSSProperties } from "react";
-import { allTiles } from "../../assets/tiles";
+import { useTileUrl } from "../../assets/tiles";
 import { PLAYER_COUNT, TILE_NUMBER_AND_ROTATION } from "../utils/mapData";
 
 export const BOARD_SIZE = 1000;
@@ -29,6 +29,8 @@ export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, til
     const handleClick = useCallback((e: React.MouseEvent) => {
         onHexClick(q, r, s, e);
     }, [q, r, s, onHexClick]);
+
+    const tileUrl = useTileUrl(tile?.number);
 
     let extraSystemStyle: CSSProperties = {}
     if (extraSystem) {
@@ -63,8 +65,8 @@ export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, til
     };
 
     // Background style for the tile image
-    const backgroundStyle = tile ? {
-        backgroundImage: `url(${allTiles[tile.number]})`,
+    const backgroundStyle = tile && tileUrl ? {
+        backgroundImage: `url(${tileUrl})`,
         // backgroundImage: `url(${urlBase}/${tile})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',

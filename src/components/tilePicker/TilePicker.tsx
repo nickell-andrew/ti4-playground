@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TileMap, tilesInfo } from '../../assets/data/tiles';
-import { allTiles, homeSystemTilesByTileNumber, hyperlaneTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../../assets/tiles';
+import { useTileUrl, homeSystemTilesByTileNumber, hyperlaneTilesByTileNumber, TILE_NUMBERS, tileNumbers } from '../../assets/tiles';
 import { TIER, tileTiers } from '../../assets/data/tile-selection';
 import { cornerCoordinates, TILE_NUMBER_AND_ROTATION } from "../utils/mapData";
 import { allRotations, degOptions, ROTATION } from "./rotations";
@@ -39,6 +39,27 @@ export interface TilePickerProps {
     onSelectTile: (tile: TILE_NUMBER_AND_ROTATION | null) => void;
     onClose: () => void;
     position: { x: number, y: number } | null;
+}
+
+interface TileOptionProps {
+    tileNumber: TILE_NUMBERS;
+    isSelected: boolean;
+    tooltipText: String;
+    rotation: number;
+    onClick: () => void;
+}
+
+const TileOption: React.FC<TileOptionProps> = ({ tileNumber, isSelected, tooltipText, rotation, onClick }) => {
+    const url = useTileUrl(tileNumber)
+    return (
+        <div
+            className={`tile-option ${isSelected ? 'selected' : ''} tooltip`}
+            onClick={onClick}
+        >
+            {url && <img src={url} alt={`Tile ${tileNumber}`} style={{ transform: `rotate(${rotation}deg)` }} />}
+            <span className="tooltiptext">{tooltipText}</span>
+        </div>
+    )
 }
 
 export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex, onSelectTile, onClose, position }) => {
@@ -266,19 +287,14 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
                 </div>
                 <div className="tile-grid">
                     {displayedTiles.map((tile, index) => (
-
-                        <div
+                        <TileOption
                             key={index}
-                            className={`tile-option ${selectedTile === tile.tileNumber ? 'selected' : ''} tooltip`}
+                            tileNumber={tile.tileNumber}
+                            isSelected={selectedTile === tile.tileNumber}
+                            tooltipText={tile.tooltipText}
+                            rotation={rotation.deg}
                             onClick={() => handleTileSelect(tile.tileNumber)}
-                        >
-                            <img
-                                src={allTiles[tile.tileNumber]}
-                                alt={`Tile ${tile})}`}
-                                style={{ transform: `rotate(${rotation.deg}deg)` }}
-                            />
-                            <span className="tooltiptext"> {tile.tooltipText}</span>
-                        </div>
+                        />
                     ))}
                     {!isShowingAll && (
                         <button onClick={() => setShowAll(true)}>

@@ -1,136 +1,8 @@
-import stEmpty from './ST_-1.png'
-import st0 from './ST_0.png'
-import st1 from './ST_1.png'
-import st2 from './ST_2.png'
-import st3 from './ST_3.png'
-import st4 from './ST_4.png'
-import st5 from './ST_5.png'
-import st6 from './ST_6.png'
-import st7 from './ST_7.png'
-import st8 from './ST_8.png'
-import st9 from './ST_9.png'
-import st10 from './ST_10.png'
-import st11 from './ST_11.png'
-import st12 from './ST_12.png'
-import st13 from './ST_13.png'
-import st14 from './ST_14.png'
-import st15 from './ST_15.png'
-import st16 from './ST_16.png'
-import st17 from './ST_17.png'
-import st18 from './ST_18.png'
-import st19 from './ST_19.png'
-import st20 from './ST_20.png'
-import st21 from './ST_21.png'
-import st22 from './ST_22.png'
-import st23 from './ST_23.png'
-import st24 from './ST_24.png'
-import st25 from './ST_25.png'
-import st26 from './ST_26.png'
-import st27 from './ST_27.png'
-import st28 from './ST_28.png'
-import st29 from './ST_29.png'
-import st30 from './ST_30.png'
-import st31 from './ST_31.png'
-import st32 from './ST_32.png'
-import st33 from './ST_33.png'
-import st34 from './ST_34.png'
-import st35 from './ST_35.png'
-import st36 from './ST_36.png'
-import st37 from './ST_37.png'
-import st38 from './ST_38.png'
-import st39 from './ST_39.png'
-import st40 from './ST_40.png'
-import st41 from './ST_41.png'
-import st42 from './ST_42.png'
-import st43 from './ST_43.png'
-import st44 from './ST_44.png'
-import st45 from './ST_45.png'
-import st46 from './ST_46.png'
-import st47 from './ST_47.png'
-import st48 from './ST_48.png'
-import st49 from './ST_49.png'
-import st50 from './ST_50.png'
-import st51 from './ST_51.png'
-import st52 from './ST_52.png'
-import st53 from './ST_53.png'
-import st54 from './ST_54.png'
-import st55 from './ST_55.png'
-import st56 from './ST_56.png'
-import st57 from './ST_57.png'
-import st58 from './ST_58.png'
-import st59 from './ST_59.png'
-import st60 from './ST_60.png'
-import st61 from './ST_61.png'
-import st62 from './ST_62.png'
-import st63 from './ST_63.png'
-import st64 from './ST_64.png'
-import st65 from './ST_65.png'
-import st66 from './ST_66.png'
-import st67 from './ST_67.png'
-import st68 from './ST_68.png'
-import st69 from './ST_69.png'
-import st70 from './ST_70.png'
-import st71 from './ST_71.png'
-import st72 from './ST_72.png'
-import st73 from './ST_73.png'
-import st74 from './ST_74.png'
-import st75 from './ST_75.png'
-import st76 from './ST_76.png'
-import st77 from './ST_77.png'
-import st78 from './ST_78.png'
-import st79 from './ST_79.png'
-import st80 from './ST_80.png'
-import st81 from './ST_81.png'
-import st82 from './ST_82.png'
-import st83A from './ST_83A.png'
-import st83B from './ST_83B.png'
-import st84A from './ST_84A.png'
-import st84B from './ST_84B.png'
-import st85A from './ST_85A.png'
-import st85B from './ST_85B.png'
-import st86A from './ST_86A.png'
-import st86B from './ST_86B.png'
-import st87A from './ST_87A.png'
-import st87B from './ST_87B.png'
-import st88A from './ST_88A.png'
-import st88B from './ST_88B.png'
-import st89A from './ST_89A.png'
-import st89B from './ST_89B.png'
-import st90A from './ST_90A.png'
-import st90B from './ST_90B.png'
-import st91A from './ST_91A.png'
-import st91B from './ST_91B.png'
-import st92 from './ST_92.png'
-import st93 from './ST_93.png'
-import st94 from './ST_94.png'
-import st95 from './ST_95.png'
-import st96A from './ST_96a.png'
-import st96B from './ST_96b.png'
-import st97 from './ST_97.png'
-import st98 from './ST_98.png'
-import st99 from './ST_99.png'
-import st100 from './ST_100.png'
-import st101 from './ST_101.png'
-import st102 from './ST_102.png'
-import st103 from './ST_103.png'
-import st104 from './ST_104.png'
-import st105 from './ST_105.png'
-import st106 from './ST_106.png'
-import st107 from './ST_107.png'
-import st108 from './ST_108.png'
-import st109 from './ST_109.png'
-import st110 from './ST_110.png'
-import st111 from './ST_111.png'
-import st112 from './ST_112.png'
-import st113 from './ST_113.png'
-import st114 from './ST_114.png'
-import st115 from './ST_115.png'
-import st116 from './ST_116.png'
-import st117 from './ST_117.png'
+import { useState, useEffect } from 'react'
 import { allFactions, ALL_FACTIONS, factionInfo } from '../data/factions'
 import { Tile, TileMap } from '../data/tiles'
 import { tilesInfo } from '../data/tiles'
-// Define a type for tile selection data
+
 export interface TileSelectionData {
     tiers: {
         high: number[];
@@ -273,145 +145,62 @@ export const tileNumbers = {
 } as const;
 export type TILE_NUMBERS = (typeof tileNumbers)[keyof typeof tileNumbers]
 
+const validTileNumbers = new Set<string>(Object.values(tileNumbers))
+
 export function isTileNumber(value: string): value is TILE_NUMBERS {
-    if (allTiles[(value as unknown as TILE_NUMBERS)] === undefined) {
-        return false
-    } else {
-        return true
-    }
+    return validTileNumbers.has(value)
 }
 
-export const allTiles: Record<TILE_NUMBERS, string> = {
-    "-1": stEmpty,
-    "0": st0,
-    "1": st1,
-    "2": st2,
-    "3": st3,
-    "4": st4,
-    "5": st5,
-    "6": st6,
-    "7": st7,
-    "8": st8,
-    "9": st9,
-    "10": st10,
-    "11": st11,
-    "12": st12,
-    "13": st13,
-    "14": st14,
-    "15": st15,
-    "16": st16,
-    "17": st17,
-    "18": st18,
-    "19": st19,
-    "20": st20,
-    "21": st21,
-    "22": st22,
-    "23": st23,
-    "24": st24,
-    "25": st25,
-    "26": st26,
-    "27": st27,
-    "28": st28,
-    "29": st29,
-    "30": st30,
-    "31": st31,
-    "32": st32,
-    "33": st33,
-    "34": st34,
-    "35": st35,
-    "36": st36,
-    "37": st37,
-    "38": st38,
-    "39": st39,
-    "40": st40,
-    "41": st41,
-    "42": st42,
-    "43": st43,
-    "44": st44,
-    "45": st45,
-    "46": st46,
-    "47": st47,
-    "48": st48,
-    "49": st49,
-    "50": st50,
-    "51": st51,
-    "52": st52,
-    "53": st53,
-    "54": st54,
-    "55": st55,
-    "56": st56,
-    "57": st57,
-    "58": st58,
-    "59": st59,
-    "60": st60,
-    "61": st61,
-    "62": st62,
-    "63": st63,
-    "64": st64,
-    "65": st65,
-    "66": st66,
-    "67": st67,
-    "68": st68,
-    "69": st69,
-    "70": st70,
-    "71": st71,
-    "72": st72,
-    "73": st73,
-    "74": st74,
-    "75": st75,
-    "76": st76,
-    "77": st77,
-    "78": st78,
-    "79": st79,
-    "80": st80,
-    "81": st81,
-    "82": st82,
-    "83A": st83A,
-    "83B": st83B,
-    "84A": st84A,
-    "84B": st84B,
-    "85A": st85A,
-    "85B": st85B,
-    "86A": st86A,
-    "86B": st86B,
-    "87A": st87A,
-    "87B": st87B,
-    "88A": st88A,
-    "88B": st88B,
-    "89A": st89A,
-    "89B": st89B,
-    "90A": st90A,
-    "90B": st90B,
-    "91A": st91A,
-    "91B": st91B,
-    "92": st92,
-    "93": st93,
-    "94": st94,
-    "95": st95,
-    "96a": st96A,
-    "96b": st96B,
-    "97": st97,
-    "98": st98,
-    "99": st99,
-    "100": st100,
-    "101": st101,
-    "102": st102,
-    "103": st103,
-    "104": st104,
-    "105": st105,
-    "106": st106,
-    "107": st107,
-    "108": st108,
-    "109": st109,
-    "110": st110,
-    "111": st111,
-    "112": st112,
-    "113": st113,
-    "114": st114,
-    "115": st115,
-    "116": st116,
-    "117": st117,
+// Map tile numbers to their filename stem (handles special cases like 96a/96b)
+function tileFilename(number: TILE_NUMBERS): string {
+    return `ST_${number}`
 }
+
+// Module-level cache: tile number -> loaded URL
+const tileUrlCache: Partial<Record<TILE_NUMBERS, string>> = {}
+
+// In-flight promises to avoid duplicate fetches
+const tileUrlPromises: Partial<Record<TILE_NUMBERS, Promise<string>>> = {}
+
+function loadTileUrl(number: TILE_NUMBERS): Promise<string> {
+    if (tileUrlCache[number] !== undefined) {
+        return Promise.resolve(tileUrlCache[number] as string)
+    }
+    if (tileUrlPromises[number] !== undefined) {
+        return tileUrlPromises[number] as Promise<string>
+    }
+    const filename = tileFilename(number)
+    const promise = import(`./${filename}.webp`).then((mod: { default: string }) => {
+        tileUrlCache[number] = mod.default
+        return mod.default
+    })
+    tileUrlPromises[number] = promise
+    return promise
+}
+
+export function useTileUrl(number: TILE_NUMBERS | null | undefined): string | undefined {
+    const cached = number != null ? tileUrlCache[number] : undefined
+    const [url, setUrl] = useState<string | undefined>(cached)
+
+    useEffect(() => {
+        if (number == null) {
+            setUrl(undefined)
+            return
+        }
+        if (tileUrlCache[number] !== undefined) {
+            setUrl(tileUrlCache[number])
+            return
+        }
+        let cancelled = false
+        loadTileUrl(number).then(loaded => {
+            if (!cancelled) setUrl(loaded)
+        })
+        return () => { cancelled = true }
+    }, [number])
+
+    return url
+}
+
 export type HOME_SYSTEM_TILES = Record<ALL_FACTIONS, Tile>
 export const homeSystemTiles: HOME_SYSTEM_TILES = {
     ...Object.entries(allFactions).reduce((dict, [_, value]) => {

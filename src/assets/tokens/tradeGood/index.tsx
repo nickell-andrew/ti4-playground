@@ -1,5 +1,5 @@
 import React from 'react';
-import Tg1 from '../../general/tg1.png';
+import Tg1 from '../../general/tg1.webp';
 import type { ImageComponentProps } from '../../units/black';
 
 const TradeGoodToken: React.FC<ImageComponentProps> = ({ alt, style }) => (

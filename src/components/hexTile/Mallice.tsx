@@ -1,4 +1,4 @@
-import malliceImage from '../../assets/tiles/ST_82.png'
+import malliceImage from '../../assets/tiles/ST_82.webp'
 import { getScaleFactor } from './HexTile';
 
 export interface MalliceProps {
