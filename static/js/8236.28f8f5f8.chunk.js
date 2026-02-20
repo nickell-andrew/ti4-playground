@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmy_app=self.webpackChunkmy_app||[]).push([[8236],{8236:(e,p,a)=>{e.exports=a.p+"static/media/ST_31.c1e35b35042715f79ae3.webp"}}]);
