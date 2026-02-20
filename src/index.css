@@ -1,12 +1,12 @@
 :root {
   /* Colors */
-  --color-primary: #4a90e2;
-  --color-primary-hover: #3a7bc8;
-  --color-surface: #ffffff;
-  --color-bg: #f0f0f0;
-  --color-text: #333333;
-  --color-border: #cccccc;
-  --color-disabled: #808080;
+  --color-primary: #D4A017;
+  --color-primary-hover: #b8880f;
+  --color-surface: rgba(15, 20, 35, 0.92);
+  --color-bg: #0d1117;
+  --color-text: #e8eaf0;
+  --color-border: rgba(255, 255, 255, 0.15);
+  --color-disabled: #4a5060;
   --color-accent-gold: #D4A017;
 
   /* Spacing */
@@ -39,6 +39,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: radial-gradient(ellipse at center, #111827 0%, #0a0f1a 100%);
+  color: var(--color-text);
 }
 
 code {

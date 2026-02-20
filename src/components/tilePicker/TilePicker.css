@@ -46,7 +46,9 @@
         .tile-picker-search {
             flex-grow: 3;
             padding: var(--space-2) var(--space-3);
-            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
             flex-grow: 1;
         }
@@ -68,15 +70,16 @@
 .category-buttons button {
     flex: 1;
     padding: var(--space-2) var(--space-3);
-    background-color: #e0e0e0;
-    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
 .category-buttons button:hover {
-    background-color: #d0d0d0;
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 .category-buttons button.active {
@@ -96,8 +99,9 @@
     flex: 1;
     min-width: calc(20% - 6px);
     padding: 6px var(--space-2);
-    background-color: #e0e0e0;
-    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -105,7 +109,7 @@
 }
 
 .tier-buttons button:hover {
-    background-color: #d0d0d0;
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 .tier-buttons button.active {
@@ -115,22 +119,24 @@
 
 .tile-picker-header button {
     padding: var(--space-2) var(--space-3);
-    background-color: #e0e0e0;
-    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     cursor: pointer;
 }
 
 .tile-picker-header button:hover {
-    background-color: #d0d0d0;
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 .close-button {
     width: 33px;
     height: 33px;
     border-radius: var(--radius-full);
-    background-color: var(--color-bg);
-    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
     font-size: 20px;
     line-height: 1;
     cursor: pointer;
@@ -140,7 +146,7 @@
 }
 
 .close-button:hover {
-    background-color: #e0e0e0;
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 .tooltip {
@@ -174,7 +180,7 @@
     max-height: 60vh;
     overflow-y: auto;
     padding: var(--space-2);
-    background-color: #f9f9f9;
+    background-color: rgba(0, 0, 0, 0.2);
     border-radius: var(--radius-sm);
 }
 
@@ -218,5 +224,5 @@
 }
 
 .tile-grid button:hover {
-    background-color: #e0e0e0;
+    background-color: rgba(255, 255, 255, 0.18);
 }

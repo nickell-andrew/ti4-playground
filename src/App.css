@@ -1,5 +1,5 @@
 .body {
-  background-color: #f0f0f0;
+  background: radial-gradient(ellipse at center, #111827 0%, #0a0f1a 100%);
   width: 100dvw;
   height: 100dvh;
 }
@@ -11,6 +11,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: radial-gradient(ellipse at center, #111827 0%, #0a0f1a 100%);
 }
 
 

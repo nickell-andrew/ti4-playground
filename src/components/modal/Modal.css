@@ -13,8 +13,12 @@
 
 .modal-content {
     background: var(--color-surface);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--color-border);
     padding: var(--space-5);
     border-radius: var(--radius-md);
     min-width: 300px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+    color: var(--color-text);
 }
