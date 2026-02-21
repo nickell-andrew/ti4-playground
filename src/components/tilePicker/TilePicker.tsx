@@ -90,6 +90,20 @@ export const TilePicker: React.FC<TilePickerProps> = ({ selectedTile, activeHex,
         };
     }, [onClose]);
 
+    // Close picker on Escape key
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                onClose();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onClose]);
+
     // Filter tiles based on search input, active category, and active tier
     const filteredTiles = useMemo(() => {
         const filteredTiles = Object.values(tileNumbers).filter(tileNumber => {

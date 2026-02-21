@@ -26,7 +26,7 @@ export const BoardControls: React.FC<BoardControlsProps> = ({
                 <button onClick={onSaveMap}>Save Map</button>
                 <button onClick={onExportClick}>Export Map</button>
                 <button
-                    className={classNames("import-button", locked && "disabled")}
+                    className={classNames("action-button", locked && "disabled")}
                     disabled={locked}
                     onClick={onImportClick}
                 >

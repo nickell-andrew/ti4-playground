@@ -20,17 +20,6 @@ Establish a coherent type scale and eliminate the inconsistent mix of font sizes
 
 ---
 
-## Modal System Consistency & Bug Fix
-
-Fix a latent z-index bug in `ConfirmModal` and clean up the parallel modal systems.
-
-- [ ] Fix `ConfirmModal.module.css` `z-index: 1` to a value above other positioned elements (use `--z-modal` token if available, otherwise `1000`)
-- [ ] Add `Escape` key listener to `TilePicker.tsx` (currently only closeable via outside-click)
-- [ ] Add fade-in transition to `Modal.css` overlay
-- [ ] Rename the `import-button` CSS class in `ExportMapModal.tsx` to `action-button` (semantic naming error)
-
----
-
 ## Hex Hover Micro-interactions
 
 Give hex tiles a polished, thematic hover state and make the active-editing hex visually distinct.
@@ -198,3 +187,4 @@ Let users reset pieces only, or wipe the entire board state, from the control pa
 - ~~**CSS Design Token System**~~ ✅ — Replace magic-number colors, spacing, and radii with CSS custom properties in `:root`.
 - ~~**Dark Space Theme**~~ ✅ — Dark near-black radial gradient background, translucent frosted-glass control panel, dark empty hexes, and updated button/text colors throughout.
 - ~~**Typography & Spacing Normalization**~~ ✅ — Set base font-size/line-height on body, replace hardcoded font-sizes and weights with design tokens, normalize button padding throughout.
+- ~~**Modal System Consistency & Bug Fix**~~ ✅ — Fixed ConfirmModal z-index to 1000, added Escape key to TilePicker, fade-in transition on Modal overlay, renamed `import-button` to `action-button`.

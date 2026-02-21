@@ -38,9 +38,9 @@ export const ImportMapModal: React.FC<ImportMapModalProps> = ({
                 </p>
             </div>
             <div className="form-actions">
-                <button className="import-button" onClick={() => fileInputRef.current?.click()}>Import From JSON</button>
-                <button className="import-button" onClick={onImportTTSString}>Import TTS String</button>
-                <button className="import-button secondary-button" onClick={onClose}>Cancel</button>
+                <button className="action-button" onClick={() => fileInputRef.current?.click()}>Import From JSON</button>
+                <button className="action-button" onClick={onImportTTSString}>Import TTS String</button>
+                <button className="action-button secondary-button" onClick={onClose}>Cancel</button>
             </div>
             <input
                 ref={fileInputRef}

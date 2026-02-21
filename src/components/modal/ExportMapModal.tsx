@@ -41,11 +41,11 @@ export const ExportMapModal: React.FC<ExportMapModalProps> = ({
                 />
             </div>
             <div className="form-actions">
-                <button className="import-button" onClick={handleCopy}>
+                <button className="action-button" onClick={handleCopy}>
                     {copied ? 'Copied!' : 'Copy to clipboard'}
                 </button>
-                <button className="import-button" onClick={handleExportAndClose}>Export to file</button>
-                <button className="import-button secondary-button" onClick={onClose}>Cancel</button>
+                <button className="action-button" onClick={handleExportAndClose}>Export to file</button>
+                <button className="action-button secondary-button" onClick={onClose}>Cancel</button>
             </div>
         </Modal>
     );

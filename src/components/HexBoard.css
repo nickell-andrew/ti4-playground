@@ -26,14 +26,14 @@
   flex-wrap: wrap;
 
   button:disabled,
-  .import-button.disabled {
+  .action-button.disabled {
     background-color: var(--color-disabled);
     cursor: default;
   }
 }
 
 .control-group button,
-.import-button {
+.action-button {
   padding: var(--space-2) var(--space-4);
   background-color: var(--color-primary);
   color: white;
@@ -45,7 +45,7 @@
 }
 
 .control-group button:hover,
-.import-button:hover {
+.action-button:hover {
   background-color: var(--color-primary-hover);
 
   &.disabled,
@@ -54,19 +54,19 @@
   }
 }
 
-.import-button {
+.action-button {
   display: inline-block;
   text-align: center;
 }
 
 /* Secondary/neutral button style for non-primary actions */
-.import-button.secondary-button {
+.action-button.secondary-button {
   background-color: rgba(255, 255, 255, 0.12);
   color: var(--color-text);
   border: 1px solid var(--color-border);
 }
 
-.import-button.secondary-button:hover {
+.action-button.secondary-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
