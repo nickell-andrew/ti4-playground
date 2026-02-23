@@ -28,3 +28,7 @@ npm start      # Development server on http://localhost:3000
 | `npm run build` | Production build |
 | `npm run deploy` | Deploy to GitHub Pages |
 | `npm run lint-fix` | Auto-fix ESLint issues |
+
+## Credits
+
+Some images used in this project were borrowed with permission from [AsyncTI4](https://github.com/AsyncTI4).
