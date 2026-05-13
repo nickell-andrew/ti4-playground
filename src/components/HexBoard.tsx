@@ -497,6 +497,7 @@ const HexBoard: React.FC = () => {
         boardSize={boardSize}
         hexagons={hexagons}
         hexTiles={hexTiles}
+        activeHex={activeHex}
         playerCount={playerCount}
         locked={locked}
         onHexClick={handleHexClick}

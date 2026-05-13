@@ -20,15 +20,6 @@ Establish a coherent type scale and eliminate the inconsistent mix of font sizes
 
 ---
 
-## Hex Hover Micro-interactions
-
-Give hex tiles a polished, thematic hover state and make the active-editing hex visually distinct.
-
-- [ ] Update hover filter in `HexBoard.css` from plain `brightness(1.1)` to a blue glow: `filter: brightness(1.05) drop-shadow(0 0 8px rgba(74, 144, 226, 0.6))`
-- [x] Replace raw `q,r,s` coordinate text in empty hexes with a subtle `+` or crosshair icon indicating "click to place"
-- [ ] Add `.hexagon.active` CSS class with a ring highlight for the hex whose tile picker is currently open
-- [ ] Wire `isActive` prop through `HexTile.tsx` from the `activeHex` state in `HexBoard.tsx`
-
 ---
 
 ## Persistent Toolbar / Sidebar
@@ -183,6 +174,7 @@ Let users reset pieces only, or wipe the entire board state, from the control pa
 
 ## Completed
 
+- ~~**Hex Hover Micro-interactions**~~ ✅ — Added a blue-glow hover state, active hex ring highlight, and subtle empty-hex placement indicator.
 - ~~**Trade Goods**~~ ✅ — Add draggable trade good tokens to each player's play area.
 - ~~**CSS Design Token System**~~ ✅ — Replace magic-number colors, spacing, and radii with CSS custom properties in `:root`.
 - ~~**Dark Space Theme**~~ ✅ — Dark near-black radial gradient background, translucent frosted-glass control panel, dark empty hexes, and updated button/text colors throughout.

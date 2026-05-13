@@ -9,6 +9,7 @@ interface HexBoardGridProps {
     boardSize: number;
     hexagons: { q: number; r: number; s: number, extraSystem?: boolean }[];
     hexTiles: Record<string, TILE_NUMBER_AND_ROTATION>;
+    activeHex: { q: number; r: number; s: number } | null;
     playerCount: PLAYER_COUNT;
     locked: boolean;
     onHexClick: (q: number, r: number, s: number, event: React.MouseEvent) => void;
@@ -22,6 +23,7 @@ export const HexBoardGrid: React.FC<HexBoardGridProps> = React.memo(({
     boardSize,
     hexagons,
     hexTiles,
+    activeHex,
     playerCount,
     locked,
     onHexClick,
@@ -52,6 +54,7 @@ export const HexBoardGrid: React.FC<HexBoardGridProps> = React.memo(({
                                     boardSize={boardSize}
                                     playerCount={playerCount}
                                     tile={hexTiles[hexKey] ?? null}
+                                    isActive={activeHex?.q === hex.q && activeHex?.r === hex.r && activeHex?.s === hex.s}
                                     isLocked={locked}
                                     onHexClick={onHexClick}
                                 />

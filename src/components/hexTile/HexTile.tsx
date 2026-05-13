@@ -21,11 +21,12 @@ export interface HexProps {
     boardSize: number;
     playerCount: PLAYER_COUNT;
     tile: TILE_NUMBER_AND_ROTATION | null;
+    isActive: boolean;
     isLocked: boolean;
     onHexClick: (q: number, r: number, s: number, event: React.MouseEvent) => void;
 }
 
-export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, tile, isLocked, extraSystem = false, onHexClick }) => {
+export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, tile, isActive, isLocked, extraSystem = false, onHexClick }) => {
     const handleClick = useCallback((e: React.MouseEvent) => {
         onHexClick(q, r, s, e);
     }, [q, r, s, onHexClick]);
@@ -75,7 +76,7 @@ export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, til
 
     return (
         <div
-            className="hexagon"
+            className={`hexagon${isActive ? ' active' : ''}`}
             style={{ ...style, ...backgroundStyle, ...(isLocked ? { pointerEvents: 'none' } : {}), ...extraSystemStyle }}
             onClick={handleClick}
             data-testid={!tile && !extraSystem ? 'empty-hex' : undefined}

@@ -126,6 +126,23 @@ describe('Tile picker updates the map', () => {
     expect(await screen.findByText('Select a Tile')).toBeInTheDocument();
   });
 
+  it('highlights the active hex while the tile picker is open and clears it on close', async () => {
+    render(<App />);
+    const emptyHex = screen.getAllByTestId('empty-hex')[0];
+
+    expect(emptyHex).not.toHaveClass('active');
+
+    fireEvent.click(emptyHex);
+    await screen.findByText('Select a Tile');
+    expect(emptyHex).toHaveClass('active');
+
+    fireEvent.click(screen.getByText('×'));
+    await waitFor(() => {
+      expect(screen.queryByText('Select a Tile')).not.toBeInTheDocument();
+    });
+    expect(emptyHex).not.toHaveClass('active');
+  });
+
   it('closes tile picker when close button is clicked', async () => {
     render(<App />);
     fireEvent.click(screen.getAllByTestId('empty-hex')[0]);
