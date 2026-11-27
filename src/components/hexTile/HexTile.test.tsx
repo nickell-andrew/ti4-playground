@@ -35,6 +35,7 @@ describe('HexTile', () => {
 
     const hex = screen.getByTestId('empty-hex');
     expect(hex).toHaveClass('hexagon active');
+    expect(hex).toHaveClass('empty');
 
     fireEvent.click(hex);
 
@@ -62,7 +63,8 @@ describe('HexTile', () => {
     const hex = container.firstChild as HTMLElement;
 
     expect(screen.queryByTestId('empty-hex')).not.toBeInTheDocument();
-    expect(hex).toHaveStyle({
+    expect(hex).not.toHaveClass('empty');
+    expect(hex.querySelector('.hexagon-image')).toHaveStyle({
       backgroundImage: 'url(tile.webp)',
       transform: 'rotate(60deg)',
     });

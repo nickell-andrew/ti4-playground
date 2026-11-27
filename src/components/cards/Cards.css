@@ -1,0 +1,35 @@
+.strategy-art { display: block; width: 100%; height: auto; border-radius: 5px; user-select: none; pointer-events: none; }
+.strategy-art.used { filter: grayscale(1) brightness(.65); }
+.planet-art { display: inline-block; position: relative; box-sizing: border-box; width: 54px; height: 154px; border: 2px solid #e6f2ff; background: #080c13; color: white; text-align: left; overflow: hidden; }
+.planet-art.exhausted { border-color: #757e89; color: #8f99a7; }
+.planet-trait-art { position: absolute; width: 46px; height: 44px; object-fit: contain; left: 2px; top: 2px; }
+.planet-vertical-name { position: absolute; left: 4px; bottom: 5px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 14px; font-family: 'Arial Narrow', sans-serif; text-transform: uppercase; font-weight: 700; max-height: 110px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.planet-value { position: absolute; left: 27px; width: 22px; height: 22px; display: grid; place-items: center; }
+.planet-value img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.planet-value b { position: relative; font-size: 16px; color: white; }
+.planet-value.resource { top: 102px; }.planet-value.influence { top: 124px; }
+.planet-legendary-art { position: absolute; left: 27px; top: 60px; width: 20px; height: 20px; }
+.planet-tech-art { position: absolute; left: 27px; top: 82px; width: 20px; height: 20px; }
+.board-card { position: absolute; z-index: 170; background: #090e17; color: #e6edff; padding: 0; border: 0; border-radius: 4px; transform: translate(-50%,-50%); cursor: grab; touch-action: none; text-align: center; }
+.board-card.strategies { width: 96px; }.board-card.planets { width: 54px; }
+.board-card:focus-visible { outline: 3px solid #92d7ff; }
+.board-card.selected { outline: 2px solid #92d7ff; outline-offset: 3px; }
+.board-card-state { display: block; font-size: 11px; line-height: 17px; background: #0b1324; white-space: nowrap; }
+.card-drag-handle { touch-action: none; cursor: grab !important; width: 100%; }
+.player-card-area { position: absolute; width: 270px; height: 285px; border: 1px dashed #52647e; border-radius: 12px; z-index: 0; pointer-events: none; background: #17243833; }
+.player-card-area > span { position: absolute; top: 5px; left: 8px; font-size: 13px; color: #afc5e2; }
+.player-card-area.over { background: #3e78a455; border: 2px solid #97d9ff; }
+.tabletop-cards .card-face .strategy-art { width: 210px; margin: auto; }
+.tabletop-cards .card-face .planet-art { align-self: center; }
+/* Compact drawer: artwork carries the title and status. */
+.tabletop-cards .card-list.strategies { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tabletop-cards .card-list.planets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tabletop-cards .card-list { gap: 8px; }
+.tabletop-cards .card-face { padding: 3px; gap: 0; align-items: center; touch-action: pan-y; cursor: grab; }
+.tabletop-cards .card-face .strategy-art { width: 100%; }
+.tabletop-cards .card-face .planet-art { flex-shrink: 0; }
+.tabletop-cards .card-owner { padding: 4px; }
+.tabletop-cards .card-owner select { width: 100%; min-width: 0; padding: 4px 2px; min-height: 32px; font-size: 12px; }
+.tabletop-cards .cards-toolbar { gap: 4px; margin: 10px 0; }
+.tabletop-cards .cards-toolbar button, .tabletop-cards .cards-toolbar select { font-size: 12px; padding: 6px; }
+.tabletop-cards .cards-toolbar label { font-size: 12px; }

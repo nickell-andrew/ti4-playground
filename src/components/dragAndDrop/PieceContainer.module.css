@@ -1,5 +1,7 @@
 .container {
   position: absolute;
+  transform: translate(-50%, -50%);
+  touch-action: none;
   display: flex;
   align-items: center;
   justify-content: center;

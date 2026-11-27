@@ -1,9 +1,9 @@
 import { UNITS, TOKENS, ALL_PIECES, tokens } from '../consts';
 import { DraggablePieceProps, DraggablePiecePropsByUid, getUidFromDraggablePieceProps } from './draggablePieceUtils';
-import { referencePoints, pieceOffsetInHex } from '../utils/pieceCoordinates';
+import { organizeCommandPools } from '../utils/commandPools';
 
-// Number of command counters pre-placed on the board at game start (in rightmost grey hex)
-export const COMMAND_COUNTERS_PRE_PLACED = 8;
+export const INITIAL_COMMAND_POOL_COUNTS = { tactics: 3, fleet: 3, strategy: 2 } as const;
+export const COMMAND_COUNTERS_PRE_PLACED = Object.values(INITIAL_COMMAND_POOL_COUNTS).reduce((sum, count) => sum + count, 0);
 
 // Max piece counts per type (used for container display)
 export const maxPieceCounts: Record<ALL_PIECES, number> = {
@@ -37,16 +37,25 @@ export const getDraggablePieceProps = (player: number): DraggablePiecePropsByUid
     // Units start with no active pieces - they are spawned from containers
     const draggablesByUid: DraggablePiecePropsByUid = {};
 
-    // Pre-place 7 command counters in the rightmost grey hex (p{player}h3)
+    // Pre-place command counters in each player's rightmost grey hex.
     const commandCounterToken: TOKENS = "commandCounter";
-    const base = referencePoints[`p${player}h3`];
-    for (let i = 1; i <= COMMAND_COUNTERS_PRE_PLACED; i++) {
-        const props: DraggablePieceProps = { player, name: commandCounterToken, pieceNumber: i };
-        const offset = pieceOffsetInHex[`${commandCounterToken}${i}`];
-        const uid = getUidFromDraggablePieceProps(props);
-        draggablesByUid[uid] = { ...props, x: base.x + offset.x, y: base.y + offset.y };
-    }
+    let pieceNumber = 1;
+    (Object.keys(INITIAL_COMMAND_POOL_COUNTS) as (keyof typeof INITIAL_COMMAND_POOL_COUNTS)[]).forEach(commandPool => {
+        for (let i = 0; i < INITIAL_COMMAND_POOL_COUNTS[commandPool]; i++) {
+            const props: DraggablePieceProps = { player, name: commandCounterToken, pieceNumber: pieceNumber++ };
+            const uid = getUidFromDraggablePieceProps(props);
+            draggablesByUid[uid] = { ...props, commandPool };
+        }
+    });
 
-    return draggablesByUid;
+    return organizeCommandPools(draggablesByUid, player);
+};
+
+export const getInitialPieces = (playerCount: number): DraggablePiecePropsByUid => {
+    const pieces: DraggablePiecePropsByUid = {};
+    for (let player = 1; player <= playerCount; player++) {
+        Object.assign(pieces, getDraggablePieceProps(player));
+    }
+    return pieces;
 };
 

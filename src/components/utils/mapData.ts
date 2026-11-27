@@ -1,6 +1,7 @@
 import { allRotations, ROTATION } from '../tilePicker/rotations';
 import { tileNumbers, TILE_NUMBERS } from '../../assets/tiles';
 import type { DraggablePiecePropsByUid } from '../dragAndDrop/draggablePieceUtils';
+import type { TabletopCards } from './tabletopCards';
 
 export type PLAYER_COUNT = 3 | 4 | 5 | 6 | 7 | 8;
 
@@ -88,5 +89,6 @@ export interface MapDataV2 {
     playerCount: PLAYER_COUNT;
     allDraggablesByUid: DraggablePiecePropsByUid;
     timestamp: number;
+    cards?: TabletopCards;
 }
 

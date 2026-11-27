@@ -63,7 +63,9 @@ export const PieceContainer: React.FC<PieceContainerProps> = React.memo(({
                 isDisabled && styles.disabled,
                 isOver && !isDisabled && styles.isOver,
             )}
-            style={{ left: x, top: y } as React.CSSProperties}
+            style={{ left: x + 20, top: y + 20 } as React.CSSProperties}
+            data-piece-supply="true"
+            aria-label={`Player ${player} ${name} supply (${remaining} remaining)`}
             {...attributes}
             {...listeners}
         >

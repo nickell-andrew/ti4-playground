@@ -47,7 +47,7 @@ export const pieceSize = {
     carrier: [60, 60],
     dreadnought: [60, 60],
     flagship: [70, 70],
-    warsun: [60, 60],
+    warsun: [48, 48],
     commandCounter: [40, 40],
     tradeGood: [30, 30],
     tradeGoodBundle: [42, 42],

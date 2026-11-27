@@ -1,6 +1,10 @@
 import React, { useCallback, CSSProperties } from "react";
+import { useDroppable, useDndContext } from '@dnd-kit/core';
+import { getHexGeometry } from '../utils/boardGeometry';
 import { useTileUrl } from "../../assets/tiles";
 import { PLAYER_COUNT, TILE_NUMBER_AND_ROTATION } from "../utils/mapData";
+import { planetTargets } from '../utils/systemTargets';
+import { PlanetDropTarget } from './PlanetDropTarget';
 
 export const BOARD_SIZE = 1000;
 
@@ -31,7 +35,16 @@ export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, til
         onHexClick(q, r, s, e);
     }, [q, r, s, onHexClick]);
 
-    const tileUrl = useTileUrl(tile?.number);
+    const visibleTile = tile?.number === '0' ? null : tile;
+    const tileUrl = useTileUrl(visibleTile?.number);
+    const geometry = getHexGeometry(q, r, boardSize);
+    const { active } = useDndContext();
+    const showGroundTargets = /-(infantry|mech|spacedock|pds)(-|$)/.test(String(active?.id ?? ''));
+    const { setNodeRef, isOver } = useDroppable({
+        id: `hex-${q},${r},${s}`,
+        disabled: extraSystem,
+        data: { isHex: true, hexKey: `${q},${r},${s}`, x: geometry.x, y: geometry.y },
+    });
 
     let extraSystemStyle: CSSProperties = {}
     if (extraSystem) {
@@ -41,47 +54,35 @@ export const HexTile: React.FC<HexProps> = React.memo(({ q, r, s, boardSize, til
         }
     }
 
-    const scaleFactor = getScaleFactor(boardSize)
-
-    // Calculate hexagon dimensions for pointy-top orientation
-    const hexWidth = 180 * scaleFactor;
-    const hexHeight = 160 * scaleFactor;
-
-    // For pointy-top hexagons:
-    // - Horizontal distance between centers: width * sqrt(3)/2 (≈ 0.866)
-    // - Vertical distance between centers: height * 3/4
-
-    const horizontalSpacing = hexWidth * 0.751; // sqrt(3)/2 of width
-    const verticalSpacing = hexHeight * 0.995
-
-    // Calculate position with proper offsets for pointy-top orientation
-    const left = (q + 1.1) * horizontalSpacing + (boardSize / 2) - (hexWidth / 2); // Center horizontally
-    const top = 240 + (r * verticalSpacing + q * verticalSpacing * 0.5) + (boardSize / 2) * 1 - (hexHeight / 2); // Center vertically with adjustment
-
     const style = {
-        left: `${left}px`,
-        top: `${top}px`,
-        width: `${hexWidth}px`,
-        height: `${hexHeight}px`
+        left: geometry.left,
+        top: geometry.top,
+        width: geometry.width,
+        height: geometry.height,
     };
 
     // Background style for the tile image
-    const backgroundStyle = tile && tileUrl ? {
+    const backgroundStyle = visibleTile && tileUrl ? {
         backgroundImage: `url(${tileUrl})`,
         // backgroundImage: `url(${urlBase}/${tile})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        transform: `rotate(${tile.rotation.deg}deg)`
+        transform: `rotate(${visibleTile.rotation.deg}deg)`
     } : {};
 
     return (
         <div
-            className={`hexagon${isActive ? ' active' : ''}`}
-            style={{ ...style, ...backgroundStyle, ...(isLocked ? { pointerEvents: 'none' } : {}), ...extraSystemStyle }}
+            ref={setNodeRef}
+            className={`hexagon${!visibleTile && !extraSystem ? ' empty' : ''}${isActive ? ' active' : ''}${isOver ? ' drop-target' : ''}`}
+            style={{ ...style, ...(isLocked ? { pointerEvents: 'none' } : {}), ...extraSystemStyle }}
             onClick={handleClick}
-            data-testid={!tile && !extraSystem ? 'empty-hex' : undefined}
+            data-testid={!visibleTile && !extraSystem ? 'empty-hex' : undefined}
+            data-hex-key={`${q},${r},${s}`}
         >
+            <div className="hexagon-image" style={backgroundStyle} />
             <div className="hexagon-content" />
+            {!extraSystem && showGroundTargets && <span className="space-drop-hint">Space</span>}
+            {!extraSystem && planetTargets(`${q},${r},${s}`, visibleTile).map(target => <PlanetDropTarget key={target.name} target={target} hexKey={`${q},${r},${s}`} geometry={geometry} />)}
         </div>
     );
 });

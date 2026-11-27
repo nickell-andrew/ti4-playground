@@ -1,9 +1,16 @@
 import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import { DragEndEvent } from '@dnd-kit/core';
+import { movePieces } from './utils/movePieces';
 import './HexBoard.css';
 
 import { generateTiles } from './utils/generateTiles';
-import { isTileNumber, TILE_NUMBERS, tileNumbers } from '../assets/tiles';
+import { TILE_NUMBERS } from '../assets/tiles';
+import { parseTTSMap } from './utils/ttsMap';
+import { emptyCards, restoreCards, TabletopCards, CardState, getMapPlanets, playerAtCardPosition, cardPosition } from './utils/tabletopCards';
+import { TabletopCardsPanel } from './TabletopCardsPanel';
+import { restoreCommandPools } from './utils/commandPools';
+import { CommandPools, PieceGroupCounts } from './dragAndDrop/CommandPools';
+import { BoardCards, CardDragData } from './cards/BoardCards';
 import { TilePicker } from './tilePicker/TilePicker';
 import { allRotations } from './tilePicker/rotations';
 import { BOARD_SIZE } from './hexTile/HexTile';
@@ -22,14 +29,12 @@ import {
 import { DraggablePiece } from './dragAndDrop/DraggablePiece';
 import {
   DraggablePiecePropsByUid,
-  getUidFromDraggablePieceProps,
 } from './dragAndDrop/draggablePieceUtils';
-import { getDraggablePieceProps, maxPieceCounts, unitTypes, tgTokenTypes } from './dragAndDrop/draggablePieceFactory';
+import { getInitialPieces, maxPieceCounts, unitTypes, tgTokenTypes } from './dragAndDrop/draggablePieceFactory';
 import { PieceContainer, getContainerUid } from './dragAndDrop/PieceContainer';
 import { TGContainer, getTGContainerUid } from './dragAndDrop/TGContainer';
-import { TGTotalBadge } from './dragAndDrop/TGTotalBadge';
 import { tokens, PLAYERS } from './consts';
-import { getContainerCoordinates, referencePoints, tgContainerPositions, H3_PROXIMITY_RADIUS } from './utils/pieceCoordinates';
+import { getContainerCoordinates, tgContainerPositions } from './utils/pieceCoordinates';
 import { ConfirmModal } from './dragAndDrop/components';
 
 const HexBoard: React.FC = () => {
@@ -46,29 +51,96 @@ const HexBoard: React.FC = () => {
   const [showClearConfirm, setShowClearConfirm] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [importString, setImportString] = useState<string>('');
+  const [importError, setImportError] = useState('');
+  const [showCards, setShowCards] = useState(false);
+  const [cards, setCards] = useState<TabletopCards>(emptyCards);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [selectedPieces, setSelectedPieces] = useState<string[]>([]);
 
   const getInitialDraggables = useCallback(() => {
-    return [...Array(playerCount)].map((_, i) => i + 1).reduce((draggablesByUid, player) => {
-      return Object.assign(draggablesByUid, getDraggablePieceProps(player))
-    }, {} as DraggablePiecePropsByUid)
+    return getInitialPieces(playerCount);
   }, [playerCount])
   // DnD handlers
-  const [allDraggables, setAllDraggables] = useState<DraggablePiecePropsByUid>(getInitialDraggables());
+  const [allDraggables, setAllDraggables] = useState<DraggablePiecePropsByUid>(getInitialDraggables);
+
+  const selectPiece = useCallback((uid: string, additive: boolean) => {
+    setSelectedPieces(previous => additive
+      ? previous.includes(uid) ? previous.filter(id => id !== uid) : [...previous, uid]
+      : previous.includes(uid) ? previous : [uid]);
+  }, []);
+
+  const changeCard = useCallback((kind: keyof TabletopCards, id: string, state: CardState) => {
+    setCards(previous => ({ ...previous, [kind]: { ...previous[kind], [id]: state } }));
+  }, []);
+  const dropCard = useCallback((data: CardDragData, point: { x: number; y: number }, player?: number) => {
+    setSelectedPieces([`board-card-${data.kind}-${data.cardId}`]);
+    const targetPlayer = player ?? playerAtCardPosition(point, playerCount);
+    setCards(previous => {
+      const state = previous[data.kind][data.cardId] ?? data.state;
+      return { ...previous, [data.kind]: { ...previous[data.kind], [data.cardId]: {
+        ...state, ...point, player: targetPlayer ?? state.player,
+        exhausted: data.kind === 'planets' && targetPlayer !== undefined && targetPlayer !== state.player ? true : state.exhausted,
+      } } };
+    });
+  }, [playerCount]);
+
+  const cardPositions = useMemo(() => {
+    const positions: Record<string, { x: number; y: number }> = {};
+    (['strategies', 'planets'] as const).forEach(kind => Object.entries(cards[kind]).forEach(([id, state]) => {
+      const position = cardPosition(kind, id, state, cards);
+      if (position) positions[`board-card-${kind}-${id}`] = position;
+    }));
+    return positions;
+  }, [cards]);
+
+  useEffect(() => {
+    const flip = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'f' || event.repeat || event.ctrlKey || event.metaKey || event.altKey ||
+          (event.target as Element)?.closest?.('input,textarea,select,[contenteditable="true"]')) return;
+      if (!selectedPieces.length) return;
+      event.preventDefault();
+      setAllDraggables(previous => {
+        const next = { ...previous };
+        selectedPieces.forEach(id => {
+          const piece = previous[id];
+          if (piece && ['fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought', 'warsun', 'flagship', 'infantry', 'mech'].includes(piece.name)) next[id] = { ...piece, damaged: !piece.damaged };
+        });
+        return next;
+      });
+      setCards(previous => {
+        const next = { strategies: { ...previous.strategies }, planets: { ...previous.planets } };
+        (['strategies', 'planets'] as const).forEach(kind => selectedPieces.forEach(selection => {
+          const prefix = `board-card-${kind}-`;
+          if (!selection.startsWith(prefix)) return;
+          const id = selection.slice(prefix.length), state = previous[kind][id];
+          if (state) next[kind][id] = { ...state, exhausted: !state.exhausted };
+        }));
+        return next;
+      });
+    };
+    window.addEventListener('keydown', flip);
+    return () => window.removeEventListener('keydown', flip);
+  }, [selectedPieces]);
+
+  useEffect(() => {
+    const names = new Set(getMapPlanets(hexTiles).map(planet => planet.name));
+    setCards(previous => {
+      if (Object.keys(previous.planets).every(name => names.has(name))) return previous;
+      return { ...previous, planets: Object.fromEntries(Object.entries(previous.planets).filter(([name]) => names.has(name))) };
+    });
+  }, [hexTiles]);
 
   const draggableItems = useMemo(() => {
     return Object.entries(allDraggables).map(([uid, props]) => {
-      const style = {
-        height: 0,
-        width: 0,
-      }
-
       return <DraggablePiece
         key={uid}
         {...props}
-        style={style}
+        selected={selectedPieces.includes(uid)}
+        selectedIds={selectedPieces}
+        onSelect={selectPiece}
       />
     })
-  }, [allDraggables])
+  }, [allDraggables, selectedPieces, selectPiece])
 
   // Build container items - one per player per piece type
   const containerItems = useMemo(() => {
@@ -133,51 +205,6 @@ const HexBoard: React.FC = () => {
     return items;
   }, [allDraggables, playerCount])
 
-  // Per-player TG total badges — count tokens physically within each player's h3 hex
-  const tgTotalItems = useMemo(() => {
-    const items: React.ReactNode[] = [];
-    const players = [...Array(playerCount)].map((_, i) => (i + 1) as PLAYERS);
-
-    for (const player of players) {
-      const h3 = referencePoints[`p${player}h3`];
-      const r = H3_PROXIMITY_RADIUS;
-
-      const isInH3 = (x: number | undefined, y: number | undefined) => {
-        if (x === undefined || y === undefined) return false;
-        return Math.abs(x - h3.x) <= r && Math.abs(y - h3.y) <= r;
-      };
-
-      const singles = Object.values(allDraggables).filter(
-        p => p.name === tokens.TradeGood && isInH3(p.x, p.y)
-      ).length;
-      const bundles = Object.values(allDraggables).filter(
-        p => p.name === tokens.TradeGoodBundle && isInH3(p.x, p.y)
-      ).length;
-
-      // Position the badge outside the player's H area:
-      // project outward from the board center through h3, past h3
-      const mecatol = referencePoints['mecatol'];
-      const outX = h3.x - mecatol.x;
-      const outY = h3.y - mecatol.y;
-      const len = Math.sqrt(outX * outX + outY * outY);
-      const badgeX = Math.round(h3.x + (outX / len) * 110);
-      const badgeY = Math.round(h3.y + (outY / len) * 110);
-
-      items.push(
-        <TGTotalBadge
-          key={`tg-total-${player}`}
-          player={player}
-          singles={singles}
-          bundles={bundles}
-          x={badgeX}
-          y={badgeY}
-        />
-      );
-    }
-
-    return items;
-  }, [allDraggables, playerCount])
-
   useEffect(() => {
     let resizeTimer: ReturnType<typeof setTimeout>;
     const handleResize = () => {
@@ -217,14 +244,13 @@ const HexBoard: React.FC = () => {
           }
         }
         setHexTiles(mapDataV2.hexTiles)
-        if (mapDataV2.allDraggablesByUid && Object.keys(mapDataV2.allDraggablesByUid).length > 0) {
-          setAllDraggables(mapDataV2.allDraggablesByUid)
-        }
+        setAllDraggables(restoreCommandPools(mapDataV2.allDraggablesByUid ?? getInitialPieces(mapDataV2.playerCount)));
+        setCards(restoreCards(mapDataV2.cards, mapDataV2.playerCount));
         setPlayerCount(mapDataV2.playerCount)
         setLocked(true)
       } catch (e) {
         console.error('Failed to load saved map:', e);
-        return
+        setHexTiles(initialTiles);
       }
     } else {
       setHexTiles(initialTiles);
@@ -279,6 +305,8 @@ const HexBoard: React.FC = () => {
   const handleConfirmClear = useCallback(() => {
     setHexTiles(initialTiles);
     setAllDraggables(getInitialDraggables());
+    setSelectedPieces([]);
+    setCards(emptyCards());
     setShowClearConfirm(false);
   }, [setHexTiles, setAllDraggables, getInitialDraggables]);
 
@@ -288,11 +316,12 @@ const HexBoard: React.FC = () => {
       hexTiles,
       playerCount,
       allDraggablesByUid: allDraggables,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      cards,
     };
     localStorage.setItem('tiMapData', JSON.stringify(mapData));
     alert('Map saved successfully!');
-  }, [hexTiles, allDraggables, playerCount]);
+  }, [hexTiles, allDraggables, playerCount, cards]);
 
   const toggleMapLock = useCallback(() => {
     setLocked(!locked);
@@ -304,7 +333,8 @@ const HexBoard: React.FC = () => {
       hexTiles,
       playerCount,
       allDraggablesByUid: allDraggables,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      cards,
     };
 
     const dataStr = JSON.stringify(mapData, null, 2);
@@ -318,7 +348,7 @@ const HexBoard: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }, [hexTiles, allDraggables, playerCount]);
+  }, [hexTiles, allDraggables, playerCount, cards]);
 
   // Import a map from a JSON file
   const handleImportMap = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -330,9 +360,9 @@ const HexBoard: React.FC = () => {
       try {
         const mapData: MapDataV2 = JSON.parse(event.target?.result as string);
         setHexTiles(mapData.hexTiles);
-        if (mapData.allDraggablesByUid && Object.keys(mapData.allDraggablesByUid).length > 0) {
-          setAllDraggables(mapData.allDraggablesByUid)
-        }
+        setAllDraggables(restoreCommandPools(mapData.allDraggablesByUid ?? getInitialPieces(mapData.playerCount)));
+        setSelectedPieces([]);
+        setCards(restoreCards(mapData.cards, mapData.playerCount));
         setPlayerCount(mapData.playerCount);
         setShowImportModal(false);
         alert('Map imported successfully!');
@@ -345,146 +375,34 @@ const HexBoard: React.FC = () => {
   }, [setHexTiles, setAllDraggables, setShowImportModal]);
 
   const handleImportTTSString = useCallback(() => {
-    let tiles = importString.trim().split(" ")
-    if (tiles.every(t => isTileNumber(t)) && tiles.length === 36) {
-      let newHexTiles: typeof hexTiles = TTSStringHexOrder.reduce((newTiles, key, idx) => {
-        newTiles[key] = {
-          number: tiles[idx] as TILE_NUMBERS,
-          rotation: allRotations[0]
-        }
-        return newTiles
-      }, {} as typeof hexTiles)
-      newHexTiles["0,0,0"] = {
-        number: tileNumbers.tile18,
-        rotation: allRotations[0]
-      }
-      setHexTiles(newHexTiles)
-      setLocked(true)
+    try {
+      const imported = parseTTSMap(importString);
+      setHexTiles(imported);
+      setCards(emptyCards());
+      setSelectedPieces([]);
+      setImportError('');
+      setShowImportModal(false);
+      setLocked(true);
+    } catch (error) {
+      setImportError((error as Error).message);
     }
-  }, [setHexTiles, setLocked, importString])
+  }, [importString]);
 
-  const onDragEnd = useCallback(({ delta, active, over }: DragEndEvent): void => {
-    const activeId = active.id as string;
-    const overId = over?.id as string | undefined;
-
-    // Shared TG container dragged → spawn a new TG token (no player association)
-    if (activeId.startsWith('container-shared-')) {
-      if (overId === activeId) return;
-      const name = activeId.replace('container-shared-', '') as any;
-
-      const maxCount = maxPieceCounts[name as keyof typeof maxPieceCounts];
-      const existingForType = Object.values(allDraggables).filter(p => p.name === name);
-      if (existingForType.length >= maxCount) return;
-
-      const usedNumbers = new Set(existingForType.map(p => p.pieceNumber));
-      let pieceNumber = 1;
-      while (usedNumbers.has(pieceNumber) && pieceNumber <= maxCount) pieceNumber++;
-      if (pieceNumber > maxCount) return;
-
-      // Spawn at container position + drag delta; player:1 is just for image lookup
-      const containerCoords = tgContainerPositions[name];
-      const spawnX = containerCoords.x + delta.x;
-      const spawnY = containerCoords.y + delta.y;
-
-      const newProps = { player: 1 as PLAYERS, name, pieceNumber };
-      const uid = getUidFromDraggablePieceProps(newProps);
-      setAllDraggables(prev => ({
-        ...prev,
-        [uid]: { ...newProps, x: spawnX, y: spawnY },
-      }));
-      return;
-    }
-
-    // Per-player container dragged → spawn a new piece
-    if (activeId.startsWith('container-')) {
-      const [, playerStr, name] = activeId.split('-');
-      const player = parseInt(playerStr) as PLAYERS;
-
-      // Don't spawn if dropped back on its own container
-      if (overId === activeId) return;
-
-      const maxCount = maxPieceCounts[name as keyof typeof maxPieceCounts];
-      const existingForType = Object.values(allDraggables).filter(
-        p => p.player === player && p.name === name
-      );
-      if (existingForType.length >= maxCount) return;
-
-      // Find next available piece number
-      const usedNumbers = new Set(existingForType.map(p => p.pieceNumber));
-      let pieceNumber = 1;
-      while (usedNumbers.has(pieceNumber) && pieceNumber <= maxCount) pieceNumber++;
-      if (pieceNumber > maxCount) return;
-
-      // Position at where the drag ended (container's board-relative coords + delta)
-      const containerCoords = getContainerCoordinates(player, name);
-      const spawnX = containerCoords.x + delta.x;
-      const spawnY = containerCoords.y + delta.y;
-
-      const newProps = { player, name: name as any, pieceNumber };
-      const uid = getUidFromDraggablePieceProps(newProps);
-      setAllDraggables(prev => ({
-        ...prev,
-        [uid]: { ...newProps, x: spawnX, y: spawnY },
-      }));
-      return;
-    }
-
-    // Piece dropped on a shared TG container → delete
-    if (overId && overId.startsWith('container-shared-')) {
-      const name = overId.replace('container-shared-', '');
-      const pieceProps = allDraggables[activeId];
-      if (pieceProps && pieceProps.name === name) {
-        setAllDraggables(prev => {
-          const next = { ...prev };
-          delete next[activeId];
-          return next;
-        });
-      }
-      return;
-    }
-
-    // Active piece dropped on its matching per-player container → delete
-    if (overId && overId.startsWith('container-')) {
-      const [, playerStr, name] = overId.split('-');
-      const player = parseInt(playerStr) as PLAYERS;
-      // Only delete if the piece belongs to the same player and piece type
-      const pieceProps = allDraggables[activeId];
-      if (pieceProps && pieceProps.player === player && pieceProps.name === name) {
-        setAllDraggables(prev => {
-          const next = { ...prev };
-          delete next[activeId];
-          return next;
-        });
-      }
-      return;
-    }
-
-    // Default: update position
-    setAllDraggables(prev => {
-      const props = prev[active.id];
-      if (!props) return prev;
-      let { x, y } = props
-      return {
-        ...prev,
-        [active.id]: {
-          ...props,
-          x: (x ?? 0) + delta.x,
-          y: (y ?? 0) + delta.y,
-        }
-      }
-    })
-  }, [setAllDraggables, allDraggables])
+  const onDragEnd = useCallback((event: DragEndEvent): void => {
+    setAllDraggables(previous => movePieces(previous, event, selectedPieces, playerCount, hexTiles));
+  }, [selectedPieces, playerCount, hexTiles]);
 
   const onExportClick = useCallback(() => {
     setShowExportModal(true)
   }, [setShowExportModal])
 
   const onImportClick = useCallback(() => {
+    setImportError('');
     setShowImportModal(true)
   }, [setShowImportModal])
 
   return (
-    <>
+    <div className="playground">
       <BoardControls
         locked={locked}
         onToggleLock={toggleMapLock}
@@ -492,6 +410,9 @@ const HexBoard: React.FC = () => {
         onSaveMap={handleSaveMap}
         onExportClick={onExportClick}
         onImportClick={onImportClick}
+        onResetPieces={() => setShowResetConfirm(true)}
+        onToggleCards={() => setShowCards(value => !value)}
+        showCards={showCards}
       />
       <HexBoardGrid
         boardSize={boardSize}
@@ -503,7 +424,17 @@ const HexBoard: React.FC = () => {
         onHexClick={handleHexClick}
         onDragEnd={onDragEnd}
         draggableItems={draggableItems}
-        containerItems={[...containerItems, ...tgTotalItems]}
+        containerItems={<>{containerItems}<PieceGroupCounts pieces={allDraggables} />
+          {Array.from({ length: playerCount }, (_, i) => <CommandPools key={i} player={i + 1} pieces={allDraggables} />)}
+          <BoardCards cards={cards} planets={getMapPlanets(hexTiles)} playerCount={playerCount} onChange={changeCard} selectedIds={selectedPieces} onSelect={selectPiece} /></>}
+        onCardDrop={dropCard}
+        boardOverlay={showCards && <TabletopCardsPanel hexTiles={hexTiles} playerCount={playerCount} cards={cards} onChange={changeCard}
+          onReadyPlanets={() => setCards(previous => ({ ...previous, planets: Object.fromEntries(Object.entries(previous.planets).map(([id, state]) => [id, { ...state, exhausted: false }])) }))}
+          onReturnStrategies={() => setCards(previous => ({ ...previous, strategies: {} }))} />}
+        pieces={allDraggables}
+        selectedIds={selectedPieces}
+        onSelectionChange={setSelectedPieces}
+        cardPositions={cardPositions}
       />
       {showPicker && (
         <TilePicker
@@ -518,7 +449,8 @@ const HexBoard: React.FC = () => {
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
         importString={importString}
-        setImportString={setImportString}
+        setImportString={value => { setImportString(value); setImportError(''); }}
+        error={importError}
         fileInputRef={fileInputRef}
         onImportMap={handleImportMap}
         onImportTTSString={handleImportTTSString}
@@ -529,6 +461,11 @@ const HexBoard: React.FC = () => {
         currentTTSString={currentTTSSTring}
         onExportToFile={handleExportMapToFile}
       />
+      {showResetConfirm && <ConfirmModal onConfirm={() => {
+        setAllDraggables(getInitialDraggables());
+        setSelectedPieces([]);
+        setShowResetConfirm(false);
+      }} onDeny={() => setShowResetConfirm(false)}>Reset all pieces to their starting supplies? Tiles and cards will stay in place.</ConfirmModal>}
       {showClearConfirm && (
         <ConfirmModal
           onConfirm={handleConfirmClear}
@@ -537,7 +474,7 @@ const HexBoard: React.FC = () => {
           Clear the entire board?
         </ConfirmModal>
       )}
-    </>
+    </div>
   );
 };
 

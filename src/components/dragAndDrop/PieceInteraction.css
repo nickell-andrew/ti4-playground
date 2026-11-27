@@ -1,0 +1,20 @@
+.board-piece { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; border: 0; border-radius: 6px; background: transparent; cursor: grab; touch-action: none; z-index: 100; }
+.board-piece img { display: block; pointer-events: none; user-select: none; }
+.board-piece.selected { outline: 2px solid #81d5ff; outline-offset: 3px; filter: drop-shadow(0 0 3px #3a9acf); z-index: 110; }
+.board-piece:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+.board-piece.ground-piece { z-index: 120; }
+.board-piece.ground-piece.selected { z-index: 130; }
+.drag-piece-overlay { position: relative; pointer-events: none; }
+.drag-piece-overlay img { display: block; }
+.selection-rectangle { position: absolute; border: 1px solid #89d7ff; background: #62b7ff33; pointer-events: none; z-index: 300; }
+.board-surface { width: 1800px; height: 1880px; position: relative; user-select: none; }
+.board-map { position: absolute; left: 200px; top: 200px; width: 1400px; height: 1480px; }
+.board-piece.pool-piece img { width: 26px !important; height: 26px !important; transform: rotate(var(--pool-rotation, 0deg)); }
+.command-pool-target { position: absolute; width: 180px; height: 160px; pointer-events: none; z-index: 60; clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); }
+.command-pool-target.over { background: #81ccff33; outline: 3px solid #99dfff; }
+.command-pool-label { position: absolute; transform: translate(-50%,-50%); color: #dce8f16b; font-size: 11px; line-height: 1.4; pointer-events: none; z-index: 70; text-align: center; text-transform: uppercase; letter-spacing: .3px; }
+.command-pool-label b { display: block; color: #dce8f194; font-size: 13px; }
+.trade-goods-label { width: 65px; }
+.command-pool-count { position: absolute; transform: translate(-50%,-50%); color: #e1edf2c4; font-size: 13px; line-height: 1; white-space: nowrap; pointer-events: none; z-index: 80; }
+.ship-damage { position: absolute; left: 50%; top: 45%; width: 55%; max-width: 26px; height: auto; filter: drop-shadow(0 0 2px #200); pointer-events: none; user-select: none; }
+.piece-group-count { position: absolute; transform: translate(-50%,-50%); z-index: 70; min-width: 16px; line-height: 18px; color: #c8deed70; font-size: 12px; font-weight: 400; pointer-events: none; text-align: center; }
