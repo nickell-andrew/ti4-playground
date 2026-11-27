@@ -10,6 +10,7 @@ interface ImportMapModalProps {
     fileInputRef: RefObject<HTMLInputElement | null>;
     onImportMap: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onImportTTSString: () => void;
+    error?: string;
 }
 
 export const ImportMapModal: React.FC<ImportMapModalProps> = ({
@@ -20,6 +21,7 @@ export const ImportMapModal: React.FC<ImportMapModalProps> = ({
     fileInputRef,
     onImportMap,
     onImportTTSString,
+    error,
 }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -32,10 +34,13 @@ export const ImportMapModal: React.FC<ImportMapModalProps> = ({
                     value={importString}
                     onChange={(e) => setImportString(e.target.value)}
                     placeholder="Paste a map string here..."
+                    aria-invalid={!!error}
+                    aria-describedby={error ? 'import-error' : 'import-hint'}
                 />
-                <p className="form-hint">
-                    Accepts a <strong>TTS string</strong> (space-separated tile numbers from Tabletop Simulator) or a <strong>JSON export</strong> from this app. Use the buttons below to choose the format.
+                <p className="form-hint" id="import-hint">
+                    Paste 36 TTS tile numbers separated by spaces or line breaks. Use <strong>0</strong> for an empty space; Mecatol Rex is added at the center. To load a JSON export, choose a file below.
                 </p>
+                {error && <p role="alert" id="import-error">{error}</p>}
             </div>
             <div className="form-actions">
                 <button className="action-button" onClick={() => fileInputRef.current?.click()}>Import From JSON</button>

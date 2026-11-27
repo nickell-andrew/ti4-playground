@@ -1,0 +1,18 @@
+.tabletop-cards { position: fixed; right: 12px; top: 12px; width: min(340px, calc(100vw - 24px)); max-height: calc(100vh - 24px); overflow: auto; z-index: 1900; padding: 16px; box-sizing: border-box; background: #111c30; border: 1px solid #42516b; border-radius: 10px; color: #e9effa; text-align: left; box-shadow: 0 8px 32px #0009; }
+.card-tabs, .cards-toolbar { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.tabletop-cards button, .tabletop-cards select { font: inherit; font-size: 14px; color: inherit; border: 1px solid #52627c; border-radius: 5px; background: #21334e; padding: 8px; cursor: pointer; }
+.tabletop-cards button:focus-visible, .tabletop-cards select:focus-visible { outline: 2px solid #a7d8ff; outline-offset: 2px; }
+.card-tabs button[aria-selected=true] { background: #356499; }
+.cards-hint { font-size: 14px; line-height: 1.5; color: #bccce2; }
+.cards-toolbar { flex-wrap: wrap; margin-bottom: 12px; font-size: 14px; }
+.card-list { display: grid; gap: 10px; }
+.tabletop-card { border: 2px solid; border-radius: 7px; background: #17273e; overflow: hidden; }
+.tabletop-cards .card-face { display: flex; width: 100%; flex-direction: column; align-items: flex-start; gap: 6px; background: transparent; border: 0; padding: 12px; text-align: left; }
+.card-face strong { font-size: 16px; }
+.card-face:disabled { cursor: default; }
+.tabletop-card.exhausted .card-face { background: repeating-linear-gradient(135deg, #0003, #0003 10px, transparent 10px, transparent 20px); color: #a5b4ca; }
+.initiative { display: inline-flex; margin-right: 10px; border: 1px solid currentColor; width: 24px; height: 24px; align-items: center; justify-content: center; border-radius: 50%; }
+.card-status { font-size: 14px; font-weight: 600; }
+.card-owner { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #42516b; padding: 8px 12px; font-size: 14px; }
+.tabletop-cards { top: 80px; max-height: calc(100dvh - 96px); z-index: 2500; }
+@media (max-width: 600px) { .tabletop-cards { top: 130px; max-height: calc(100dvh - 146px); } }

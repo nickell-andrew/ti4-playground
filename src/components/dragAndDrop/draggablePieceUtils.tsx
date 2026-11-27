@@ -6,6 +6,7 @@ import allTokenImages from '../../assets/tokens';
 import type { TokenImageEntry } from '../../assets/tokens';
 import { ImageComponentProps } from '../../assets/units/black';
 import { pieceSize } from '../consts';
+import type { CommandPool } from '../utils/commandPools';
 
 export interface DraggablePieceProps {
     player: PLAYERS;
@@ -14,6 +15,12 @@ export interface DraggablePieceProps {
     x?: number;
     y?: number;
     style?: CSSProperties;
+    hexKey?: string;
+    commandPool?: CommandPool;
+    layoutScale?: number;
+    tradeGoodPlayer?: number;
+    planet?: string;
+    damaged?: boolean;
 }
 
 export type DraggablePiecePropsByUid = Record<UniqueIdentifier, DraggablePieceProps>;
@@ -72,7 +79,7 @@ export const getImageFromDraggablePieceProps = (
     return (
         <Component
             alt={getAltTextFromDraggablePieceProps({ player, name, pieceNumber })}
-            style={{ width: `${width}px`, height: `${height}px` }}
+            style={{ width: `${width * scaleFactor}px`, height: `${height * scaleFactor}px` }}
         />
     );
 };

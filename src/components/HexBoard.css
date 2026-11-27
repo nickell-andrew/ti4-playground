@@ -1,12 +1,12 @@
 .board-controls {
-  position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
+  position: relative;
+  top: auto;
+  left: auto;
   display: flex;
   justify-content: space-between;
   flex-basis: min-content;
   height: fit-content;
-  margin-bottom: var(--space-5);
+  margin: 0;
   z-index: 2000;
   padding: var(--space-2);
   background-color: var(--color-surface);
@@ -15,13 +15,13 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 1px 4px rgba(0, 0, 0, 0.4);
-  max-width: 1200px;
+  max-width: none;
 }
 
 
 .control-group {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--space-2);
   flex-wrap: wrap;
 
@@ -122,6 +122,7 @@
 
 .hexagon {
   position: absolute;
+  z-index: 1;
   /* Change clip-path to create pointy-top hexagons */
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   background-color: var(--color-bg);
@@ -153,6 +154,7 @@
 
 .mallice {
   position: absolute;
+  z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -171,7 +173,7 @@
 }
 
 /* Style for empty hexagons */
-.hexagon:not([style*="background-image"]) {
+.hexagon.empty {
   background-color: rgba(30, 50, 90, 0.55);
 }
 
@@ -199,7 +201,7 @@
   opacity: 1;
 }
 
-.hexagon:not([style*="background-image"]) .hexagon-content::before {
+.hexagon.empty .hexagon-content::before {
   content: '+';
   display: block;
   font-size: var(--font-size-lg);
@@ -248,3 +250,29 @@
     max-height: 70vh;
   }
 }
+
+.playground { display: grid; grid-template-rows: auto minmax(0, 1fr); width: 100%; height: 100dvh; overflow: hidden; background: #080f1c; }
+.board-controls { border-radius: 0; border-width: 0 0 1px; }
+.control-group { align-items: center; }
+.control-group button { min-height: 44px; font-size: 14px; padding: 8px 14px; }
+.board-grid-shell { position: relative; min-height: 0; min-width: 0; overflow: hidden; }
+.board-viewport { width: 100%; height: 100%; overflow: auto; overscroll-behavior: contain; cursor: crosshair; }
+.board-viewport.panning { cursor: grab; }
+.board-viewport.selecting { cursor: crosshair; }
+.board-viewport:focus-visible { outline: 2px solid #8ad7ff; outline-offset: -2px; }
+.board-scroll-content { min-width: 100%; min-height: 100%; display: grid; place-items: center; }
+.board-stage { position: relative; flex-shrink: 0; }
+.hex-board { position: absolute; left: 0; top: 0; transform-origin: 0 0; margin: 0; }
+.hexagon.drop-target { filter: brightness(1.35) drop-shadow(0 0 6px #77cfff); }
+.hexagon-image { position: absolute; inset: 0; pointer-events: none; }
+.planet-drop-target { position: absolute; width: 50px; height: 50px; border: 1.5px dashed #a9ddff; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0; pointer-events: none; z-index: 5; background: #163a6244; }
+.planet-drop-target.visible { opacity: 1; }
+.planet-drop-target.over { background: #5fa2cf88; border-style: solid; box-shadow: 0 0 9px #b1eaff; }
+.planet-drop-target span { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); font-size: 11px; color: white; background: #102139ee; padding: 1px 4px; border-radius: 3px; white-space: nowrap; }
+.space-drop-hint { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: #102139ee; color: #c5e9ff; border-radius: 3px; padding: 1px 5px; font-size: 11px; pointer-events: none; }
+.board-help { position: absolute; top: 8px; left: 8px; right: 8px; width: fit-content; max-width: calc(100% - 32px); padding: 6px 10px; z-index: 500; background: #0b152ad9; border-radius: 6px; color: #c3d4ec; font-size: 13px; pointer-events: none; text-align: left; }
+.board-navigation { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 6px; z-index: 600; background: #142238ef; border: 1px solid #475d7d; border-radius: 10px; box-shadow: 0 4px 20px #0008; max-width: calc(100% - 24px); }
+.board-navigation button { min-width: 44px; min-height: 44px; border: 1px solid transparent; border-radius: 5px; padding: 6px 10px; background: #263d5d; color: #f0f5ff; font: inherit; font-size: 14px; cursor: pointer; }
+.board-navigation button:hover, .board-navigation button[aria-pressed=true] { background: #3f6997; }
+.board-navigation output { min-width: 42px; font-size: 14px; color: #e0ebff; }
+@media (max-width: 600px) { .control-group { gap: 4px; } .control-group button { flex: 1 1 auto; padding: 6px 10px; } .board-help { font-size: 12px; } .board-navigation { gap: 2px; padding: 4px; bottom: 8px; flex-wrap: wrap; justify-content: center; width: max-content; } .board-navigation button { padding: 6px 8px; } }

@@ -1,0 +1,1111 @@
+{
+  "Abaddon": {
+    "id": "abaddon",
+    "position": {
+      "x": 214,
+      "y": 89
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Abyz": {
+    "id": "abyz",
+    "position": {
+      "x": 136,
+      "y": 91
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Accoen": {
+    "id": "accoen",
+    "position": {
+      "x": 134,
+      "y": 86
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Acheron": {
+    "id": "acheron",
+    "position": {
+      "x": 170,
+      "y": 130
+    },
+    "type": "FACTION",
+    "faction": "cabal"
+  },
+  "Alio Prima": {
+    "id": "alioprima",
+    "position": {
+      "x": 202,
+      "y": 207
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Andeara": {
+    "id": "andeara",
+    "position": {
+      "x": 136,
+      "y": 89
+    }
+  },
+  "Ang": {
+    "id": "ang",
+    "position": {
+      "x": 172,
+      "y": 148
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Arc Prime": {
+    "id": "arcprime",
+    "position": {
+      "x": 134,
+      "y": 86
+    },
+    "type": "FACTION",
+    "faction": "letnev"
+  },
+  "Archon Ren": {
+    "id": "archonren",
+    "position": {
+      "x": 134,
+      "y": 86
+    },
+    "type": "FACTION",
+    "faction": "xxcha"
+  },
+  "Archon Tau": {
+    "id": "archontau",
+    "position": {
+      "x": 226,
+      "y": 200
+    },
+    "type": "FACTION",
+    "faction": "xxcha"
+  },
+  "Archon Vail": {
+    "id": "archonvail",
+    "position": {
+      "x": 168,
+      "y": 152
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Arcturus": {
+    "id": "arcturus",
+    "position": {
+      "x": 170,
+      "y": 130
+    },
+    "type": "FACTION",
+    "faction": "nomad"
+  },
+  "Arinam": {
+    "id": "arinam",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Arnor": {
+    "id": "arnor",
+    "position": {
+      "x": 138,
+      "y": 91
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Arretze": {
+    "id": "arretze",
+    "position": {
+      "x": 209,
+      "y": 80
+    },
+    "type": "FACTION",
+    "faction": "hacan"
+  },
+  "Ashtroth": {
+    "id": "ashtroth",
+    "position": {
+      "x": 221,
+      "y": 229
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Atlas": {
+    "id": "atlas",
+    "position": {
+      "x": 135,
+      "y": 90
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Avar": {
+    "id": "avar",
+    "position": {
+      "x": 224,
+      "y": 224
+    },
+    "type": "FACTION",
+    "faction": "argent"
+  },
+  "Ba'Kal": {
+    "id": "bakal",
+    "position": {
+      "x": 136,
+      "y": 90
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Bellatrix": {
+    "id": "bellatrix",
+    "position": {
+      "x": 139,
+      "y": 92
+    }
+  },
+  "Bereg": {
+    "id": "bereg",
+    "position": {
+      "x": 138,
+      "y": 90
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Capha": {
+    "id": "capha",
+    "position": {
+      "x": 203,
+      "y": 210
+    }
+  },
+  "Cealdri": {
+    "id": "cealdri",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Centauri": {
+    "id": "centauri",
+    "position": {
+      "x": 139,
+      "y": 89
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Cormund": {
+    "id": "cormund",
+    "position": {
+      "x": 134,
+      "y": 129
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Corneeq": {
+    "id": "corneeq",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Cresius": {
+    "id": "cresius",
+    "position": {
+      "x": 136,
+      "y": 87
+    }
+  },
+  "Creuss": {
+    "id": "creuss",
+    "position": {
+      "x": 206,
+      "y": 161
+    },
+    "type": "FACTION",
+    "faction": "ghost"
+  },
+  "Cronos Hollow": {
+    "id": "cronoshollow",
+    "position": {
+      "x": 135,
+      "y": 82
+    },
+    "faction": "obsidian"
+  },
+  "Cronos": {
+    "id": "cronos",
+    "position": {
+      "x": 134,
+      "y": 83
+    },
+    "faction": "firmament"
+  },
+  "Dal Bootha": {
+    "id": "dalbootha",
+    "position": {
+      "x": 137,
+      "y": 90
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Darien": {
+    "id": "darien",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "yin"
+  },
+  "Druaa": {
+    "id": "druaa",
+    "position": {
+      "x": 226,
+      "y": 200
+    },
+    "type": "FACTION",
+    "faction": "naalu"
+  },
+  "Elnath": {
+    "id": "elnath",
+    "position": {
+      "x": 87,
+      "y": 138
+    }
+  },
+  "Elysium": {
+    "id": "elysium",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "titans"
+  },
+  "Emelpar": {
+    "id": "emelpar",
+    "position": {
+      "x": 171,
+      "y": 146
+    }
+  },
+  "Everra": {
+    "id": "everra",
+    "position": {
+      "x": 141,
+      "y": 127
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Fria": {
+    "id": "fria",
+    "position": {
+      "x": 202,
+      "y": 208
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Garbozia": {
+    "id": "garbozia",
+    "position": {
+      "x": 171,
+      "y": 150
+    }
+  },
+  "Gral": {
+    "id": "gral",
+    "position": {
+      "x": 204,
+      "y": 207
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Hercalor": {
+    "id": "hercalor",
+    "position": {
+      "x": 204,
+      "y": 208
+    }
+  },
+  "Hercant": {
+    "id": "hercant",
+    "position": {
+      "x": 87,
+      "y": 136
+    },
+    "type": "FACTION",
+    "faction": "hacan"
+  },
+  "Hope's End": {
+    "id": "hopesend",
+    "position": {
+      "x": 169,
+      "y": 151
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Horizon": {
+    "id": "horizon",
+    "position": {
+      "x": 216,
+      "y": 91
+    }
+  },
+  "Ikatena": {
+    "id": "ikatena",
+    "position": {
+      "x": 171,
+      "y": 131
+    },
+    "faction": "deepwrought"
+  },
+  "Industrex": {
+    "id": "industrex",
+    "position": {
+      "x": 171,
+      "y": 150
+    }
+  },
+  "Ixth": {
+    "id": "ixth",
+    "position": {
+      "x": 171,
+      "y": 130
+    },
+    "type": "FACTION",
+    "faction": "mahact"
+  },
+  "Jeol Ir": {
+    "id": "jeolir",
+    "position": {
+      "x": 202,
+      "y": 207
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Jol": {
+    "id": "jol",
+    "position": {
+      "x": 226,
+      "y": 200
+    },
+    "type": "FACTION",
+    "faction": "jolnar"
+  },
+  "Jord": {
+    "id": "jord",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "sol"
+  },
+  "Kamdorn": {
+    "id": "kamdorn",
+    "position": {
+      "x": 228,
+      "y": 222
+    },
+    "type": "FACTION",
+    "faction": "hacan"
+  },
+  "Kosboth": {
+    "id": "kostboth",
+    "position": {
+      "x": 136,
+      "y": 90
+    }
+  },
+  "Kraag": {
+    "id": "kraag",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Lazar": {
+    "id": "lazar",
+    "position": {
+      "x": 136,
+      "y": 91
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Lazul Rex": {
+    "id": "lazulrex",
+    "position": {
+      "x": 203,
+      "y": 208
+    }
+  },
+  "Lemox": {
+    "id": "lemox",
+    "position": {
+      "x": 171,
+      "y": 150
+    }
+  },
+  "Lesab": {
+    "id": "lesab",
+    "position": {
+      "x": 173,
+      "y": 148
+    }
+  },
+  "Lirta IV": {
+    "id": "lirtaiv",
+    "position": {
+      "x": 205,
+      "y": 207
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Lisis II": {
+    "id": "lisisii",
+    "position": {
+      "x": 136,
+      "y": 81
+    },
+    "type": "FACTION",
+    "faction": "saar"
+  },
+  "Lisis": {
+    "id": "lisis",
+    "position": {
+      "x": 134,
+      "y": 87
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Lodor": {
+    "id": "lodor",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Loki": {
+    "id": "loki",
+    "position": {
+      "x": 83,
+      "y": 139
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Lor": {
+    "id": "lor",
+    "position": {
+      "x": 203,
+      "y": 208
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Luthien VI": {
+    "id": "luthieniv",
+    "position": {
+      "x": 224,
+      "y": 231
+    }
+  },
+  "Maaluuk": {
+    "id": "maaluuk",
+    "position": {
+      "x": 134,
+      "y": 86
+    },
+    "type": "FACTION",
+    "faction": "naalu"
+  },
+  "Mallice": {
+    "id": "mallice",
+    "position": {
+      "x": 236,
+      "y": 156
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Mecatol Rex": {
+    "id": "mr",
+    "position": {
+      "x": 171,
+      "y": 149
+    },
+    "type": "MR",
+    "faction": null
+  },
+  "Meer": {
+    "id": "meer",
+    "position": {
+      "x": 201,
+      "y": 207
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Mehar Xull": {
+    "id": "meharxull",
+    "position": {
+      "x": 172,
+      "y": 150
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Mellon": {
+    "id": "mellon",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Mez Lo Orz Fei Zsha": {
+    "id": "mez",
+    "position": {
+      "x": 134,
+      "y": 85
+    },
+    "faction": "ralnel"
+  },
+  "Moll Primus": {
+    "id": "mollprimus",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "mentak"
+  },
+  "Mordai II": {
+    "id": "mordaiii",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "nekro"
+  },
+  "Muaat": {
+    "id": "muaat",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "muaat"
+  },
+  "Naazir": {
+    "id": "naazir",
+    "position": {
+      "x": 134,
+      "y": 85
+    },
+    "type": "FACTION",
+    "faction": "naaz"
+  },
+  "Nar": {
+    "id": "nar",
+    "position": {
+      "x": 134,
+      "y": 85
+    },
+    "type": "FACTION",
+    "faction": "jolnar"
+  },
+  "Nestphar": {
+    "id": "nestphar",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "arborec"
+  },
+  "New Albion": {
+    "id": "newalbion",
+    "position": {
+      "x": 135,
+      "y": 88
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "New Terra": {
+    "id": "terra",
+    "position": {
+      "x": 134,
+      "y": 86
+    },
+    "type": "FACTION",
+    "faction": "psm"
+  },
+  "Olergodt": {
+    "id": "olergodt",
+    "position": {
+      "x": 172,
+      "y": 150
+    }
+  },
+  "Ordinian": {
+    "id": "ordinian",
+    "position": {
+      "x": 135,
+      "y": 94
+    },
+    "faction": "bastion"
+  },
+  "Paunus": {
+    "id": "faunus",
+    "position": {
+      "x": 172,
+      "y": 147
+    }
+  },
+  "Perimeter": {
+    "id": "perimeter",
+    "position": {
+      "x": 168,
+      "y": 152
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Primor": {
+    "id": "primor",
+    "position": {
+      "x": 172,
+      "y": 148
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Quann": {
+    "id": "quann",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Qucen'n": {
+    "id": "qucenn",
+    "position": {
+      "x": 136,
+      "y": 88
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Quinarra": {
+    "id": "quinarra",
+    "position": {
+      "x": 226,
+      "y": 200
+    },
+    "type": "FACTION",
+    "faction": "sardakk"
+  },
+  "Ragh": {
+    "id": "ragh",
+    "position": {
+      "x": 222,
+      "y": 200
+    },
+    "type": "FACTION",
+    "faction": "saar"
+  },
+  "Rarron": {
+    "id": "rarron",
+    "position": {
+      "x": 202,
+      "y": 206
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Rep Lo Orz Qet": {
+    "id": "rep",
+    "position": {
+      "x": 226,
+      "y": 203
+    },
+    "faction": "ralnel"
+  },
+  "Resulon": {
+    "id": "resculon",
+    "position": {
+      "x": 203,
+      "y": 207
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Retillion": {
+    "id": "retillion",
+    "position": {
+      "x": 130,
+      "y": 85
+    },
+    "type": "FACTION",
+    "faction": "yssaril"
+  },
+  "Rigel I": {
+    "id": "rigeli",
+    "position": {
+      "x": 221,
+      "y": 229
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Rigel II": {
+    "id": "rigelii",
+    "position": {
+      "x": 214,
+      "y": 89
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Rigel III": {
+    "id": "rigeliii",
+    "position": {
+      "x": 83,
+      "y": 139
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Rokha": {
+    "id": "rokha",
+    "position": {
+      "x": 226,
+      "y": 201
+    },
+    "type": "FACTION",
+    "faction": "naaz"
+  },
+  "Sakulag": {
+    "id": "sakulag",
+    "position": {
+      "x": 203,
+      "y": 208
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Saudor": {
+    "id": "saudor",
+    "position": {
+      "x": 172,
+      "y": 148
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Sem-Lore": {
+    "id": "semlore",
+    "position": {
+      "x": 169,
+      "y": 148
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Shalloq": {
+    "id": "shalloq",
+    "position": {
+      "x": 223,
+      "y": 200
+    },
+    "type": "FACTION",
+    "faction": "yssaril"
+  },
+  "Siig": {
+    "id": "siig",
+    "position": {
+      "x": 201,
+      "y": 206
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Starpoint": {
+    "id": "starpoint",
+    "position": {
+      "x": 202,
+      "y": 207
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Tallin Hollow": {
+    "id": "tallinhollow",
+    "position": {
+      "x": 227,
+      "y": 201
+    },
+    "faction": "obsidian"
+  },
+  "Tallin": {
+    "id": "tallin",
+    "position": {
+      "x": 227,
+      "y": 201
+    },
+    "faction": "firmament"
+  },
+  "Tar'mann": {
+    "id": "tarmann",
+    "position": {
+      "x": 172,
+      "y": 152
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Tarana": {
+    "id": "tarana",
+    "position": {
+      "x": 137,
+      "y": 90
+    }
+  },
+  "Tempesta": {
+    "id": "tempesta",
+    "position": {
+      "x": 171,
+      "y": 146
+    }
+  },
+  "Tequ'ran": {
+    "id": "tequran",
+    "position": {
+      "x": 137,
+      "y": 88
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "The Dark": {
+    "id": "thedark",
+    "position": {
+      "x": 173,
+      "y": 135
+    },
+    "type": "FACTION",
+    "faction": "empyrean"
+  },
+  "Thibah": {
+    "id": "thibah",
+    "position": {
+      "x": 172,
+      "y": 148
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Tiamat": {
+    "id": "tiamat",
+    "position": {
+      "x": 136,
+      "y": 89
+    }
+  },
+  "Tinnes": {
+    "id": "tinnes",
+    "position": {
+      "x": 204,
+      "y": 210
+    }
+  },
+  "Torkan": {
+    "id": "torkan",
+    "position": {
+      "x": 203,
+      "y": 208
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Tren'lak": {
+    "id": "trenlak",
+    "position": {
+      "x": 130,
+      "y": 86
+    },
+    "type": "FACTION",
+    "faction": "sardakk"
+  },
+  "Valk": {
+    "id": "valk",
+    "position": {
+      "x": 86,
+      "y": 138
+    },
+    "type": "FACTION",
+    "faction": "argent"
+  },
+  "Vefut II": {
+    "id": "vefutii",
+    "position": {
+      "x": 170,
+      "y": 150
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Vega Major": {
+    "id": "vegamajor",
+    "position": {
+      "x": 134,
+      "y": 91
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Vega Minor": {
+    "id": "vegaminor",
+    "position": {
+      "x": 202,
+      "y": 207
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Velnor": {
+    "id": "velnor",
+    "position": {
+      "x": 202,
+      "y": 207
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Vira-Pics III": {
+    "id": "virapicsiii",
+    "position": {
+      "x": 173,
+      "y": 149
+    }
+  },
+  "Vorhal": {
+    "id": "vorhal",
+    "position": {
+      "x": 170,
+      "y": 151
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Wellon": {
+    "id": "wellon",
+    "position": {
+      "x": 170,
+      "y": 151
+    },
+    "type": "INDUSTRIAL",
+    "faction": null
+  },
+  "Winnu": {
+    "id": "winnu",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "winnu"
+  },
+  "Wren Terra": {
+    "id": "wrenterra",
+    "position": {
+      "x": 226,
+      "y": 200
+    },
+    "type": "FACTION",
+    "faction": "letnev"
+  },
+  "Xanhact": {
+    "id": "xanhact",
+    "position": {
+      "x": 204,
+      "y": 207
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "Xxehan": {
+    "id": "xxehan",
+    "position": {
+      "x": 202,
+      "y": 207
+    },
+    "type": "CULTURAL",
+    "faction": null
+  },
+  "Ylir": {
+    "id": "ylir",
+    "position": {
+      "x": 210,
+      "y": 81
+    },
+    "type": "FACTION",
+    "faction": "argent"
+  },
+  "Zohbat": {
+    "id": "zohbat",
+    "position": {
+      "x": 205,
+      "y": 217
+    },
+    "type": "HAZARDOUS",
+    "faction": null
+  },
+  "[0.0.0]": {
+    "id": "0.0.0",
+    "position": {
+      "x": 170,
+      "y": 128
+    },
+    "type": "FACTION",
+    "faction": "l1z1x"
+  }
+}

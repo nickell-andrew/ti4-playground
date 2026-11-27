@@ -53,7 +53,9 @@ export const TGContainer: React.FC<TGContainerProps> = React.memo(({
                 styles.container,
                 isOver && styles.isOver,
             )}
-            style={{ left: x, top: y } as React.CSSProperties}
+            style={{ left: x + 20, top: y + 20 } as React.CSSProperties}
+            data-piece-supply="true"
+            aria-label={`${name} supply`}
             {...attributes}
             {...listeners}
         >

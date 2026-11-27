@@ -8,6 +8,9 @@ interface BoardControlsProps {
     onSaveMap: () => void;
     onExportClick: () => void;
     onImportClick: () => void;
+    onResetPieces?: () => void;
+    onToggleCards?: () => void;
+    showCards?: boolean;
 }
 
 export const BoardControls: React.FC<BoardControlsProps> = ({
@@ -17,12 +20,17 @@ export const BoardControls: React.FC<BoardControlsProps> = ({
     onSaveMap,
     onExportClick,
     onImportClick,
+    onResetPieces,
+    onToggleCards,
+    showCards,
 }) => {
     return (
         <div className="board-controls">
             <div className="control-group">
                 <button onClick={onToggleLock}>{locked ? "Unlock Map" : "Lock Map"}</button>
                 <button disabled={locked} onClick={onClearBoard}>Clear Board</button>
+                <button onClick={onResetPieces}>Reset Pieces</button>
+                <button onClick={onToggleCards} aria-expanded={showCards}>{showCards ? 'Hide Cards' : 'Show Cards'}</button>
                 <button onClick={onSaveMap}>Save Map</button>
                 <button onClick={onExportClick}>Export Map</button>
                 <button

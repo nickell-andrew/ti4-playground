@@ -434,13 +434,13 @@ describe('Trade Goods', () => {
     it('renders a TG total badge for each of the 6 players', () => {
       render(<App />);
       // Each badge shows "0 TG" when no tokens are present
-      const badges = screen.getAllByText('0 TG');
+      const badges = screen.getAllByTestId('trade-goods-total').filter(badge => badge.textContent === '0');
       expect(badges).toHaveLength(6);
     });
 
     it('each badge shows 0 TG when no tokens have been placed', () => {
       render(<App />);
-      const badges = screen.getAllByText('0 TG');
+      const badges = screen.getAllByTestId('trade-goods-total').filter(badge => badge.textContent === '0');
       badges.forEach(badge => {
         expect(badge).toBeInTheDocument();
       });
@@ -462,8 +462,8 @@ describe('Trade Goods', () => {
       render(<App />);
       // Total = 2 singles + 1 bundle*3 = 5 TG for player 1
       // Other players still show 0 TG
-      expect(screen.getByText('5 TG')).toBeInTheDocument();
-      const zeroBadges = screen.getAllByText('0 TG');
+      expect(screen.getByLabelText('Player 1 Trade Goods: 5')).toBeInTheDocument();
+      const zeroBadges = screen.getAllByTestId('trade-goods-total').filter(badge => badge.textContent === '0');
       expect(zeroBadges).toHaveLength(5);
     });
 
@@ -476,7 +476,7 @@ describe('Trade Goods', () => {
       });
       localStorage.setItem('tiMapData', JSON.stringify(mapData));
       render(<App />);
-      expect(screen.getByText('6 TG')).toBeInTheDocument();
+      expect(screen.getByLabelText('Player 1 Trade Goods: 6')).toBeInTheDocument();
     });
 
     it('tokens far from a player\'s h3 do not count toward that player\'s total', () => {
@@ -489,7 +489,7 @@ describe('Trade Goods', () => {
       localStorage.setItem('tiMapData', JSON.stringify(mapData));
       render(<App />);
       // All 6 badges should still show 0 TG (token is far from all h3 hexes)
-      const zeroBadges = screen.getAllByText('0 TG');
+      const zeroBadges = screen.getAllByTestId('trade-goods-total').filter(badge => badge.textContent === '0');
       expect(zeroBadges).toHaveLength(6);
     });
 
@@ -502,8 +502,8 @@ describe('Trade Goods', () => {
       });
       localStorage.setItem('tiMapData', JSON.stringify(mapData));
       render(<App />);
-      expect(screen.getByText('1 TG')).toBeInTheDocument();
-      const zeroBadges = screen.getAllByText('0 TG');
+      expect(screen.getByLabelText('Player 2 Trade Goods: 1')).toBeInTheDocument();
+      const zeroBadges = screen.getAllByTestId('trade-goods-total').filter(badge => badge.textContent === '0');
       expect(zeroBadges).toHaveLength(5);
     });
   });
@@ -525,4 +525,161 @@ describe('Trade Goods', () => {
       expect(saved.allDraggablesByUid['1-tradeGood-1'].name).toBe('tradeGood');
     });
   });
+});
+
+describe('Tabletop improvements', () => {
+  it('clears the map while restoring counters for every player', () => {
+    localStorage.setItem('tiMapData', JSON.stringify(buildMapData()));
+    render(<App />);
+    fireEvent.click(screen.getByText('Unlock Map'));
+    fireEvent.click(screen.getByText('Clear Board'));
+    fireEvent.click(screen.getByText('Yes'));
+    for (let player = 1; player <= 6; player++) {
+      expect(document.querySelectorAll(`[data-piece-id^="${player}-commandCounter-"]`)).toHaveLength(8);
+      expect(screen.getByLabelText(`Player ${player} Tactics: 3 tokens`)).toBeInTheDocument();
+      expect(screen.getByLabelText(`Player ${player} Fleet: 3 tokens`)).toBeInTheDocument();
+      expect(screen.getByLabelText(`Player ${player} Strategy: 2 tokens`)).toBeInTheDocument();
+    }
+    fireEvent.click(screen.getByText('Save Map'));
+    const saved = JSON.parse(localStorage.getItem('tiMapData')!);
+    expect(saved.hexTiles['1,-1,0']).toBeUndefined();
+    expect(Object.keys(saved.allDraggablesByUid)).toHaveLength(48);
+  });
+
+  it('resets pieces without changing tiles, cards, or map lock', () => {
+    localStorage.setItem('tiMapData', JSON.stringify(buildMapData({
+      allDraggablesByUid: { '1-cruiser-1': { player: 1, name: 'cruiser', pieceNumber: 1, x: 500, y: 500 } },
+      cards: { strategies: { '1': { player: 2, exhausted: true } }, planets: {} },
+    })));
+    render(<App />);
+    fireEvent.click(screen.getByText('Reset Pieces'));
+    fireEvent.click(screen.getByText('Yes'));
+    expect(screen.getByText('Unlock Map')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Save Map'));
+    const saved = JSON.parse(localStorage.getItem('tiMapData')!);
+    expect(saved.hexTiles['1,-1,0'].number).toBe('26');
+    expect(saved.cards.strategies['1']).toEqual({ player: 2, exhausted: true });
+    expect(saved.allDraggablesByUid['1-cruiser-1']).toBeUndefined();
+    for (let player = 1; player <= 6; player++) {
+      expect(document.querySelectorAll(`[data-piece-id^="${player}-commandCounter-"]`)).toHaveLength(8);
+      expect(screen.getByLabelText(`Player ${player} Tactics: 3 tokens`)).toBeInTheDocument();
+      expect(screen.getByLabelText(`Player ${player} Fleet: 3 tokens`)).toBeInTheDocument();
+      expect(screen.getByLabelText(`Player ${player} Strategy: 2 tokens`)).toBeInTheDocument();
+    }
+  });
+
+  it('imports mixed whitespace and empty TTS spaces, closes the modal, and exports the same string', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText('Import Map'));
+    const tiles = Array(36).fill('0'); tiles[1] = '26';
+    fireEvent.change(screen.getByLabelText('Paste map string'), { target: { value: ' \n' + tiles.join('  \r\n\t') + '  ' } });
+    fireEvent.click(screen.getByText('Import TTS String'));
+    expect(screen.queryByText('Import TTS String')).not.toBeInTheDocument();
+    expect(screen.getByText('Unlock Map')).toBeInTheDocument();
+    expect(screen.getAllByTestId('empty-hex')).toHaveLength(35);
+    fireEvent.click(screen.getByText('Export Map'));
+    expect(screen.getByRole('textbox')).toHaveValue(tiles.join(' '));
+  });
+
+  it('reports an invalid TTS input without changing the map and clears the error on edit', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText('Import Map'));
+    fireEvent.change(screen.getByLabelText('Paste map string'), { target: { value: '999' } });
+    fireEvent.click(screen.getByText('Import TTS String'));
+    expect(screen.getByRole('alert')).toHaveTextContent('Enter 36 tile numbers');
+    expect(screen.getByText('Lock Map')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Paste map string'), { target: { value: Array(36).fill('999').join(' ') } });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Import TTS String'));
+    expect(screen.getByRole('alert')).toHaveTextContent('Unknown tile: 999');
+  });
+
+  it('assigns and uses strategy cards, exhausts planets, and persists their state', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText('Show Cards'));
+    expect(screen.getByLabelText('Use Leadership')).toBeEnabled();
+    fireEvent.change(screen.getByLabelText('Owner of Leadership'), { target: { value: '2' } });
+    fireEvent.click(screen.getByLabelText('Use Leadership'));
+    expect(screen.getByLabelText('Ready Leadership')).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('tab', { name: 'Planet cards' }));
+    fireEvent.change(screen.getByLabelText('Owner of Mecatol Rex'), { target: { value: '3' } });
+    expect(screen.getByLabelText('Ready Mecatol Rex')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Ready all planets'));
+    fireEvent.click(screen.getByLabelText('Exhaust Mecatol Rex'));
+    fireEvent.click(screen.getByText('Save Map'));
+    const saved = JSON.parse(localStorage.getItem('tiMapData')!);
+    expect(saved.cards.strategies['1']).toEqual({ player: 2, exhausted: true });
+    expect(saved.cards.planets['Mecatol Rex']).toEqual({ player: 3, exhausted: true });
+  });
+
+  it('supports shift-click selection and deselection', () => {
+    render(<App />);
+    const first = document.querySelector('[data-piece-id="1-commandCounter-1"]')!;
+    const second = document.querySelector('[data-piece-id="2-commandCounter-1"]')!;
+    fireEvent.click(first, { shiftKey: true });
+    fireEvent.click(second, { shiftKey: true });
+    expect(first).toHaveAttribute('aria-pressed', 'true');
+    expect(second).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText('2 selected · Drag to move together')).toBeInTheDocument();
+    fireEvent.click(first, { shiftKey: true });
+    expect(first).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(screen.getByText('Deselect'));
+    expect(second).toHaveAttribute('aria-pressed', 'false');
+  });
+});
+
+describe('F flips selected components', () => {
+  it('flips selected cards and toggles ship damage, preserving both in saves', () => {
+    localStorage.setItem('tiMapData', JSON.stringify(buildMapData({
+      allDraggablesByUid: {
+        '1-carrier-1': { player: 1, name: 'carrier', pieceNumber: 1, x: 550, y: 550 },
+        '1-infantry-1': { player: 1, name: 'infantry', pieceNumber: 1, x: 450, y: 450 },
+      },
+      cards: { strategies: { '1': { player: 1, exhausted: false } }, planets: { 'Mecatol Rex': { player: 1, exhausted: false } } },
+    })));
+    render(<App />);
+    fireEvent.click(document.querySelector('[data-piece-id="1-carrier-1"]')!, { shiftKey: true });
+    fireEvent.click(screen.getByLabelText('Board card Leadership, player 1, ready'), { shiftKey: true });
+    fireEvent.click(screen.getByLabelText('Board card Mecatol Rex, player 1, ready'), { shiftKey: true });
+    fireEvent.keyDown(window, { key: 'f' });
+    expect(screen.getByAltText('Damaged')).toBeInTheDocument();
+    expect(screen.getByLabelText('Board card Leadership, player 1, exhausted')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByLabelText('Board card Mecatol Rex, player 1, exhausted')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Save Map'));
+    const saved = JSON.parse(localStorage.getItem('tiMapData')!);
+    expect(saved.allDraggablesByUid['1-carrier-1'].damaged).toBe(true);
+    expect(saved.cards.strategies['1'].exhausted).toBe(true);
+    expect(saved.cards.planets['Mecatol Rex'].exhausted).toBe(true);
+    fireEvent.keyDown(window, { key: 'F' });
+    expect(screen.queryByAltText('Damaged')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Board card Leadership, player 1, ready')).toBeInTheDocument();
+  });
+
+  it('ignores F in inputs, with modifiers, and on key repeat', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText('Show Cards'));
+    fireEvent.change(screen.getByLabelText('Owner of Leadership'), { target: { value: '1' } });
+    fireEvent.click(screen.getByLabelText('Board card Leadership, player 1, ready'));
+    fireEvent.keyDown(window, { key: 'f', ctrlKey: true });
+    fireEvent.keyDown(window, { key: 'f', repeat: true });
+    fireEvent.keyDown(screen.getByLabelText('Owner of Leadership'), { key: 'f' });
+    expect(screen.getByLabelText('Board card Leadership, player 1, ready')).toBeInTheDocument();
+  });
+});
+
+it('flips infantry and mechs to damaged art while leaving tokens unaffected', () => {
+  localStorage.setItem('tiMapData', JSON.stringify(buildMapData({ allDraggablesByUid: {
+    '1-infantry-1': { player: 1, name: 'infantry', pieceNumber: 1, x: 500, y: 500 },
+    '1-mech-1': { player: 1, name: 'mech', pieceNumber: 1, x: 550, y: 500 },
+    '1-commandCounter-1': { player: 1, name: 'commandCounter', pieceNumber: 1, x: 600, y: 500 },
+  } })));
+  render(<App />);
+  ['1-infantry-1','1-mech-1','1-commandCounter-1'].forEach(id => fireEvent.click(document.querySelector(`[data-piece-id="${id}"]`)!, { shiftKey: true }));
+  fireEvent.keyDown(window, { key: 'f' });
+  expect(screen.getAllByAltText('Damaged')).toHaveLength(2);
+  fireEvent.click(screen.getByText('Save Map'));
+  const saved = JSON.parse(localStorage.getItem('tiMapData')!);
+  expect(saved.allDraggablesByUid['1-infantry-1'].damaged).toBe(true);
+  expect(saved.allDraggablesByUid['1-mech-1'].damaged).toBe(true);
+  expect(saved.allDraggablesByUid['1-commandCounter-1'].damaged).toBeUndefined();
 });
